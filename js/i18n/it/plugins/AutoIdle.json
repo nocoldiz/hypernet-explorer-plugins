@@ -440,6 +440,13 @@
     "rejoined": "{name} torna nel Party.",
     "actionCancel": "Lascia stare"
   },
+  "remoteTalk": {
+    "yourself": "Te stesso",
+    "npc": "PNG",
+    "pet": "Animale",
+    "commands": "◄ / ► Seleziona bersaglio   [OK] Parla   [ESC] Annulla",
+    "commandsHeld": "◄ / ► Seleziona bersaglio   [Rilascia / OK] Parla   [ESC] Annulla"
+  },
   "auto": {
     "equipped": "{name} indossa {item}",
     "usedItem": "{name} usa {item} su {target}",

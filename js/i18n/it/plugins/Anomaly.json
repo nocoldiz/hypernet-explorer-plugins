@@ -24850,7 +24850,7 @@
      }
     },
     "b2": {
-     "text": "{Il nome appartiene a un ex tecnico della Gilda cacciato anni fa per intercettazioni temporali illegali.|Si scopre che il tizio è stato messo nella lista nera della Gilda dei Maghi negli anni Ottanta per aver gestito linee condivise non registrate.}\n{Lo rintracci qualche paese più in là; è del tutto impenitente e consegna con orgoglio undici anni di intercettazioni trascritte.|Sfoggia i suoi registri di chiamate illegali, barattando segreti d'archivio rubati in cambio del tuo silenzio.|Una bella pila di materiale da ricatto e segreti della Gilda per la collezione.}",
+     "text": "{Il nome appartiene a un ex tecnico della Gilda cacciato anni fa per intercettazioni temporali illegali.|Si scopre che il tizio è stato messo nella lista nera della Gilda degli Stregoni negli anni Ottanta per aver gestito linee condivise non registrate.}\n{Lo rintracci qualche paese più in là; è del tutto impenitente e consegna con orgoglio undici anni di intercettazioni trascritte.|Sfoggia i suoi registri di chiamate illegali, barattando segreti d'archivio rubati in cambio del tuo silenzio.|Una bella pila di materiale da ricatto e segreti della Gilda per la collezione.}",
      "outcome": {
       "kind": "artifact",
       "mag": "large",
@@ -25959,7 +25959,7 @@
    "nodes": {
     "n0": {
      "text": "Una porta in una fila di case a schiera senza numero, senza targa, senza campanello e con un raschiafango consumato fino a fare la conca.\nLe case ai lati sono il 42 e il 44. Questa non è il 43. Le imposte non vengono pagate perché è fuori dal catasto, e la posta si rifiuta di consegnarci, e tutti in questa via sanno che dopo il buio si cammina dall'altro lato e nessuno sa dire perché.\nLa buca delle lettere è calda.\nIl raschiafango è consumato fino a fare la conca e il gradino non è consumato per niente.",
-     "emText": "Una porta tra il 42 e il 44 che non è il 43, non è a catasto, non riceve posta, con un raschiafango consumato da moltissimi stivali.\nLa Gilda dei Maghi, come attività. La gente della Thatcher, prima della Thatcher, e dopo. Da qualche parte dietro questa porta ci sono le carte delle persone che hanno scelto te, e la buca delle lettere è calda, e questo è il punto più vicino a cui tu sia mai arrivata e non ti muovi da circa un minuto.",
+     "emText": "Una porta tra il 42 e il 44 che non è il 43, non è a catasto, non riceve posta, con un raschiafango consumato da moltissimi stivali.\nLa Gilda degli Stregoni, come attività. La gente della Thatcher, prima della Thatcher, e dopo. Da qualche parte dietro questa porta ci sono le carte delle persone che hanno scelto te, e la buca delle lettere è calda, e questo è il punto più vicino a cui tu sia mai arrivata e non ti muovi da circa un minuto.",
      "bubba": "Bubba posa due dita sulla buca delle lettere e le ritira. \"Calda. Ah. Zucchero. È 'a gente toja, chesta. Sono loro. Vuoi farlo oggi?\"",
      "asides": {
       "scholarly": "{member} {sta già registrando le anomalie dei sensori con un grugnito seccato|analizza la lega e borbotta di date di fabbricazione obsolete|controlla i registri dei rilievi e si lamenta della documentazione mancante|fa notare che le letture non hanno alcun senso termodinamico}",

@@ -23,7 +23,8 @@
     "zoomIn": "Zoom In",
     "zoomOut": "Zoom Out",
     "kick": "Kick",
-    "run": "Run"
+    "run": "Run",
+    "remoteTalk": "Remote Talk (Hold Action)"
   },
   "unassigned": "Unassigned"
 }

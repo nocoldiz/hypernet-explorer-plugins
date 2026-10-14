@@ -628,6 +628,7 @@
       sexualOrientation: "bisexual", // key into js/db/NPC/Orientations.json (sexual); well documented in his own writing
       romanticOrientation: "biromantic", // key into js/db/NPC/Orientations.json (romantic)
       money: 300000, // 3,000€ - squandered his inherited fortune, died in poverty
+      knowledge: 9999,
       items: [{ id: 1404, amount: 1 }], // Forbidden Magic Grimoire
       weapons: [],
       armors: [{ id: 531, amount: 1 }], // Robes of the Great Beast

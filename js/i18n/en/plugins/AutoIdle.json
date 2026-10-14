@@ -416,6 +416,13 @@
     "rejoined": "{name} rejoins the party.",
     "actionCancel": "Never mind"
   },
+  "remoteTalk": {
+    "yourself": "Yourself",
+    "npc": "NPC",
+    "pet": "Pet",
+    "commands": "◄ / ► Select   [OK] Talk   [ESC] Cancel",
+    "commandsHeld": "◄ / ► Select   [Release / OK] Talk   [ESC] Cancel"
+  },
   "auto": {
     "equipped": "{name} puts on {item}",
     "usedItem": "{name} uses {item} on {target}",

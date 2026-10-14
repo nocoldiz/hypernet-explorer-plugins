@@ -2149,8 +2149,8 @@
     "excluded": "",
     "name": ""
   },
-  "Ghent Mages Guild": {
-    "val": "GHENT MAGES GUILD",
+  "Ghent Wizard Guild": {
+    "val": "GHENT WIZARD GUILD",
     "excluded": "",
     "name": ""
   },
@@ -2434,8 +2434,8 @@
     "excluded": "",
     "name": ""
   },
-  "Mages Guild Basement": {
-    "val": "MAGES GUILD BASEMENT",
+  "Wizard Guild Basement": {
+    "val": "WIZARD GUILD BASEMENT",
     "excluded": "",
     "name": ""
   },

@@ -706,13 +706,82 @@
         this._knowledgePoints = 0;
     };
 
+    function isGrimoireItem(item) {
+        if (!item) return false;
+        if (item.note && /<Grimoire:/i.test(item.note)) return true;
+        if (item.name && /grimoire|grimorie/i.test(item.name)) return true;
+        if (item.id >= 1400 && item.id <= 1439) return true;
+        return false;
+    }
+
+    function isGrimoireStart() {
+        if (typeof $gameParty === 'undefined' || !$gameParty) return false;
+        if (typeof $gameParty.items === 'function') {
+            const items = $gameParty.items();
+            for (let i = 0; i < items.length; i++) {
+                if (isGrimoireItem(items[i])) return true;
+            }
+        }
+        if (typeof $gameParty.allMembers === 'function') {
+            const members = $gameParty.allMembers();
+            for (let i = 0; i < members.length; i++) {
+                const actor = members[i];
+                if (!actor || typeof actor.equips !== 'function') continue;
+                const equips = actor.equips();
+                for (let j = 0; j < equips.length; j++) {
+                    if (isGrimoireItem(equips[j])) return true;
+                }
+            }
+        }
+        if (typeof $gameSystem !== 'undefined' && $gameSystem) {
+            if ($gameSystem._ccOriginSymbol === 'origin_arcanist') return true;
+        }
+        return false;
+    }
+
+    function isCrowleyStart() {
+        if (typeof $gameParty === 'undefined' || !$gameParty || typeof $gameParty.allMembers !== 'function') return false;
+        const members = $gameParty.allMembers();
+        for (let i = 0; i < members.length; i++) {
+            const a = members[i];
+            if (!a) continue;
+            const name = (typeof a.name === 'function' ? a.name() : (a._name || '')).toLowerCase();
+            if (a._presetId === 10 ||
+                a._presetKey === 'aleister crowley' ||
+                a._presetKey === 'alesteir crowley' ||
+                a._presetName === 'Aleister Crowley' ||
+                a._presetName === 'Alesteir Crowley' ||
+                /aleister\s*crowley|alesteir\s*crowley/i.test(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function isPlaytestStart(sys) {
+        if (sys && sys._isSandboxMode) return true;
+        if (typeof $gameSystem !== 'undefined' && $gameSystem && $gameSystem._isSandboxMode) return true;
+        if (typeof $gameTemp !== 'undefined' && $gameTemp && typeof $gameTemp.isPlaytest === 'function' && $gameTemp.isPlaytest()) return true;
+        if (typeof Utils !== 'undefined' && typeof Utils.isOptionValid === 'function' && Utils.isOptionValid('test')) return true;
+        if (typeof $gameParty !== 'undefined' && $gameParty) {
+            const leader = typeof $gameParty.leader === 'function' ? $gameParty.leader() : (typeof $gameParty.allMembers === 'function' ? $gameParty.allMembers()[0] : null);
+            if (leader) {
+                const name = typeof leader.name === 'function' ? leader.name() : leader._name;
+                if (name && name.toLowerCase() === 'test') return true;
+            }
+        }
+        return false;
+    }
+
     Game_System.prototype.getKnowledge = function () {
         if (this._knowledgePoints === undefined) this._knowledgePoints = 0;
-        if (!this._sandboxKnowledgePointsGiven) {
-            const isSandbox = (this._isSandboxMode) || ($gameSystem && $gameSystem._isSandboxMode);
-            const isTestPlayer = ($gameParty && $gameParty.allMembers && $gameParty.allMembers().length > 0 && $gameParty.allMembers()[0].name().toLowerCase() === 'test');
-            if (isSandbox || isTestPlayer) {
-                this._knowledgePoints = 99999;
+        if (!this._initialKpGranted) {
+            const isPlaytest = isPlaytestStart(this);
+            const isCrowley = isCrowleyStart();
+            const isGrimoire = isGrimoireStart();
+            if (isPlaytest || isCrowley || isGrimoire) {
+                this._knowledgePoints = 9999;
+                this._initialKpGranted = true;
                 this._sandboxKnowledgePointsGiven = true;
             }
         }
@@ -1049,7 +1118,7 @@
     };
 
     function isWorkshopMode() {
-        if ($gameSystem && ($gameSystem._isSandboxMode || $gameSystem._sandboxKnowledgePointsGiven)) return true;
+        if ($gameSystem && $gameSystem._isSandboxMode) return true;
         const leader = $gameParty && $gameParty.allMembers && $gameParty.allMembers()[0];
         return !!(leader && leader.name && leader.name().toLowerCase() === 'test');
     }

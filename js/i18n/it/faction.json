@@ -1,7 +1,7 @@
 {
   "factions": {
     "magesguild": {
-      "name": "Gilda dei Maghi",
+      "name": "Gilda degli Stregoni",
       "description": "L'antica istituzione burocratica che regola l'uso della magia nel continente. Tengono all'ordine, alla tradizione e ai permessi.",
       "troops": {
         "apprenticemage": {
@@ -2666,6 +2666,77 @@
         },
         "warboss": {
           "name": "Capoguerra dell'Orda"
+        }
+      }
+    },
+    "wizardguild": {
+      "name": "Gilda degli Stregoni",
+      "description": "L'antica istituzione burocratica che regola l'uso della magia nel continente. Tengono all'ordine, alla tradizione e ai permessi.",
+      "troops": {
+        "apprenticemage": {
+          "name": "Mago Apprendista"
+        },
+        "guildinitiate": {
+          "name": "Iniziato della Gilda"
+        },
+        "guildwarden": {
+          "name": "Custode della Gilda"
+        },
+        "certifiedmage": {
+          "name": "Mago Certificato"
+        },
+        "battlemage": {
+          "name": "Mago da Battaglia"
+        },
+        "guildenforcer": {
+          "name": "Esecutore della Gilda"
+        },
+        "mysticarcher": {
+          "name": "Arciere Mistico"
+        },
+        "seniormagister": {
+          "name": "Magistro Anziano"
+        },
+        "warwizard": {
+          "name": "Mago di Guerra"
+        },
+        "archmage": {
+          "name": "Arcimago"
+        },
+        "spellsniper": {
+          "name": "Cecchino Incantatore"
+        },
+        "grandmasterwizard": {
+          "name": "Gran Maestro Stregone"
+        },
+        "scientist": {
+          "name": "Ricercatore Arcano"
+        }
+      },
+      "leaders": {
+        "archmageeldrin": {
+          "name": "Archmage Eldrin"
+        },
+        "magisterlyra": {
+          "name": "Magister Lyra"
+        },
+        "councilortheron": {
+          "name": "Councilor Theron"
+        },
+        "spellweavermira": {
+          "name": "Spellweaver Mira"
+        },
+        "enchanterkael": {
+          "name": "Enchanter Kael"
+        },
+        "wizardlordvaren": {
+          "name": "Wizard Lord Varen"
+        },
+        "sageceleste": {
+          "name": "Sage Celeste"
+        },
+        "grandmagusdorian": {
+          "name": "Grand Magus Dorian"
         }
       }
     }

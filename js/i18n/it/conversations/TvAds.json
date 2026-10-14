@@ -177,7 +177,7 @@
       ]
     },
     "guild_licensing": {
-      "sponsor": "la Gilda dei Maghi",
+      "sponsor": "la Gilda degli Stregoni",
       "lines": [
         "{Lanciare su una leyline in tensione|Stare su una leyline e lanciare|Lavorare direttamente su una leyline} senza {licenza|formazione|autorizzazione} {la spezza|la tronca|la ammazza}. {Una leyline spezzata non torna|Le leyline spezzate non si rimarginano|Non ricresce niente}.",
         "{La Legge del CamelCase non è in discussione|Il CamelCase è legge|Si dice attaccato e con le maiuscole}. {Separate le parole|Metteteci uno spazio|Pronunciatelo in due parole} e l'universo {lo prende per un trascendentale|lo legge come un trascendentale|vi consegna la fattura di un dio}. {Si comincia dalle corde vocali|Le corde vocali se ne vanno per prime|Le prime ad andarsene sono le corde vocali}.",

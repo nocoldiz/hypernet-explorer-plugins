@@ -19448,7 +19448,7 @@
      }
     },
     "b2": {
-     "text": "{The name belongs to an ex-Guild tech who got kicked out years ago for illegal temporal wiretapping.|Turns out the guy was blacklisted by the Mages Guild in the eighties for running unregistered party lines.}\n{You track him down a few towns over; he's completely unrepentant and proudly hands over eleven years of transcribed wiretaps.|He shows off his illegal call logs, trading stolen archival secrets for your silence.|A solid stack of blackmail material and guild secrets for the collection.}",
+     "text": "{The name belongs to an ex-Guild tech who got kicked out years ago for illegal temporal wiretapping.|Turns out the guy was blacklisted by the Wizard Guild in the eighties for running unregistered party lines.}\n{You track him down a few towns over; he's completely unrepentant and proudly hands over eleven years of transcribed wiretaps.|He shows off his illegal call logs, trading stolen archival secrets for your silence.|A solid stack of blackmail material and guild secrets for the collection.}",
      "outcome": {
       "kind": "artifact",
       "mag": "large",

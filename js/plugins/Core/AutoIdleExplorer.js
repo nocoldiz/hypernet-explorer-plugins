@@ -8723,6 +8723,25 @@
         // the leader on the left and whoever answers on the right.
         memberTalk(f, actor) {
             const leader = $gameParty.leader();
+            const actorName = actor ? (typeof actor.name === "function" ? actor.name() : actor.name) : "";
+            if (actorName === "Bubba" && Math.random() < 0.30) {
+                const SD = window.StoryDialogue;
+                const topics = (SD?.askFixed?.() || SD?.list?.("askbubba") || []).filter(Boolean);
+                if (topics.length > 0) {
+                    const pick = topics[Math.floor(Math.random() * topics.length)];
+                    const sceneName = typeof pick === "string" ? pick : pick.name;
+                    if (sceneName && SD?.play?.("askbubba", sceneName)) {
+                        if (window.PartyNeeds?.fillNeed) {
+                            if (leader) window.PartyNeeds.fillNeed(leader, "social", 20);
+                            window.PartyNeeds.fillNeed(actor, "social", 20);
+                        }
+                        const H = window.NPCEmpathize?._helpers;
+                        if (H?._addPairBond) H._addPairBond(5);
+                        return true;
+                    }
+                }
+            }
+
             const NT = window.NPCTalk;
             const EM = window.NPCEmpathize;
             const H = EM && EM._helpers;
@@ -9773,19 +9792,459 @@
         }
     };
 
+    // ========================================================================
+    // Remote Talk System
+    // Hold action button on non-world maps to remotely talk to NPCs, party
+    // members, and yourself (self reflection in empathize menu).
+    // Selecting them with left/right arrows pans camera to their coordinates.
+    // ========================================================================
+    const RemoteTalk = {
+        _active: false,
+        _holdFrames: 0,
+        _HOLD_THRESHOLD: 18,
+        _targets: [],
+        _index: 0,
+        _hud: null,
+        _panFrames: 0,
+        _panMaxFrames: 18,
+        _panFromX: 0,
+        _panFromY: 0,
+        _panDx: 0,
+        _panDy: 0,
+        _pendingOkTap: false,
+        _justActivated: false,
+
+        isActive() {
+            return this._active;
+        },
+
+        onWorldMap() {
+            const WMR = window.WorldMapReturn;
+            if (WMR && typeof WMR.isWorldMap === 'function') {
+                return WMR.isWorldMap($gameMap ? $gameMap.mapId() : 0);
+            }
+            return !!($gameMap && $gameMap.mapId() === 315);
+        },
+
+        canActivate() {
+            if (!SceneManager._scene || !(SceneManager._scene instanceof Scene_Map)) return false;
+            if (!$gamePlayer || !$gameMap || !$gameParty) return false;
+            if ($gamePlayer.isInVehicle && $gamePlayer.isInVehicle()) return false;
+            if (this.onWorldMap()) return false; // not active in worldmap, active in all other maps
+            if ($gameMap.isEventRunning() || ($gameMessage && $gameMessage.isBusy())) return false;
+            if (window.MapBattleMode && window.MapBattleMode.isBattleActive && window.MapBattleMode.isBattleActive()) return false;
+            if (window.PeekSystem && window.PeekSystem.isPeeking) return false;
+            if (SceneManager._scene._fbActive) return false;
+            if ($gamePlayer._throwTargetingMode) return false;
+            return true;
+        },
+
+        gatherTargets() {
+            const targets = [];
+            const leader = $gameParty ? $gameParty.leader() : null;
+            if (!leader) return targets;
+
+            // 1. Yourself
+            const selfLabel = leader.name() + " (" + (T('AutoIdle.remoteTalk.yourself') || "Yourself") + ")";
+            targets.push({
+                type: 'self',
+                id: 'self',
+                actorId: leader.actorId(),
+                actor: leader,
+                character: $gamePlayer,
+                name: leader.name(),
+                x: $gamePlayer.x,
+                y: $gamePlayer.y,
+                label: selfLabel
+            });
+
+            // 2. Followers (Active Party & Bubba & Pet)
+            const members = ($gameParty && $gameParty.members()) || [];
+            const followers = ($gamePlayer && $gamePlayer.followers && $gamePlayer.followers()) ? $gamePlayer.followers().data() : [];
+
+            // Active party members (excluding leader)
+            for (let i = 1; i < members.length; i++) {
+                const actor = members[i];
+                if (!actor) continue;
+                const f = followers.find(fol => fol && fol.actor && fol.actor() === actor && fol.isVisible && fol.isVisible());
+                const char = f || $gamePlayer;
+                targets.push({
+                    type: 'party',
+                    id: 'party_' + actor.actorId(),
+                    actorId: actor.actorId(),
+                    actor: actor,
+                    follower: f,
+                    character: char,
+                    name: actor.name(),
+                    x: char.x,
+                    y: char.y,
+                    label: actor.name()
+                });
+            }
+
+            // Story Follower Bubba (if benched / not in active party)
+            const hasBubbaInParty = members.some(m => m && m.name && m.name() === 'Bubba');
+            if (!hasBubbaInParty) {
+                const bubbaFollower = followers.find(fol => fol instanceof window.Game_BubbaFollower || (fol && fol.actor && fol.actor()?.name?.() === 'Bubba'));
+                if (bubbaFollower && bubbaFollower.isVisible && bubbaFollower.isVisible()) {
+                    const bubbaActor = bubbaFollower.actor ? bubbaFollower.actor() : (window.PartyRoster?.getBubbaActor?.() || ($gameActors && $gameActors.actor(2)));
+                    targets.push({
+                        type: 'bubba',
+                        id: 'bubba',
+                        actorId: bubbaActor ? bubbaActor.actorId() : 2,
+                        actor: bubbaActor,
+                        follower: bubbaFollower,
+                        character: bubbaFollower,
+                        name: bubbaActor ? bubbaActor.name() : 'Bubba',
+                        x: bubbaFollower.x,
+                        y: bubbaFollower.y,
+                        label: bubbaActor ? bubbaActor.name() : 'Bubba'
+                    });
+                }
+            }
+
+            // Pet Follower
+            for (const f of followers) {
+                if (window.Game_PetFollower && f instanceof window.Game_PetFollower && f.isVisible && f.isVisible()) {
+                    const petName = T('AutoIdle.remoteTalk.pet') || "Pet";
+                    targets.push({
+                        type: 'pet',
+                        id: 'pet',
+                        follower: f,
+                        character: f,
+                        name: petName,
+                        x: f.x,
+                        y: f.y,
+                        label: petName
+                    });
+                }
+            }
+
+            // 3. Map NPCs
+            if ($gameMap && $gameMap.events) {
+                const evs = $gameMap.events().slice();
+                evs.sort((a, b) => {
+                    const da = Math.abs(a.x - $gamePlayer.x) + Math.abs(a.y - $gamePlayer.y);
+                    const db = Math.abs(b.x - $gamePlayer.x) + Math.abs(b.y - $gamePlayer.y);
+                    return da - db;
+                });
+
+                for (const ev of evs) {
+                    if (!ev || ev._erased || (ev.isTransparent && ev.isTransparent())) continue;
+                    if (!ev.characterName || !ev.characterName()) continue;
+                    const evData = ev.event ? ev.event() : null;
+                    if (!evData) continue;
+                    const rawName = String(evData.name || '').trim();
+                    if (/^(teleport|transfer|door|fast\s*travel|spawn|hitbox|scenery)/i.test(rawName)) continue;
+                    if (/^EV\d+/i.test(rawName) && (!evData.pages || !evData.pages.some(p => p.list && p.list.length > 1))) continue;
+
+                    const isNpc = (window.NPCSystem && typeof window.NPCSystem.isNPCEvent === 'function' && window.NPCSystem.isNPCEvent(evData.note)) ||
+                                  (typeof isPersonEvent === 'function' && isPersonEvent(ev)) ||
+                                  (ev.isTriggerIn && ev.isTriggerIn([0])) ||
+                                  (window.NPCSocietyRegistry && typeof window.NPCSocietyRegistry.getProfile === 'function' && window.NPCSocietyRegistry.getProfile(rawName));
+                    if (!isNpc) continue;
+
+                    const displayName = rawName || ((T('AutoIdle.remoteTalk.npc') || 'NPC') + ' #' + ev.eventId());
+                    targets.push({
+                        type: 'npc',
+                        id: 'event_' + ev.eventId(),
+                        event: ev,
+                        character: ev,
+                        name: displayName,
+                        x: ev.x,
+                        y: ev.y,
+                        label: displayName
+                    });
+                }
+            }
+
+            return targets;
+        },
+
+        activate() {
+            if (this._active) return;
+            const targets = this.gatherTargets();
+            if (!targets.length) return;
+            this._targets = targets;
+            this._index = 0;
+            this._active = true;
+            this._justActivated = true;
+            this._holdFrames = this._HOLD_THRESHOLD;
+            this._panFrames = 0;
+            SoundManager.playCursor();
+            this.showHUD();
+            this.updateHUD();
+        },
+
+        clampX(x) {
+            if ($gameMap.isLoopHorizontal()) return x.mod($gameMap.width());
+            const end = $gameMap.width() - $gameMap.screenTileX();
+            return end < 0 ? end / 2 : x.clamp(0, end);
+        },
+
+        clampY(y) {
+            if ($gameMap.isLoopVertical()) return y.mod($gameMap.height());
+            const end = $gameMap.height() - $gameMap.screenTileY();
+            return end < 0 ? end / 2 : y.clamp(0, end);
+        },
+
+        panTo(targetX, targetY) {
+            const screenTileX = $gameMap.screenTileX();
+            const screenTileY = $gameMap.screenTileY();
+            let destX = this.clampX(targetX - screenTileX / 2);
+            let destY = this.clampY(targetY - screenTileY / 2);
+
+            const fromX = $gameMap.displayX();
+            const fromY = $gameMap.displayY();
+            let dx = destX - fromX;
+            let dy = destY - fromY;
+
+            if ($gameMap.isLoopHorizontal()) {
+                const w = $gameMap.width();
+                if (dx > w / 2) dx -= w;
+                else if (dx < -w / 2) dx += w;
+            }
+            if ($gameMap.isLoopVertical()) {
+                const h = $gameMap.height();
+                if (dy > h / 2) dy -= h;
+                else if (dy < -h / 2) dy += h;
+            }
+
+            if (!dx && !dy) {
+                this._panFrames = 0;
+                return;
+            }
+
+            this._panFromX = fromX;
+            this._panFromY = fromY;
+            this._panDx = dx;
+            this._panDy = dy;
+            this._panFrames = this._panMaxFrames;
+        },
+
+        updatePan() {
+            if (this._panFrames <= 0) return;
+            this._panFrames--;
+            const t = 1 - this._panFrames / this._panMaxFrames;
+            const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+            $gameMap.setDisplayPos(this._panFromX + this._panDx * e, this._panFromY + this._panDy * e);
+        },
+
+        panToPlayer() {
+            if ($gamePlayer) this.panTo($gamePlayer.x, $gamePlayer.y);
+        },
+
+        selectNext() {
+            if (!this._targets.length) return;
+            this._index = (this._index + 1) % this._targets.length;
+            const target = this._targets[this._index];
+            SoundManager.playCursor();
+            this.panTo(target.x, target.y);
+            this.updateHUD();
+        },
+
+        selectPrev() {
+            if (!this._targets.length) return;
+            this._index = (this._index - 1 + this._targets.length) % this._targets.length;
+            const target = this._targets[this._index];
+            SoundManager.playCursor();
+            this.panTo(target.x, target.y);
+            this.updateHUD();
+        },
+
+        showHUD() {
+            if (this._hud) return;
+            const el = document.createElement("div");
+            el.id = "remote-talk-hud";
+            el.style.cssText =
+                "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;" +
+                "padding:8px 20px;font:bold 14px sans-serif;letter-spacing:0.5px;" +
+                "color:#fff;background:rgba(20,20,30,0.88);border:1px solid #c9a063;border-radius:4px;" +
+                "box-shadow:0 4px 14px rgba(0,0,0,0.7);text-align:center;pointer-events:none;";
+            document.body.appendChild(el);
+            this._hud = el;
+        },
+
+        updateHUD() {
+            if (!this._hud) return;
+            const target = this._targets[this._index];
+            if (!target) return;
+            const name = target.label || target.name;
+            const coords = `(X: ${target.x}, Y: ${target.y})`;
+            const count = `[${this._index + 1}/${this._targets.length}]`;
+            const cmdText = T('AutoIdle.remoteTalk.commandsHeld') || '◄ / ► Select   [Release / OK] Talk   [ESC] Cancel';
+
+            this._hud.innerHTML =
+                `<div style="font-size:16px;color:#f0d79e;margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:12px;">` +
+                `<span style="color:#c9a063;">◄</span>` +
+                `<span>${name}</span>` +
+                `<span style="color:#c9a063;">►</span>` +
+                `<span style="font-size:12px;color:#aaa;font-weight:normal;">${coords} ${count}</span>` +
+                `</div>` +
+                `<div style="font-size:12px;color:#ddd;font-weight:normal;">${cmdText}</div>`;
+        },
+
+        hideHUD() {
+            if (this._hud) {
+                if (this._hud.parentNode) this._hud.parentNode.removeChild(this._hud);
+                this._hud = null;
+            }
+        },
+
+        confirm() {
+            if (!this._active) return;
+            this._active = false;
+            this.hideHUD();
+            const target = this._targets[this._index];
+            if (!target) {
+                this.panToPlayer();
+                return;
+            }
+
+            SoundManager.playOk();
+
+            if (target.type === 'self') {
+                if (window.NPCEmpathize && typeof window.NPCEmpathize.openForActor === 'function') {
+                    const leader = $gameParty ? $gameParty.leader() : null;
+                    if (leader) {
+                        if (window.NPCEmpathize.Scene_NPCEmpathize) {
+                            window.NPCEmpathize.Scene_NPCEmpathize._openSelfReflection = true;
+                        }
+                        window.NPCEmpathize.openForActor(leader.actorId());
+                    }
+                }
+            } else if (target.type === 'party' || target.type === 'bubba') {
+                if (target.follower && typeof Loose.talkTo === 'function') {
+                    Loose.talkTo(target.follower);
+                } else if (target.actor && typeof Loose.memberMenu === 'function') {
+                    Loose.memberMenu(target.follower || null, target.actor);
+                } else if (target.event) {
+                    if (target.event.lock) target.event.lock();
+                    target.event.start();
+                    $gameMap.setupStartingMapEvent();
+                }
+            } else if (target.type === 'pet') {
+                if (target.follower && typeof Loose.petMenu === 'function') {
+                    Loose.petMenu(target.follower);
+                }
+            } else if (target.type === 'npc') {
+                if (target.event) {
+                    if (target.event.lock) target.event.lock();
+                    target.event.start();
+                    $gameMap.setupStartingMapEvent();
+                }
+            }
+        },
+
+        cancel() {
+            if (!this._active) return;
+            this._active = false;
+            this.hideHUD();
+            this.panToPlayer();
+        },
+
+        update() {
+            if (!this.canActivate()) {
+                if (this._active) this.cancel();
+                this._holdFrames = 0;
+                this._pendingOkTap = false;
+                return;
+            }
+
+            if (!this._active) {
+                if (Input.isPressed('ok')) {
+                    this._holdFrames = (this._holdFrames || 0) + 1;
+                    if (this._holdFrames >= this._HOLD_THRESHOLD) {
+                        this._pendingOkTap = false;
+                        this.activate();
+                    }
+                } else {
+                    if (this._pendingOkTap) {
+                        this._pendingOkTap = false;
+                        this._holdFrames = 0;
+                        this.executeNormalButtonAction();
+                    }
+                    this._holdFrames = 0;
+                }
+            } else {
+                this.updatePan();
+
+                if (this._justActivated) {
+                    if (!Input.isPressed('ok')) {
+                        this._justActivated = false;
+                    }
+                }
+
+                if (Input.isTriggered('cancel') || (typeof TouchInput !== "undefined" && TouchInput.isCancelled && TouchInput.isCancelled())) {
+                    SoundManager.playCancel();
+                    this.cancel();
+                    return;
+                }
+
+                if (Input.isRepeated('right') || Input.isTriggered('right')) {
+                    this.selectNext();
+                } else if (Input.isRepeated('left') || Input.isTriggered('left')) {
+                    this.selectPrev();
+                }
+
+                if (Input.isTriggered('ok') && !this._justActivated) {
+                    this.confirm();
+                    return;
+                }
+
+                if (!Input.isPressed('ok')) {
+                    this.confirm();
+                    return;
+                }
+            }
+        },
+
+        executeNormalButtonAction() {
+            const player = $gamePlayer;
+            if (!player) return;
+            executeNormalPlayerButtonAction(player);
+        }
+    };
+
+    window.RemoteTalk = RemoteTalk;
+    AutoIdle.RemoteTalk = RemoteTalk;
+
     // 3) OK on a member or companion (faced or on the same tile) opens their
     //    interaction menu. Checked before events when faced, and after events
     //    when sharing the same tile.
+    function executeNormalPlayerButtonAction(player) {
+        const origTriggered = Input.isTriggered;
+        Input.isTriggered = function (key) {
+            if (key === "ok") return true;
+            return origTriggered.call(Input, key);
+        };
+        try {
+            if (!player.isInVehicle()) {
+                const f = Loose.facedFollower() || Loose.facedPet();
+                if (f && Loose.talkTo(f)) return true;
+            }
+            if (_Game_Player_triggerButtonAction_loose &&
+                _Game_Player_triggerButtonAction_loose.call(player)) return true;
+            if (!player.isInVehicle()) {
+                if (Loose.interactAt(player.x, player.y)) return true;
+            }
+            return false;
+        } finally {
+            Input.isTriggered = origTriggered;
+        }
+    }
+
     const _Game_Player_triggerButtonAction_loose = Game_Player.prototype.triggerButtonAction;
     Game_Player.prototype.triggerButtonAction = function () {
-        if (Input.isTriggered("ok") && !this.isInVehicle()) {
-            const f = Loose.facedFollower() || Loose.facedPet();
-            if (f && Loose.talkTo(f)) return true;
+        if (RemoteTalk.onWorldMap() || this.isInVehicle() || !RemoteTalk.canActivate()) {
+            return executeNormalPlayerButtonAction(this);
         }
-        if (_Game_Player_triggerButtonAction_loose &&
-            _Game_Player_triggerButtonAction_loose.call(this)) return true;
-        if (Input.isTriggered("ok") && !this.isInVehicle()) {
-            if (Loose.interactAt(this.x, this.y)) return true;
+        if (RemoteTalk.isActive()) return true;
+
+        if (Input.isTriggered("ok")) {
+            RemoteTalk._pendingOkTap = true;
+            RemoteTalk._holdFrames = 1;
+            return true;
         }
         return false;
     };
@@ -9816,6 +10275,7 @@
     const _Game_Player_canMove_lead = Game_Player.prototype.canMove;
     Game_Player.prototype.canMove = function () {
         if (Lead._bufferedDir) return false;
+        if (RemoteTalk.isActive()) return false;
         return _Game_Player_canMove_lead ? _Game_Player_canMove_lead.call(this) : true;
     };
 
@@ -9829,6 +10289,11 @@
             Lead.update();
         } catch (e) {
             console.error("[AutoIdleExplorer] lead update error:", e);
+        }
+        try {
+            RemoteTalk.update();
+        } catch (e) {
+            console.error("[AutoIdleExplorer] remote talk update error:", e);
         }
         try {
             Loose.update();
@@ -9854,6 +10319,8 @@
         AutoIdle.hideBadge();
         AutoIdle.p2.hideBadge();
         Bubbles.clear();
+        RemoteTalk.hideHUD();
+        RemoteTalk._active = false;
         _SceneMap_terminate.call(this);
     };
 
@@ -10851,5 +11318,16 @@
     // command list, both of them accepted.
     registerRegroup(["PartyRegroup", "party regroup"], () => Regroup.startParty());
     registerRegroup(["EmBubbaRegroup", "Em Bubba regroup"], () => Regroup.startPair());
+
+    PluginManager.registerCommand(PLUGIN, "RemoteTalk", function () {
+        if (RemoteTalk.canActivate()) {
+            RemoteTalk.activate();
+        }
+    });
+    PluginManager.registerCommand(PLUGIN, "remote talk", function () {
+        if (RemoteTalk.canActivate()) {
+            RemoteTalk.activate();
+        }
+    });
 
 })();

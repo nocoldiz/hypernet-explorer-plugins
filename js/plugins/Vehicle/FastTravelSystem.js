@@ -2314,7 +2314,7 @@
     // Character creation train origin: the starting train only runs to the few
     // beginner stations, so the origin picker is whitelisted to them instead of
     // offering the whole rail network.
-    const CC_TRAIN_START_DESTINATIONS = ['Ghent', 'Frozen Station', 'Omega Tower', 'Bologna'];  // i18n-ignore  destination ids
+    const CC_TRAIN_START_DESTINATIONS = ['Ghent', 'Frozen Station', 'Omega Tower'];  // i18n-ignore  destination ids
 
     Scene_Map.prototype.startFastTravel = function (transportType) {
         const data = getFastTravelData();

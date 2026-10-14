@@ -5019,9 +5019,15 @@ Imported.DialogueSystem = true;
         return storySceneList(fileName).map(sc => ({ name: sc.name, title: sc.title, file: fileName }));
     }
 
-    // The topics that are always there, in the order they were written.
+    // The topics that are always there, sorted in alphabetical order.
     function storyAskFixedScenes() {
-        return storyAskBank(STORY_ASK_FIXED);
+        const clean = s => String(s || '').replace(/^[^a-zA-Z0-9\u00C0-\u024F]+/u, '');
+        return storyAskBank(STORY_ASK_FIXED).slice().sort((a, b) => {
+            const ta = a.title || a.name || '';
+            const tb = b.title || b.name || '';
+            return clean(ta).localeCompare(clean(tb), undefined, { sensitivity: 'base' })
+                || ta.localeCompare(tb);
+        });
     }
 
     // The scenes this map brings up, in the order the note lists them, each

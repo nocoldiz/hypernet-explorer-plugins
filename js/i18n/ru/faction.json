@@ -1271,6 +1271,51 @@
           "name": "Ведущий учёный"
         }
       }
+    },
+    "wizardguild": {
+      "name": "Mages Guild",
+      "description": "The ancient, bureaucratic institution regulating the use of magic across the continent. They value order, tradition, and permits.",
+      "troops": {
+        "apprenticemage": {
+          "name": "Apprentice Mage"
+        },
+        "guildinitiate": {
+          "name": "Guild Initiate"
+        },
+        "guildwarden": {
+          "name": "Guild Warden"
+        },
+        "certifiedmage": {
+          "name": "Certified Mage"
+        },
+        "battlemage": {
+          "name": "Battle Mage"
+        },
+        "guildenforcer": {
+          "name": "Guild Enforcer"
+        },
+        "mysticarcher": {
+          "name": "Mystic Archer"
+        },
+        "seniormagister": {
+          "name": "Senior Magister"
+        },
+        "warwizard": {
+          "name": "War Wizard"
+        },
+        "archmage": {
+          "name": "Archmage"
+        },
+        "spellsniper": {
+          "name": "Spell Sniper"
+        },
+        "grandmasterwizard": {
+          "name": "Grandmaster Wizard"
+        },
+        "scientist": {
+          "name": "Тайный исследователь"
+        }
+      }
     }
   }
 }

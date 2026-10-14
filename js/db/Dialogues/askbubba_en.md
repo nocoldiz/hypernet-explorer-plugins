@@ -1,153 +1,145 @@
-
 ------------------------------------------------------------------------------------------------------------
 new_year_eve
 New year eve
-Em:
-Soooo where we were doing...before i made this whole mess with God?
-
-Bubba: 
-We were having a picnic at [Moonlit Station] to celebrate new years eve, we were about to test our homemade technomagical fireworks when a giant hand made of water emerged from the lake, snatched you and disappeared underwater.
-I started immediately tracking your liminal cuffs on the radar but your coordinates were off, about 39.3 light years from Earth.
-I shrugged it off first though and tought that the [Tourists] kidnapped you to run some sociology experiments on esoteric subjects.
-But then ad midnight that giant mecha made of light appeared emerging from the tower and it had exactly your face! 
-Then the heavens split in half and the big boss, [YHWH] himself, appeared in all it's glory.
-You just skewered him with a lance you materialize from thin air and left his body orbiting around Earth.
-Then the mecha fractured in quadrillions of shards and you fell to the ground right here.
-
 
 Em:
-That....was badass!
+Soooo what were we doing... before I made this whole mess with God?
 
 Bubba:
-I know! 
-I'll update your Hexapedia page with this feat!
-I hope that adding "Godslayer" doesn't violate the wiki editing rules.
-We can now both say that we both interacted with a divine being, dear.
-Me with love and you with murder! Eheh.
+We were having a picnic at [Moonlit Station] to celebrate new years eve, we were about to test our homemade technomagical fireworks when a giant hand made of water surged from the lake, took you and submerged back!
+I started immediately tracking your liminal cuffs on the radar but your coordinates were off, about 39.3 light years from Earth.
+I shrugged it off first though and thought that the [Tourists] kidnapped you to run some sociology experiments on esoteric subjects.
+But then at midnight that giant mecha made of light appeared emerging from the tower and it had exactly your face!
+Then the heavens split in half and the big boss, [God] himself, appeared in all its glory.
+You just skewered him with a lance you materialized from thin air and left his body orbiting around Earth.
+Then the mecha fractured in quadrillions of shards and you fell to the ground right here.
+
+Em:
+That... was epic!
+
+Bubba:
+I know right!
+I'm gonna update your page on Hexapedia with this great feat!
+Hope adding "Deicide" will not violate the wiki editing guidelines.
+Now both of us can say we dealt with a divine being darlin'.
+Me with love and you with murder! Hehe.
 
 ------------------------------------------------------------------------------------------------------------
 em_name
 My name
 
-
 Em:
-So my name is Em...like the...Em Drive?
+So my name is Em... like the... EmDrive?
 
 Bubba:
-Yes that one! The one your father invented! We should pay him a visit at [Wimbledon].
+Yes that one! The one that your father invented! We should go pay him a visit at [Wimbledon].
 
 Em:
-But it broke the barrier of lightpeed?
+Didn't it break the lightspeed barrier though?
 
 Bubba:
-No it was a scam, i studied for years that engine and i realized that was completely jackshit and a complete loss of my time.
-I think your father bribed all the peer reviewer and the entire [Nobel Prize] commission.
+Nah it was a scam. I studied that engine for decades and it was total bullshit and a complete waste of time.
+I think your father bribed all the peers and the entire [Nobel Prize] committee.
 
 Em:
-Why i remember this information and not your name or our adventures?
+Why do I remember this and not your name or our adventures?
 
-Bubba: we need first to figure out the nature of your memoru loss.
+Bubba:
+We need to understand the nature of your memory loss first.
 
 ------------------------------------------------------------------------------------------------------------
 judicial_ghosts
 Judicial Ghosts
 
-
 Em:
-What is a judicial ghost?
+What are the judicial ghosts?
 
 Bubba:
-Think of them as cops that can phase through walls and they move in a straight line toward your position.
-They'll pursue endlessly until they touch you.
-And if it touches you it's over: you'll be transported to the [Judicial Dimension] and will face Eris.
-
+Think of them like guards that can pass through walls and move only in a straight line.
+They will relentlessly approach you until they touch you.
+And if one touches you it's over: you will be teleported into the [Judicial Dimension] to face Eris.
 
 ------------------------------------------------------------------------------------------------------------
 space
 Going to space
 
-Em: 
-Space i want to go to space.
+Em:
+Space, I want to go to space.
 
 Bubba:
-Got a death wish Em? 
-Space is not that dangerous, is getting there that get people killed and dilaniated by orbital debris.
+Got a death wish, Em?
+Space is not that dangerous, it's getting there that gets people killed, shredded by orbital debris.
 
 Em:
-Why is so hard?
+Why is it so hard?
 
 Bubba:
-[Kessler syndrome] that the whole planet is sick with darlin'.
-It all started when the Envisat satellite crashed into another during the Y2K event.
-The European space agency, under [Margherita Hack], is building rockets that are almost entirely armour plating, to resist the impact with the debris field.
-And when in orbit they use my [Liminal Engine] to leave this forsaken planet.
-Anyway just go to [Greenwitch space center] or [Apulia space center] and ask the receptionist, they take volunteers and they are desperate.
+The [Kessler syndrome], which the whole planet is sick with, darlin'.
+It all started when the Envisat satellite crashed into another one during the Y2K event.
+The European Space Agency under [Margherita Hack] is manufacturing rockets made nearly entirely of armored parts to resist the impacts against the debris belt.
+And once in orbit they use my [Liminal Engine] to leave this godforsaken planet.
+Just go to the [Greenwitch space center] or [Apulia space center] and ask at the reception: they will take suicidal volunteers.
 
 Em:
 Will you come with me to space?
 
 Bubba:
-Of course! I don't mind getting my body pierced with quadrillion of orbital debris if that means experiencing the [Overview effect] with you at my side,
+Hell yeah! I don't mind getting my body shredded in a gazillion pieces of orbital debris if it means experiencing the [Overview effect] with you at my side.
 
 Em:
-It's true that billionaires don't experience the [Overview effect] when in space?
+Is it true that hypercapitalist billionaires don't experience the [Overview effect] when they are in space?
 
 Bubba:
-Yes, those hypercapitalistic bastards can go hex themselves.
+Yeah, those bastards can go hex themselves.
+
 ------------------------------------------------------------------------------------------------------------
 needs
 Needs
 
 Bubba:
-Use the [Cooking] option in the menu to cook.
+Use the [Cooking] option in the menu to cook food.
 If you are dirty wash yourself by swimming or using a bathroom.
+To satisfy thirst, find water sources and take a sip or use the inventory to drink beverages.
 To socialize just talk to me or other fellas down the road.
 To have fun just punch some holes in monsters and play minigames.
-To sleep use the [Sleep] option in main menu, set up a  [Camp] in world map by pressing [Continue] or rent a room in a tavern.
-------------------------------------------------------------------------------------------------------------
+To sleep use the [Sleep] option in the main menu, set up a [Camp] on the world map by pressing [Continue] or rent a room in a tavern.
 
+------------------------------------------------------------------------------------------------------------
 y2k_event
 Y2K event
 unlock: y2k_event_bubba_em
 
 Em:
-What happened during the this [Y2K Event]?
+What happened during this [Y2K Event]?
 
 Bubba:
-Two billion people died in one night Em.
+Two billion people died in one night, Em.
 
 Em:
 You mean millions?
 
 Bubba:
-Billions Em.
+Billions, Em.
+
 ------------------------------------------------------------------------------------------------------------
 y2k_event_bubba_em
 Us during the Y2K event.
 
 
 Em: 
-What we wre doing during the [Y2K Event]?
+What were we doing during the [Y2K Event]?
 
 Bubba:
-We were in [Roccalonga] hunting aliens Em.
-A swarm of UFOs passed over that village and a gigantic triangular mothership landed and they kidnapped you to study you or something...it all resolved in nothing.
+We were in [Roccalonga] hunting aliens, Em.
+A swarm of UFOs passed over that village and a gigantic triangular mothership landed and they kidnapped you to study you or something... it all resolved in nothing.
 A faction of the [Tourists] called the [Crimson Analyzers] wanted just to vivisect you up with their katanas, but they lacked permission so they let you wander around their ship.
-While exploring the ship you encountered [Giulio Andreotti] discussing with [Marco Marco Marco] of the [Tourists]
+While exploring the ship you encountered [Giulio Andreotti] discussing with [Marco Marco Marco] of the [Tourists], then I don't really recall what happened later because the world hexing ended.
 
 
 ------------------------------------------------------------------------------------------------------------
-
-
-------------------------------------------------------------------------------------------------------------
-
-
-Bubba:
-the 31st of December 1999.
-Not a bug in the computers dear, a bug in the world.
 
 Em:
-Two billion.
+Two billion... dead?
 
 Bubba:
 And the [Omega Tower] had been sealed since it landed in 1992.
@@ -166,15 +158,15 @@ omega_tower
 The Omega Tower
 
 Em:
-That tower goes above the clouds. What is it, some sort of skyscraper?
+That tower goes above the clouds. What is it, some sort of skyscraper... or a big-ass railgun?
 
 Bubba:
 It looks like a skyscraper darlin', but it's a spear.
 [Eris] threw it in 1992 to kill [Maat], the goddess of justice, and it went straight through the crust for hundreds of kilometres.
-Maat's body is still down there at the point, buried and sealed by the thing that killed her.
+Maat's body is still down there at the point, buried and sealed by the very thing that killed her.
 
 Em:
-So we are living on a murder weapon.
+So we are living on a god murder weapon.
 
 Bubba:
 We are living on the only thing holding the world together!
@@ -186,7 +178,7 @@ Charming. And the climbing?
 
 Bubba:
 Anyone can climb it, all the way to the celestial throne at the top, where whichever god is currently in charge sits.
-Right now that is Eris.
+Right now that is Eris, she is my ex-wife and she doesn't hex around.
 It's supposed to be neutral ground, so the [Archive Foundation] keeps the peace and everybody else keeps an office.
 Inside it makes no sense at all: department stores next to underground jungles, reactors the size of a small town, corridors full of camping tents.
 
@@ -204,14 +196,15 @@ Em:
 Everyone keeps saying "the Squishing" like I should already know.
 
 Bubba:
-On the 21st of December 2012, Eris kills Maat by throwing the tower at her.
-The trouble is that the tower arrived on the 21st of December 1992, twenty years early and 92 dimensions off course.
+On the 21st of December 2012, Eris will kill Maat by throwing the Omega Tower at her.
+The trouble is that the tower arrived on the 21st of December 1992, twenty years early and making a big hexing hole through the 92 dimensions.
+And Maat was pierced by the tower and buried hundreds of kilometers underground.
 
 Em:
-The murder has not happened yet, but the weapon has already arrived.
+The murder has not happened yet, but the weapon has already arrived and killed her?
 
 Bubba:
-That's the paradox, and the timeline has been coming apart at the seams ever since.
+That's the paradox, and the timeline has been unraveling into pure chaos ever since.
 Time loop bubbles, chunks of other dimensions dropping into ours, the [Rule of 80], all of it.
 It gets worse the higher the dimension number goes. The [Green Fields] at number 77 are already mostly unlivable.
 
@@ -219,7 +212,7 @@ Em:
 And when 2012 arrives and the paradox closes?
 
 Bubba:
-Then space and time here are twisted so badly that nothing can live in them.
+Then space and time here will be twisted so badly that nothing can live in them.
 So we have eleven years, dear. Plenty of time for a picnic.
 
 ------------------------------------------------------------------------------------------------------------
@@ -227,9 +220,8 @@ rule_of_eighty
 The Rule of 80
 
 Bubba:
-Before you touch a steering wheel, learn this one.
+Before you touch a steering wheel, relearn this one please, it's one of the fundamental forces that keep the cosmos from collapsing.
 Anything moving faster than 80 kilometres an hour gets pulled into the nearest time loop bubble.
-Anything. A car, a bullet, a bird with a tailwind.
 
 Em:
 And once inside?
@@ -239,56 +231,56 @@ The rule flips. Inside, the only way out is to move outward at more than 80.
 Stay under it and the day resets on you forever.
 
 Em:
-So the speed that traps me is also the speed that frees me.
+So the speed that traps me is also the speed that frees me?
 
 Bubba:
 Now you're thinking like a driver, dear!
-And my [Liminal Engine] lets us ignore the whole rule, as long as we keep the needle above 80.
-Which is why I get nervous when you ask me to slow down for scenery.
+And my [Liminal Engine] lets us ignore the whole rule and surf over the time loop bubbles, as long as we keep the speed above 80.
 
 ------------------------------------------------------------------------------------------------------------
 loop_bubbles
 Time loop bubbles
 
 Em:
-What does a bubble look like from outside?
+What does a bubble look like from the inside?
 
 Bubba:
-Almost nothing. A shimmer in the air, and only when you're a few metres from the edge.
-That's why they're marked on every road map, and why the maps get reprinted so often. They keep growing.
+Almost nothing. Like the faintest shimmer in the air, and it's visible only when you're a few millimetres from the edge.
+That's why they're marked on every road map and why the maps get reprinted so often.
+They keep growing as the Squishing progresses.
 
 Em:
-And inside, the same day forever.
+And once inside, every day is Groundhog Day!
 
 Bubba:
-Same day, every day, and after a while you notice.
-The mind adjusts for a week or two and then you start keeping the memories and the boredom stacks up like dishes.
-There is one upside: inside a bubble the only way to die for good is to be moving over 80, or to be hit by something moving over 80.
+Same day, every day is Groundhog Day! And after a while you'll start noticing it.
+The mind adjusts for a week or two and then you slowly go insane.
+There is one upside: inside a bubble the only way to die for good is to be moving over 80.
 
 Em:
-So it is immortality with no Tuesdays.
+Like a bullet?
 
 Bubba:
-And no telephone! No signal gets in or out, electronic, mental or magical.
+That's right! Or just running them over with our camper while going at more than 80.
 People use carrier pigeons with USB sticks tied to their legs, because a pigeon with a good wind does 90.
-The [Trucker's Society] handles everything the pigeons can't carry.
+And the [Trucker's Society] handles everything the pigeons can't carry.
 
 Em:
-Our civilisation is being held together by birds.
+Our entire displaced civilisation is being held together by pigeons and truckers?
 
 Bubba:
-Birds and truckers, dear. Always has been.
+Pigeons and truckers, dear. Always has been.
 
 ------------------------------------------------------------------------------------------------------------
 liminal_engine
 The Liminal Engine
 
 Em:
-And this engine is yours?
+And this liminal engine is yours?
 
 Bubba:
-Mine! First prototype in 1996, in a shed, with a coffee tin for a housing.
-It compresses the road in front of us, so a few minutes gets you across Europe and the [Rule of 80] never gets a vote.
+Mine!... Well almost!
+I made the first prototype in 1996, it compresses the road in front of us, so a few minutes gets you across Europe and the [Rule of 80] can go hex herself.
 By this year it's in production and bolted onto nearly every public vehicle on the continent.
 
 Em:
@@ -296,6 +288,7 @@ Which makes you...
 
 Bubba:
 Disgustingly rich, dear! Thank you for asking.
+But I donated everything to the research against [The Hollowing].
 Calibrated properly it also drives underwater, through the air and into space.
 And with the one setting nobody else has, it opens onto the [Encompassing Road] and the [Scraps of Creation].
 
@@ -303,43 +296,47 @@ Em:
 And you are the only person alive who knows that setting.
 
 Bubba:
-Which is why nobody has ever successfully stolen this camper, and three people have tried.
+And people who have tried accessing the [Scraps of Creation] without that setting get dismembered across spacetime while still being alive and feeling extreme endless pain.
+
 
 ------------------------------------------------------------------------------------------------------------
 encompassing_road
 The Encompassing Road
 
 Bubba:
-Every road, in every world, in every dimension, is one road, dear.
 They call it the [Encompassing Road].
-The liminal engine compresses the tarmac in front of us and if I get the calibration right we merge onto it.
+It's all roads, in every world, all twisting and leading everywhere.
+The liminal engine compresses the asphalt in front of us and if I get the calibration right we merge onto it.
 
 Em:
 And then a motorway exit takes us where, exactly?
 
 Bubba:
-Another place, another dimension, another century, or one of the [Scraps of Creation].
-Read the signs carefully. Some of them are lying and some of them are just old.
+Everywhere and every time.
+
+------------------------------------------------------------------------------------------------------------
+asphalt_god
+The Asphalt god
 
 Em:
-Is there a patron saint for this?
+Why did the chicken cross the road?
 
 Bubba:
-There's the God of Asphalt! He invented the concept of road, trillions of years ago.
-And then he became the first road death, run over by a bigger god.
+To worship the God of Asphalt! He invented the concept of road, trillions of years ago.
+And then he became the first road death, run over by a bigger god with a bigger truck.
 
 Em:
 A cautionary tale about building your own killer.
 
 Bubba:
-Nobody in this business ever learns that one, dear.
+No God ever learns that one, my deicidal dear.
 
 ------------------------------------------------------------------------------------------------------------
 eris_wife
 Your ex wife
 
 Em:
-I would like the whole story of you and the goddess.
+I would like the whole tea on you and the goddess.
 
 Bubba:
 For millennia they treated Eris like a third rate deity, so she started planning her way to the throne.
@@ -350,33 +347,29 @@ You.
 
 Bubba:
 Me! Years on the road in the old camper, robbing banks along [Route 666] all the way down the three Americas.
-She bends probability, dear. Every safe in the world opens on the first try when she's leaning on it.
+She bends probability, dear. Every safe and vault opens with just her slightly bending her pinky finger!
 
 Em:
-And it ended.
+And why did you two break up?
 
 Bubba:
-December 1992. The Eris of 2012 killed [Maat] retroactively, and my Eris had to go back to climbing toward the throne so the paradox wouldn't get any worse.
+The Eris of 2012 killed [Maat] retroactively by throwing the Omega Tower at her, and my Eris had to go back to climbing toward the throne so the paradox wouldn't get any worse.
 The idea was that if she reached the top she could decide not to do it in 2012.
-Then the father aspect of [YHWH] died and the throne was empty, so she sat in it and no god had the nerve to say no.
+But I don't think it's working, the dimensions are collapsing anyway.
 
 Em:
 And she inherited the entire justice system of every dimension.
 
 Bubba:
 With no training whatsoever! So she runs it her way, chaotic and arbitrary.
-And she is jealous of you, dear, which is why probability keeps insulting you personally.
-For the record, I still love her and I have never once been in love with you.
-
-Em:
-A relief, sincerely.
+But she has no power over the Vatican territory.
 
 ------------------------------------------------------------------------------------------------------------
 judicial_dimension
 The Judicial Dimension
 
 Em:
-If a ghost catches me, what happens in there?
+If a judicial ghost catches me, what happens?
 
 Bubba:
 You get a trial. Eris runs billions of them at once, so don't expect her full attention.
@@ -386,59 +379,56 @@ Em:
 And that last one means?
 
 Bubba:
-That means you challenge her for the throne, dear.
-And if you kill her up there, the celestial throne on top of the [Omega Tower] goes empty and you have a few days to climb it and take the seat.
+That last one means you claim the throne yourself, dear.
+And if you win the argument you take the seat.
 
 Em:
 And if I don't climb it?
 
 Bubba:
-Somebody else does. A god, or a person you've met, and they come down as whatever the throne makes of them.
-Empty chairs never stay empty. That's practically the only law in the universe that works.
+Somebody else will do it, snatching your rightful place.
+Empty thrones in the sky never stay empty.
 
 ------------------------------------------------------------------------------------------------------------
 gods
 The Gods
 
 Em:
-How does a god actually die? Ours seems to have managed it.
+How does a god actually die?
 
 Bubba:
 Two ways, dear.
 A god exists as long as people are willing to believe in it, and very few of the ancient ones made it this far.
-When one starves out like that, the body turns to stone and drops into the [White Desert] and nobody minds.
+When one starves out like that, the body turns to stone and drops into the [White Desert] and nobody will ever remember it existed.
+I have been there and it is scattered with trillions of statues of dead forgotten gods as far as the eye can see.
 
 Em:
 And the other way?
 
 Bubba:
-Deicide. Then the body stays anchored in physical reality and starts to rot, and the consciousness is still awake inside it.
-Maat is under our feet with a tower through her.
-And YHWH is in orbit getting sandblasted by satellite debris, with pieces of him falling back down.
+Deicide.
+The body stays anchored in physical reality and starts to rot, and its consciousness is still awake inside it.
+Maat is under our feet with a gargantuan tower through her and her mind still intact.
+And God is in orbit getting shredded by satellite debris, with pieces of him falling back down.
 
 Em:
-Falling on people.
+Falling on people?
 
 Bubba:
-And granting them a share of his power! People with no magical talent at all are picking up divine abilities off the ground.
-That's the treasure hunt of the century and it is made of a corpse.
+And granting an [expression] power! People with no talent at all are picking up [Expression seeds] off the ground.
 
 Em:
-And the gods are at war with the wizards.
+And the gods are at war with the wizards?
 
 Bubba:
 Because the [Guild of Wizards] knows the [Ritual of Solomon] and the ritual can kill them.
-You would be nervous too.
 
 ------------------------------------------------------------------------------------------------------------
 solomon_ritual
 The Ritual of Solomon
 
-Em:
-This is about my memories, isn't it.
 
 Bubba:
-It is, dear. Take a seat.
 The ritual runs one whole night and it needs the three pillars of the [Guild of Wizards], a sacrifice and seven artifacts of historical or esoteric weight.
 It rewrites the source code of magic in whichever dimension you run it in.
 Easy for everyone, restricted to a chosen few, or switched off entirely.
@@ -447,68 +437,57 @@ Em:
 And the last one used what?
 
 Bubba:
-The Iron Crown, the Spear of Longinus, the sword Tyrfing, the clay of the golem of Prague, the dragon clasp of Xia, and a carved neolithic horn.
-They all came out of it hollow, every drop of power spent.
+The Iron Crown, the Spear of Longinus, the sword Ghana, a fragment of Ronald Reagan's soul, the first mask ever created, and a carved fossil horn from the Jurassic.
+There are smaller versions too, using one artifact instead of seven to rewrite just a single Leyline instead of the whole magical system.
 
 Em:
 And the sacrifice.
 
 Bubba:
-You. Volunteered.
-They pulled out your memories and all your future potential and forged them into a lance, and that lance is what killed the father aspect of YHWH.
-Ninety two percent of your life, dear, made into a weapon.
+They pulled out your memories and all your future potential and forged them into a lance, and that lance is what killed the father aspect of God.
+Ninety-two percent of what makes you you, dear, made into a deicidal weapon.
 
 Em:
-Then it is not lost. It is just somewhere else, in a shape.
+Then it is not lost. It is just somewhere else, maybe off Earth?
 
 Bubba:
 That's exactly what I've been telling myself since the first of January.
-And you didn't die, and your magical potential went up instead of down, which nobody can explain.
-
-Em:
-So a woman gave up everything she was, and the paperwork lists her as an ingredient.
-
-Bubba:
-There are smaller versions too, one artifact instead of seven, temporary effects.
-Still comes with a fair chance of death or memory loss.
-
-Em:
-I would rather not do a sequel.
+And you didn't die, and your magical potential went skyrocketing instead of being burned off.
 
 ------------------------------------------------------------------------------------------------------------
 arcane_magic
 Arcane magic
 
 Em:
-Since apparently I am a witch, explain the craft.
+Since apparently I am a witch, explain what magic is in simple terms please.
 
 Bubba:
 Magic is reality bending to intent, and the harder you study it the less rational it gets.
-It runs along [Leylines], invisible rivers of power that come up out of oil wells and connect places of history, religion or arcane weight.
-The closer you stand, the stronger your spell and the harder it is to hold.
+It runs along [Leylines], invisible rivers of power that erupt out of oil wells and connect places of history, religion or arcane weight.
+The closer you are to a leyline, the stronger your spell and the harder it is to hold.
 
 Em:
 And standing directly on one?
 
 Bubba:
 Without the right training you snap it, dear.
-And in a place with a broken leyline you can barely light a candle by magic ever again.
-Half a wizard's job is geography: finding the spot where the damage lands hardest.
+And in a place with a broken leyline you can barely cast a GenericFireball.
+Half of an arcane wizard's job is geography: finding the spot where the damage lands hardest.
 
 Em:
-And the ways of casting?
+And how to cast a spell?
 
 Bubba:
-Three.
+Three ways.
 Ritual magic, which anyone who isn't a perfect idiot can do: follow the steps, make no mistakes, no MP at all, and it's the most powerful and the hardest to undo.
 Sympathetic magic, which compresses a ritual into words, hand gestures and catalyst materials, hours down to seconds, and that costs MP.
 And metamagic, which replaces every physical component with pure imagination. Weaker, silent, and it's the only kind you can multiply together to make new spells.
 
 Em:
-And psionics?
+You forgot psionics!
 
 Bubba:
-Not magic, different principles, and people mix them up constantly.
+They are not magic dear, they are based on a real phenomenon, and people mix them up constantly.
 Don't be one of those people, dear.
 
 ------------------------------------------------------------------------------------------------------------
@@ -516,104 +495,55 @@ camel_case
 The Law of CamelCase
 
 Bubba:
-This one you learn before you cast anything, dear.
-Every spell is written and pronounced in CamelCase. Words jammed together, a capital at the start of each one.
-Multi word formulas are transcendentals, god tier, powerful enough to remodel reality to taste.
+Every spell is written and pronounced in CamelCase. Words stitched together that you must recite with no pauses between.
+Multi-word formulas from 3 to 6 are transcendentals, powerful enough to remodel reality to taste.
 
 Em:
 And if a mortal puts a space in?
 
 Bubba:
-The universe reads it as a transcendental and sends you the bill.
-Best case you lose your vocal cords. There are worse cases and I've met two of them.
+The universe reads it as a transcendental and sends you the spell rebound bill.
+Best case you lose your vocal cords. There are worse cases I can recall, but I just had dinner and I don't want to vomit.
 
 Em:
-And this is why you flinch when I read out loud.
+And this is why you flinch when I read a spell!
 
 Bubba:
-Also watch your grimoires! A misspelled spell starts breeding into the other words on the page with copies of itself.
+Also watch your grimoires! A misspelled spell starts bleeding into the other words on the page with copies of itself.
 Burn the book or it eats whatever you leave next to it.
 
 Em:
-So my spellbook can develop an appetite.
+So my spellbook can be an informational epidemic?
 
 Bubba:
-Your active spells also get chosen while you sleep, and each one has a daily cap.
-Put two in the same slot and you get a temporary fusion of the pair.
-The permanent versions you buy from vending machines or win with a ritual.
-
-Em:
-Vending machines.
-
-Bubba:
-The economy is stranger than the magic, dear.
+Yes but don't do it!
 
 ------------------------------------------------------------------------------------------------------------
 sacred_magic
 Sacred magic
 
 Em:
-And sacred magic is the same thing with better lighting?
+And sacred magic is the same thing as arcane magic but... golden?
 
 Bubba:
-Not at all.
+Nope.
 Arcane magic comes up out of oil wells and runs in leylines.
-Sacred magic is produced by the gods and comes down onto whoever worships and invokes them.
-Same three methods, rituals, sympathetic and metamagic, plus miracles, which have no scientific or magical explanation and break every rule we ever wrote down.
+Sacred magic is produced by the gods and rains down onto whoever worships and invokes them.
 
 Em:
 And when the god dies?
 
 Bubba:
-The spells stop, dear.
-Most of the sacred repertoire the Vatican owns has been dead weight since the 1st of January 2001.
+The spells slowly stop, dear.
+Most of the sacred arsenal the Vatican owns has been reduced to useless paper and burned off holy grimories since the 1st of January 2001.
 
 Em:
 Because of me.
-
-Bubba:
-Because of a lance made of your childhood, which is not quite the same sentence.
-
-------------------------------------------------------------------------------------------------------------
-factions
-Who runs the world
-
-Em:
-Give me the map of who hates whom.
-
-Bubba:
-The [Gods], outside time, immune to the Rule of 80, led by Eris. At war with the Guild, bored by the archivists, allied with the Collective.
-The [Guild of Wizards], the old Hermetic Order of the Golden Dawn, richest and best armed on paper and useless in practice because it's split between Thatcher's traditionalists and Crowley's followers.
-The [Archive Foundation], out of the ashes of the Internet Archive, paramilitaries obsessed with cataloguing everything and publishing it, and they will stop you at a checkpoint to publish your phone messages.
-
-Em:
-That is a threat model, not a librarian.
-
-Bubba:
-The [Hypercapitalist Collective], a pyramid scheme the size of a continent that runs trade between dimensions.
-They spent so long above 80 that their bodies are immune to the loop even standing still.
-They sell escapes to people stuck in bubbles and they trade in anything, memories and emotions included. They also own the only clean water, everything else is cut with LSD.
-And [Esoteric Heavy Industries], who make flying broomsticks and fusion reactors and everything between.
-
-Em:
-And their appeal?
-
-Bubba:
-Their goods ignore the loop. Move an EHI object under 80 and it doesn't reset.
-Nobody has ever seen their factories or their workers. The stock simply appears in the warehouse when nobody is looking.
-
-Em:
-And you buy from them anyway.
-
-Bubba:
-Everybody does, dear. That is exactly how they got that way.
 
 ------------------------------------------------------------------------------------------------------------
 vatican_empire
 The Holy Vatican Empire
 
-Em:
-And the people who want to burn me.
 
 Bubba:
 A Catholic theocracy holding Italy, Spain, Poland and East Germany, direct successor to the Holy Roman Empire.
@@ -631,72 +561,69 @@ Em:
 And the current Pope?
 
 Bubba:
-Pietro II, born Joseph Ratzinger, elected after John Paul II died from the attempt in May 1981.
-And since YHWH died, Vatican City is fitted with liminal engines and floats about 800 metres over Rome as the Citadel of the Vatican.
-Any infidel who comes close gets a battery of Gauss cannons.
+Pietro II, born Joseph Ratzinger, elected after John Paul II died from the attempt on his life in May 1981.
+And since God died, Vatican City is fitted with liminal engines and floats about 800 metres over Rome as the Citadel of the Vatican.
+Any infidel who comes close gets a battery of Holy damage Gauss railguns in the face.
 
-Em:
-A church that had to be told its god was dead and responded by taking off.
-
-Bubba:
 He has also declared war on [Jenna of Northpoint], calls her the Antichrist and refuses to recognise her as his own reincarnation.
-So you're not even top of the list, dear. You're second.
+So you're not even top of the Pope's killing list, dear. You're second.
 
 Em:
 I have never been so comforted by bureaucracy.
 
 ------------------------------------------------------------------------------------------------------------
 wizards_guild
-The Guild of Wizards
+The Wizard Guild
 
 Em:
-And the wizards were secret until when?
+Magic was a secret until when?
 
 Bubba:
 Until Margaret Thatcher put magic on live television during the Falklands, with [Okeanus].
-The ultimate water spell, dear. It ate the Argentine fleet and cut sailors in half with pressurised jets, and the whole planet watched.
+The ultimate water spell, dear. It ate the Argentine fleet and cut sailors in half with pressurised jets, and the whole planet watched in shock.
 After that every hyperpower started an arcane arms race.
 
 Em:
 And before the broadcast?
 
 Bubba:
-Founded by King Solomon in 950 BC, quietly steering the world ever since.
-Refounded at the start of the 1900s by Sir Aleister Crowley with the backing of the royal house of Britannia, as a sort of knightly order. That's where the Sir and the Lady come from.
+Arcane magic was discovered by King Solomon in 950 BC, quietly steering the world ever since.
+The Wizard Guild was founded at the start of the 1900s by Sir Aleister Crowley with the backing of the royal house of Britannia, as a sort of knightly order. That's where those silly Sir and Lady titles in the Guild come from.
 Every school of magic gets a faction inside, but the real decisions belong to the three pillars: past, present and future.
 
 Em:
-And the pillars this year?
+And the pillars are?
 
 Bubba:
-Sir Aleister Crowley for the past, Lady Margaret Thatcher for the present, and "the Father" Shoko Asahara for the future.
-A pillar stops ageing while he holds the post, usually for fifty years.
-Crowley has never once agreed to leave, and nobody in the Guild can make him. He knows spells the gods don't.
+Sir Aleister Crowley for the past, Lady Margaret Thatcher for the present, and "the Father" of the erased name for the future.
+A pillar stops ageing while he holds his job, usually for fifty years.
+Crowley has never once agreed to leave, and nobody in the Guild can make him. He knows spells that even the gods don't.
 
 Em:
 And they also protect the world from extradimensional horrors, presumably in their spare time.
 
 Bubba:
-That is genuinely in the job description, dear. So is rebuilding technology out of magic for whoever pays.
+That is genuinely in the job description, dear.
+And also rebuilding pre Y2K technology out of magic for whoever pays.
 
 ------------------------------------------------------------------------------------------------------------
 naguka
 The Naguka
 
 Em:
-Somebody at the market had green skin and spoke like a five year old.
+Somebody at the market had green skin and was headbanging so hard that I thought he risked self-decapitation!
 
 Bubba:
-A [Naguka], dear, and mind your manners around them.
+A [Naguka] goblin, dear, and mind your manners around them.
 Tens of millions of years ago an ancestor of ours went to live underground in the cave system [Magamui] dug.
-They evolved in parallel but they are human all the way through, and they can have children with us. A goblin and human hybrid is called an orc.
+They evolved in parallel but they are human and share a common ancestor with us Sapiens, and they can have children with us. A goblin and human hybrid is called an orc.
 
 Em:
 And they came up when?
 
 Bubba:
-May 1970. The Soviets drilled too deep with the Kola Superdeep Borehole and the goblins climbed the hole.
-In the nineties they conquered their way through Scandinavia, discovered Norwegian black metal, and most of them started worshipping [Mahyem] as gods and painting their faces with corpse paint before a battle.
+May 1970. The Soviets drilled too deep with the Kola Superdeep Borehole and the goblins climbed the hole by millions.
+In the nineties they conquered their way through Scandinavia, discovered Norwegian black metal, and most of them started worshipping [Junehem] as gods and painting their faces with corpse paint before a battle.
 
 Em:
 Naturally.
@@ -711,58 +638,59 @@ verden
 The Verden
 
 Em:
-And the blue ones with the kinder faces?
+What about the blue goblins with the kinder faces?
 
 Bubba:
 [Verden], dear, and they only look like Naguka.
-Naguka are human underneath. Verden are true goblins, evolved in another dimension, completely different biology.
-They lay eggs, they reproduce by splitting, and a severed limb planted in the ground grows new Verden.
+Naguka are human underneath. Verden are true goblins, evolved in another dimension with a completely different biology.
+They can lay eggs, they can also reproduce by splitting.
+And a severed limb of them planted in the ground grows new Verden.
 
 Em:
 And they came from the Green Fields.
 
 Bubba:
 Dimension 77, and once one of the most advanced species in the multiverse.
-Then thousands of years ago they threw every piece of technology they had into their own sun and went off to be farmers and study magic instead.
-Nobody, not even the Naguka, knows why.
+Then thousands of years ago they shot every piece of technology they had into their own sun and went off to be farmers and study magic instead.
 
 Em:
 And now they are here.
 
 Bubba:
-The [Squishing] made the Green Fields unlivable, so they moved to Earth, fell in love with our technology and integrated.
-They speak fluent MarkovSpeak, which is more than their cousins manage.
-And they learned to read the goblin collective unconscious by magic, so they know what a Naguka horde will do before it does it.
+The [Squishing] made the Green Fields an unlivable dimensional mess, so they moved to Earth and integrated with human society.
+They speak fluent MarkovSpeak, which is more than their pseudo convergent evolution cousins manage.
+And they learned to read the goblin collective unconscious by noospheric associations, so they know what a Naguka horde will do before it does it.
 
 Em:
 Read only, I assume.
 
 Bubba:
-Read only. They can't write a new enemy into it, or a new idea, which is the one mercy in the whole arrangement.
+Read only. They can't write a new enemy into it, or a new idea.
 
 ------------------------------------------------------------------------------------------------------------
-mahyem
-Mahyem
+junehem
+Junehem
 
 Em:
-Explain to me how a band became gods.
+Explain to me how a black metal band became gods.
 
 Bubba:
 Mass worship, dear. The Naguka adore them, and a god exists as long as people believe.
-Now they can steer the goblin collective unconscious with their music, and they're leading the hordes trying to come down through Scandinavia into Europe.
+Now they can steer the goblin collective unconscious with their music, and they're leading the hordes trying to come down through Scandinavia.
+They play stadium shows with sixty thousand goblins screaming the lyrics in broken English, and every concert is basically a high energy mass.
 
 Em:
 And nobody has stopped them.
 
 Bubba:
 Every government on the planet has tried to kill them, in every way you can imagine.
-They're metal gods now. They can't die while a single goblin still believes in them.
+They're metal gods now. They can't die while a single goblin still headbangs to them.
 
 Em:
 And the one who was stabbed?
 
 Bubba:
-[Euronymous]. Survived Varg's knife and came out of the brain trauma with acquired savant syndrome.
+[Hieronymus]. Survived Count Grissnack's knife and came out of the brain trauma with acquired savant syndrome.
 One of the most powerful psionics alive.
 The rest of the band live like gods and he walked away from the stage entirely.
 Nobody has any idea where he is, dear, and I would love to buy him a coffee.
@@ -772,87 +700,75 @@ magamui
 Magamui
 
 Em:
-There is something inside the planet, isn't there.
+There is something inside the planet, isn't there?
 
 Bubba:
-A larva, dear. Alien, a quarter the size of the Moon, wrapped around the Earth's core for millions of years.
-It feeds on the thermal and electromagnetic energy the core puts out, and it's asleep.
+A larva, a quarter the size of the Moon and has been wrapped around the Earth's core for millions of years.
+It feeds on the thermal and electromagnetic energy the core puts out.
+And it's asleep... for now.
 
 Em:
 Asleep and?
 
 Bubba:
 And still able to take mental control of exactly one person at a time, mostly for self preservation.
-The worry is that if it ever reaches full maturity it could take the whole population, and if it ever leaves the planet to go back to space, we go with it.
+The worry is that if it ever reaches full maturity it could mind control the whole of humanity.
+And IF it ever leaves the planet to go back to space, Earth will be cracked open like an egg.
 
 Em:
-And somebody is handling this.
+And somebody is handling this?
 
 Bubba:
-The [Guild of Wizards] does. Their job is to find whoever Magamui is currently riding and kill them, because it needs time to take another.
+The [Guild of Wizards] does, sorta. Their job is to find whoever Magamui is currently riding and kill them, because it needs time to take another.
 
 Em:
-So there is a person walking around right now who has been sentenced to death for being possessed.
+So there is a person walking around right now who has been sentenced to death for being possessed by an alien larva?
 
 Bubba:
-Every day of the year, dear. Try not to be interesting.
-It also dug the [Serpentine Road], a spiral tunnel that opens somewhere in Antarctica and runs all the way down to the core.
+Yes and maybe it's me! Just jokin', Em!
 
 ------------------------------------------------------------------------------------------------------------
 inverted_citadel
 The Inverted Citadel
 
 Bubba:
-At the bottom of the Serpentine Road there's a cavern around the core, and a city built on the inside of it.
-The core hangs in the middle like a little sun and the city wraps all the way around it.
-Look up and you see other streets, dear, upside down, with the lights on.
+At the bottom of the Serpentine Road in Antarctica there's a round cavern around the core, and a city carved on the inside of it.
+The Earth core hangs in the middle like a little sun and the city wraps all the way around it.
+Look up and you see other streets and buildings, dear, hanging upside down.
 
 Em:
 Built by whom?
 
 Bubba:
-An advanced civilisation between the dinosaurs and us, which vanished without leaving one written document or one piece of technology.
+An advanced civilisation between the dinosaurs and us, which vanished without leaving a note.
 Just an empty city.
 The goblins moved in and made it their underground capital.
-
-Em:
-Someone built a world with no sky and then declined to explain themselves.
-
-Bubba:
-That is the most relatable thing I have ever heard about them.
 
 ------------------------------------------------------------------------------------------------------------
 petrodemons
 Petrodemons
 
 Em:
-And the oil?
+Is it true that oil is sentient?
 
 Bubba:
-Some of the oil is awake, dear.
+Some of it, dear.
 [Petrodemons] are entities made of sentient petroleum, and while they're near a leyline they're effectively indestructible because it keeps regenerating them.
+Leylines spring from deep oil reserves.
 
 Em:
 Where does something like that come from?
 
 Bubba:
-The theory is that the dinosaurs were natural arcane practitioners, able to cast without leylines, and part of that power stayed bound in the oil molecules.
+The most accepted theory is that the dinosaurs were natural arcane practitioners, able to cast without leylines, and part of that power stayed bound in the oil molecules.
 
 Em:
-And killing one?
+And killing a Petrodemon is even possible?
 
 Bubba:
 You deliberately break the leyline first, then hit it with conventional weapons or divine magic.
 Even with no regeneration it takes an army.
-That's why the hyperpowers sign contracts with them instead. Petrodemons can redirect leylines, and everybody wants their river moved.
-
-Em:
-And Enrico Mattei?
-
-Bubba:
-They say he found a scroll in a Libyan tomb with the ritual to call and bind them, and tried it for Italian energy independence.
-His plane went down in 1962.
-Whether the demons are real or not, dear, they are a perfect description of the oil business.
+That's why the hyperpowers sign contracts with them instead. Petrodemons can redirect and weaponize leylines against arcane practitioners.
 
 ------------------------------------------------------------------------------------------------------------
 fantablack
@@ -869,22 +785,21 @@ Em:
 Expensive?
 
 Bubba:
-Painfully. But a bullet coated in it can kill a person inside a bubble, which is the only reason anyone still bothers murdering people in there.
+Painfully. But a weapon coated in it can kill a person inside a bubble, which is the only reason anyone still bothers murdering people in time loop bubbles.
 
 Em:
 And it is also in the money.
 
 Bubba:
 In the security stripe of every euro note, dear.
-Arcane pigment, plus the rule that names are power, plus a name printed on tens of billions of notes.
-That's how [Mario Draghi] got deified.
+It's for total market control.
 
 ------------------------------------------------------------------------------------------------------------
 mario_draghi
 Mario Draghi
 
 Em:
-The head of the central bank is a god.
+Mario Draghi, the head of the European central bank is a... god?
 
 Bubba:
 His name is written on more banknotes and transaction logs than the name of God appears in every Bible ever printed, dear.
@@ -894,15 +809,14 @@ Em:
 And it worked.
 
 Bubba:
-He ascended as the deity of the market.
-Lost his individuality and his physical body, became an abstract concept and a financial engine running the economy of the multiverse from behind the curtain.
+He ascended as the prime motor of the market.
+He lost his individuality and his physical body, became an abstract concept and a financial engine running the economy of the multiverse from behind the curtain.
 
 Em:
-So he cannot be starved of believers like the others.
+So he cannot be starved of believers like the other gods.
 
 Bubba:
-To destroy him you would have to burn every single note with his name on it.
-Which is why I keep some cash, dear. Piety.
+To even perceive him you would have to burn every single note with his name on it.
 
 ------------------------------------------------------------------------------------------------------------
 anoki_phones
@@ -912,22 +826,23 @@ Em:
 Why is your phone older than I am?
 
 Bubba:
-[Anoki phones] were the first technology rebuilt with magic.
+[Anoki phones] were the first technology rebuilt with technomagic post Y2K event.
 They talk to each other along the [Leylines], and tuned properly they'll reach the afterlife, or a god directly.
 
 Em:
-And that is a feature people wanted.
+And it has minigames?
 
 Bubba:
-They're indestructible bricks that turned into talismans, dear.
-They stabilise local loops, they keep dimensional fractures at a distance and they give some spells a push.
-No trucker leaves without one in his pocket.
+Yes plenty of them!
+They're indestructible bricks that can also be turned into luck-attracting talismans, dear.
 
 Em:
-And if I misdial?
+And if I misdial and call the afterlife?
 
 Bubba:
-Then be polite and hang up first.
+There is no afterlife anymore, dear.
+You destroyed it along with God.
+Every soul will go to the void.
 
 ------------------------------------------------------------------------------------------------------------
 truckers_society
@@ -935,39 +850,34 @@ The Trucker's Society
 
 Bubba:
 The [Trucker's Society] are the real knights of the Road, dear.
-They don't just move freight. They keep the lines open between communities living in different realities.
+They keep the lines open between communities living in different time loop bubbles.
 Resources, information and people in and out of the loop bubbles, with their own ranks and their own network for passing on what's waiting up ahead.
 
 Em:
 And you are a member.
 
 Bubba:
-I'm a mechanic with opinions, which is close enough that they let me sit down.
-Never turn down road information from one of them and never lie to one about what you saw behind you.
+Honorary member!
+They made me vicepresident of their association because I invented the one thing that let them cross time loop bubbles.
 
 ------------------------------------------------------------------------------------------------------------
 scraps_of_creation
 Scraps of Creation
 
 Em:
-And the small worlds you keep mentioning?
+What are the Scraps of Creation you keep mentioning?
 
 Bubba:
-Pocket dimensions, dear. Eons ago the gods used them to test their powers and their imagination.
-Practice sketches, basically, and completely sealed off from the multiverse.
+Pocket dimensions, dear. Eons ago the gods used them to beta test their powers.
+Universal sandbox mode, basically, and now they're completely sealed off from the multiverse.
 
 Em:
 Until 1992.
 
 Bubba:
-Until the [Squishing]. Some of them started falling into the physical world on their own.
-The others we reached for the first time with the liminal engine, off the [Encompassing Road].
-
-Em:
-So we are trespassing in someone's rough drafts.
-
-Bubba:
-And some of the drafts have residents, so wipe your feet.
+That's right! Until the [Squishing] started ramping up its effects.
+Some of them started falling and leaking into our physical world,
+and then some others still up in the aether, we reached for the first time when testing together the [Liminal Engine].
 
 ------------------------------------------------------------------------------------------------------------
 canadafrica
@@ -978,71 +888,26 @@ The map is wrong. The Americas are the wrong shape.
 
 Bubba:
 That's [Canadafrica], one of the first visible effects of the Squishing.
-Over the course of a single day the whole of Mexico and South America was remodelled to look like Africa seen from orbit.
+Over the course of a single year the whole land of Mexico and South America was remodelled to look like Africa seen from orbit.
 
 Em:
 And the people?
 
 Bubba:
-Every city and every inhabitant exactly where they were, dear. Nothing moved but the coastline.
-They woke up in the same house on a different shape.
-
-Em:
-The universe redrew a continent and did not disturb a single kitchen.
-
-Bubba:
-And the road atlases sold out in an afternoon. That's the part that made me nervous.
+Every city and every inhabitant exactly where they were, dear.
+They woke up everyday in the same house on a slightly different shape.
 
 ------------------------------------------------------------------------------------------------------------
 three_americas
 The three Americas
 
 Em:
-And who governs the new shape?
+And who governs the three Americas?
 
 Bubba:
-Nobody governs all of it. America never got its independence and it never became one country.
+Nobody governs all of it. America never won its independence and it never became one whole country.
 The Republic of Cascadia holds the east coast, the Independent States of the Midwest hold the middle, and the Atlantic Protectorate holds the west coast under [Britannia].
-
-Em:
-Those directions are wrong.
-
-Bubba:
-They are, and everyone keeps saying them anyway.
-Bill Clinton is president of the Midwest, and [Route 666] runs down through all three of them, which is where I did most of my growing up.
-
-------------------------------------------------------------------------------------------------------------
-new_york_bombing
-The teonuclear bombing
-
-Em:
-There is a hole in the news from September.
-
-Bubba:
-The 11th of September this year, dear. A Thatcherite cell set off three teonuclear devices in the middle of New York.
-Those things barely scratch the buildings.
-They disintegrate every soul in the blast radius, and leave the bodies walking on instinct and biology alone.
-
-Em:
-Walking.
-
-Bubba:
-Walking, breathing, going to work.
-It was blamed on Al Qaeda, and only the three pillars of the [Guild of Wizards] know the truth.
-The catalysts for the devices were artifacts burned out in the [Ritual of Solomon].
-
-Em:
-The ritual that used me.
-
-Bubba:
-The same seven artifacts, dear.
-Whatever was left of their unspent potential got converted into those bombs.
-
-Em:
-So the leftovers of my memory were made into a weapon twice.
-
-Bubba:
-That is why I don't talk about that night unless you ask me.
+And [Route 666] runs down through all three of them, which is the street where I was raised.
 
 ------------------------------------------------------------------------------------------------------------
 odds_and_ends
@@ -1054,17 +919,8 @@ Lava is nearly harmless since the [Squishing]. It drains your MP instead of inci
 Lava that was summoned by magic still hurts exactly as much as it used to, so check who poured it.
 
 Em:
-Noted.
+Interesting.
 
 Bubba:
 Porphyrin is the thin thread that ties human blood, petroleum and the [Leylines] together, and half the people who study it end up working for the oil companies.
-And TTDs are thought transmitted diseases. You stop them with a mental dam, which is tinfoil wrapped around your head.
-
-Em:
-Tinfoil.
-
-Bubba:
-Tinfoil! Every conspiracy theorist of the twentieth century was correct, dear, and none of them enjoyed being right.
-
-Em:
-I find that the most upsetting fact you have given me so far.
+And TTDs are thought-transmitted diseases. You stop them with a mental dam, which is tinfoil wrapped around your head.

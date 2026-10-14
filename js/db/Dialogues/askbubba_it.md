@@ -10,7 +10,7 @@ Stavamo facendo un picnic a [Moonlit Station] per festeggiare la vigilia di Capo
 Ho cominciato subito a tracciare le tue manette liminali sul radar, ma le tue coordinate erano sballate, a circa 39,3 anni luce dalla Terra.
 All'inizio ci ho rimuginato sopra, pensando che [I Turisti | Tourists] ti avessero rapita per qualche esperimento sociologico su soggetti esoterici.
 Ma poi a mezzanotte quel mecha gigante fatto di luce è apparso scendendo dalla torre, e aveva proprio la tua faccia!
-Poi, Madonna santa, il cielo si è spaccato a metà e il gran capo in persona, [YHWH], è apparso in tutta la sua gloria.
+Poi, Madonna santa, il cielo si è spaccato a metà e il gran capo in persona, [Dio | God], è apparso in tutta la sua gloria.
 Tu l'hai semplicemente infilzato con una lancia materializzata dal nulla e hai lasciato il suo corpo in orbita attorno alla Terra.
 Poi il mecha si è sfasciato in fantastiliardi di frammenti e tu sei caduta a terra proprio qui.
 
@@ -98,10 +98,11 @@ Bisogni
 
 Bubba:
 Usa l'opzione [Cucina | Cooking] nel menu per cucinare.
-Se sei sporca, lavati nuotando o usando un bagno.
-Per chiacchierare, parla con me o con gli altri tizi per strada.
-Per divertirti, fai qualche buco nei mostri e gioca ai minigiochi.
-Per dormire, usa l'opzione [Sonno | Sleep] nel menu principale, piazza un [Accampamento | Camp] sulla mappa del mondo premendo [CONTINUA | Continue] oppure affittati una stanza in una locanda.
+Se sei sporca lavati nuotando o usando un bagno.
+Per dissetarti, trova fonti d'acqua e bevi un sorso, oppure usa l'inventario per bere qualcosa.
+Per socializzare parla con me o con gli altri tizi lungo la strada.
+Per divertirti fai qualche buco nei mostri e datti ai minigiochi.
+Per dormire usa l'opzione [Riposo | Sleep] nel menu principale, piazza un [Accampamento | Camp] sulla mappa del mondo premendo [Continua | Continue], oppure affitta una stanza in una locanda.
 
 ------------------------------------------------------------------------------------------------------------
 y2k_event
@@ -124,26 +125,21 @@ Miliardi, Em.
 y2k_event_bubba_em
 Noi durante l'evento Y2K.
 
-Em:
+
+Em: 
 Cosa stavamo facendo durante l'[Evento Y2K | Y2K Event]?
 
 Bubba:
 Eravamo a [Roccalonga] a caccia di alieni, Em.
 Uno sciame di UFO è passato sopra quel paesello, una gigantesca nave madre triangolare è atterrata e ti hanno rapita per studiarti o qualcosa del genere... alla fine si è risolto tutto in un nulla di fatto.
 Una fazione di [I Turisti | Tourists] chiamata gli [Analisti Cremisi | Crimson Analyzers] voleva solo vivisezionarti con le loro katane, ma non avevano i permessi, e così ti hanno lasciata girare per la nave.
-Mentre esploravi la nave hai incontrato [Giulio Andreotti] che discuteva con [Marco Marco Marco] di [I Turisti | Tourists].
-
-------------------------------------------------------------------------------------------------------------
+Mentre esploravi la nave hai incontrato [Giulio Andreotti] che discuteva con [Marco Marco Marco] di [I Turisti | Tourists], poi non mi ricordo mica cos'è successo dopo perché l'hexing del mondo è finito.
 
 
 ------------------------------------------------------------------------------------------------------------
-
-Bubba:
-'O 31 dicembre 1999.
-Mica 'nu bug nei computer, teso', proprio 'nu bug d' 'o mondo intero.
 
 Em:
-Due miliardi.
+Due miliardi... morti?
 
 Bubba:
 E la [Torre Omega | Omega Tower] era rimasta chiusa a chiave da quando era caduta nel 1992.
@@ -158,32 +154,31 @@ Bubba:
 Non l'ha spiegato nessuno neanche a me, e gliel'ho pure chiesto con le buone maniere.
 
 ------------------------------------------------------------------------------------------------------------
-
 omega_tower
 La Torre Omega
 
 Em:
-Quella torre sale oltre le nuvole. Cos'è, una specie di grattacielo?
+Quella torre sale oltre le nuvole. Cos'è, una specie di grattacielo... o un gigantesco cannone a rotaia?
 
 Bubba:
-Sembra un grattacielo, teso', ma è una lancia.
+Sembra un grattacielo, darlin', ma è una lancia.
 [Eris] l'ha scagliata nel 1992 per stendere [Maat], la dea della giustizia, ed è affondata dritta nella crosta per centinaia di chilometri.
 Il corpo di Maat è ancora laggiù sulla punta, sepolto e sigillato da ciò che l'ha uccisa.
 
 Em:
-Quindi stiamo vivendo sopra un'arma del delitto.
+Quindi stiamo vivendo sopra l'arma del delitto di un dio.
 
 Bubba:
 Viviamo sopra l'unica cosa che tiene il mondo ancora sano e salvo!
 Attraversa tutte e 92 le dimensioni e le tiene inchiodate al loro posto.
-Pensa allo stuzzicadenti con la bandierina che s'infilza nell'hamburger, uagliona. Togli lo stuzzicadenti e ti ritrovi a leccare il pane da terra.
+Pensa allo stuzzicadenti con la bandierina che s'infilza nell'hamburger, teso'. Togli la bandierina e ti ritrovi a mangiare per terra.
 
 Em:
 Affascinante. E la scalata?
 
 Bubba:
 Chiunque può scalarla, fino al trono celeste in cima, dove siede qualsiasi dio sia al comando in quel momento.
-Adesso c'è Eris.
+Adesso c'è Eris, è la mia ex moglie e non si fa pregare per mandare tutto a farsi hexare.
 Dovrebbe essere un posto neutrale, infatti l'[Archive Foundation] mantiene la pace e tutti gli altri ci tengono un piccolo ufficio.
 Dentro non ha nessun senso: grandi magazzini attaccati a giungle sotterranee, reattori grandi quanto un paese, corridoi pieni di tende da campeggio.
 
@@ -194,7 +189,6 @@ Bubba:
 E allora ci salirà qualcun altro, teso', e tu dovrai fare i conti con qualunque cosa diventerà.
 
 ------------------------------------------------------------------------------------------------------------
-
 the_squishing
 Lo Squishing
 
@@ -202,14 +196,15 @@ Em:
 Tutti continuano a dire "lo Squishing" come se dovessi già sapere di cosa si tratta.
 
 Bubba:
-Il 21 dicembre 2012 Eris uccide Maat scagliandole addosso la torre.
-Il guaio è che la torre è arrivata il 21 dicembre 1992, con vent'anni d'anticipo e sfasata di 92 dimensioni.
+Il 21 dicembre 2012 Eris ucciderà Maat scagliandole addosso la Torre Omega.
+Il guaio è che la torre è arrivata il 21 dicembre 1992, con vent'anni d'anticipo e aprendo un gran buco maledetto da farsi hexare attraverso le 92 dimensioni.
+E Maat è stata trapassata dalla torre e sepolta a centinaia di chilometri sottoterra.
 
 Em:
-L'omicidio non è ancora avvenuto, ma l'arma è già arrivata.
+L'omicidio non è ancora avvenuto, ma l'arma è già arrivata e l'ha già uccisa?
 
 Bubba:
-È proprio questo il paradosso, e da allora la linea temporale ha cominciato a sfilacciarsi lungo tutte le cuciture.
+È proprio questo il paradosso, e da allora la linea temporale ha cominciato a sfilacciarsi nel caos più totale.
 Bolle di loop temporale, pezzi di altre dimensioni che cadono nella nostra, la [Regola degli 80 | Rule of 80], tutto quanto.
 Peggiora man mano che il numero della dimensione sale. I [Campi Verdi | Green Fields] alla numero 77 sono già quasi del tutto invivibili.
 
@@ -217,18 +212,16 @@ Em:
 E quando arriverà il 2012 e il paradosso si chiuderà?
 
 Bubba:
-E allora lo spazio e il tempo qua dentro saranno talmente storti che niente potrà più viverci.
+E allora lo spazio e il tempo qua dentro saranno talmente contorti che niente potrà più viverci.
 Quindi abbiamo undici anni, teso'. Un sacco di tempo per farci un bel picnic.
 
 ------------------------------------------------------------------------------------------------------------
-
 rule_of_eighty
 La Regola degli 80
 
 Bubba:
-Prima di toccare un volante, imparati questa.
-Qualsiasi cosa che va a più di 80 chilometri all'ora viene risucchiata nella bolla di loop temporale più vicina.
-Qualsiasi cosa, eh: un'auto, un proiettile, perfino un piccione col vento a favore.
+Prima di toccare un volante, ristudiati questa qua per favore: è una delle forze fondamentali che impediscono al cosmo di collassare.
+Qualsiasi cosa si muova a più di 80 chilometri all'ora viene risucchiata dentro la bolla di loop temporale più vicina.
 
 Em:
 E una volta dentro?
@@ -238,642 +231,546 @@ La regola si capovolge! Dentro, l'unica via d'uscita è correre verso l'esterno 
 Resta sotto quella velocità e il giorno ti si resetta addosso per sempre.
 
 Em:
-Quindi la velocità che mi intrappola è anche la velocità che mi libera.
+Quindi la velocità che m'intrappola è pure la velocità che mi libera?
 
 Bubba:
-Adesso ragioni come una vera pilota, uagliona!
-E il mio [Motore Liminale | Liminal Engine] ci permette di hexarcene di tutta la regola, basta che teniamo la lancetta sempre sopra gli 80.
-Mannaggia, ecco perché mi scoccio e mi girano i nervi quando mi chiedi di rallentare per guardare il paesaggio!
+Adesso cominci a ragionare come una pilota vera, darlin'!
+E il mio [Motore Liminale | Liminal Engine] ci permette di ignorare completamente la regola e surfare sopra le bolle di loop temporale, a patto di tenere la velocità sopra gli 80.
 
 ------------------------------------------------------------------------------------------------------------
-
 loop_bubbles
 Bolle di loop temporale
 
 Em:
-Come si presenta una bolla vista da fuori?
+Come appare una bolla dall'interno?
 
 Bubba:
-Quasi invisibile, teso'. Un tremolio nell'aria, e solo quando sei a due metri dal bordo.
-Ecco perché sono segnate su ogni mappa stradale, ed ecco perché le mappe le ristampano di continuo. Continuano a crescere!
+Quasi un niente. Il più leggero luccichio nell'aria, ed è visibile solo quando sei a pochi millimetri dal bordo.
+Ecco perché sono segnate su ogni carta stradale e perché le mappe vengono ristampate così spesso.
+Continuano a crescere man mano che lo Squishing avanza.
 
 Em:
-E dentro, lo stesso giorno per sempre.
+E una volta dentro, ogni giorno è il giorno della marmotta!
 
 Bubba:
-Lo stesso giorno, ogni singolo giorno, e dopo un po' te ne accorgi.
-La testa si adatta per una settimana o due, poi cominci a trattenere i ricordi e la noia si accumula come i piatti sporchi nel lavandino.
-C'è un lato positivo: dentro una bolla l'unico modo per morire per sempre è muoversi a più di 80, o essere colpiti da qualcosa che va a più di 80.
+Lo stesso giorno, ogni giorno è il giorno della marmotta! E dopo un po' comincerai a notarlo.
+La testa regge per una o due settimane, poi pian piano cominci a dare di matto.
+C'è un lato positivo: dentro una bolla l'unico modo per morire sul serio è muoversi a più di 80.
 
 Em:
-Quindi è l'immortalità senza i martedì.
+Come una pallottola?
 
 Bubba:
-E senza telefono! Nessun segnale entra o esce: né elettronico, né mentale, né magico.
-La gente usa i piccioni viaggiatori con le chiavette USB legate alle zampe, perché un piccione col vento buono tocca pure i 90.
-La [Società dei Camionisti | Trucker's Society] gestisce tutto quello che i piccioni non possono portare.
+Proprio così! O finendoci sotto col nostro camper mentre viaggia a più di 80.
+La gente usa piccioni viaggiatori con le chiavette USB legate alle zampette, perché un piccione col vento buono tocca i 90.
+E la [Società dei Camionisti | Trucker's Society] gestisce tutto quello che i piccioni non possono trasportare.
 
 Em:
-La nostra civiltà è tenuta insieme dai volatili.
+La nostra intera civiltà sbandata sta in piedi grazie a piccioni e camionisti?
 
 Bubba:
-Uccelli e camionisti, teso'. È sempre stato così.
+Piccioni e camionisti, teso'. Da sempre.
 
 ------------------------------------------------------------------------------------------------------------
-
 liminal_engine
 Il Motore Liminale
 
 Em:
-E questo motore è tuo?
+E questo motore liminale è roba tua?
 
 Bubba:
-Tutto mio, teso'! Il primo prototipo l'ho fatto nel 1996, in un capanno, usando un barattolo di latta del caffè come contenitore.
-Comprime la strada davanti a noi, così in due minuti attraversi tutta l'Europa e la [Regola degli 80 | Rule of 80] non conta più una mazza.
-Da quest'anno è andato in produzione e sta imbullonato sopra a quasi ogni veicolo pubblico del continente.
+Mio!... Beh, quasi!
+Ho fatto il primo prototipo nel 1996, comprime la strada davanti a noi, così in pochi minuti ti attraversi l'Europa e la [Regola degli 80 | Rule of 80] può andare a farsi hexare.
+Ormai è in piena produzione e imbullonato su quasi tutti i mezzi pubblici del continente.
 
 Em:
 Il che ti rende...
 
 Bubba:
-Schifosamente ricco, teso'! Assai! Grazie per avermelo chiesto.
-Se lo tari come si deve, ti fa guidare perfino sott'acqua, per aria e nello spazio!
-E con quell'unica impostazione che non ha nessun altro al mondo, si va a finire dritti sulla [Strada Avvolgente | Encompassing Road] e negli [Scarti della Creazione | Scraps of Creation].
+Schifosamente ricco, teso'! Grazie per avermelo chiesto.
+Ma ho donato tutto alla ricerca contro [Lo Svuotamento | The Hollowing].
+Tarato a dovere può andare anche sott'acqua, per aria e dritto nello spazio.
+E con quell'unica impostazione che nessun altro possiede, si apre sulla [Strada Avvolgente | Encompassing Road] e sugli [Scarti della Creazione | Scraps of Creation].
 
 Em:
-E tu sei l'unica persona al mondo che conosce quell'impostazione.
+E tu sei l'unica persona viva a conoscere quell'impostazione.
 
 Bubba:
-Per questo nessuno è mai riuscito a rubarmi questo camper, e ci hanno provato in tre, hai capito, uagliona?
+E la gente che ha provato ad accedere agli [Scarti della Creazione | Scraps of Creation] senza quell'impostazione finisce smembrata lungo lo spaziotempo rimanendo viva e soffrendo pene indicibili all'infinito.
+
 
 ------------------------------------------------------------------------------------------------------------
-
 encompassing_road
 La Strada Avvolgente
 
 Bubba:
-Ogni strada, in ogni mondo, in ogni dimensione, è una e una sola strada, teso'.
 La chiamano la [Strada Avvolgente | Encompassing Road].
-Il motore liminale comprime l'asfalto davanti a noi e, se becco la calibrazione giusta, ci entriamo dritti dritti sopra.
+È l'insieme di tutte le strade, in ogni mondo, tutte aggrovigliate e che portano in qualunque posto.
+Il motore liminale comprime l'asfalto davanti a noi e, se azzecco la calibrazione giusta, ci immettiamo dritti sopra.
 
 Em:
-E poi un'uscita autostradale ci porta dove, esattamente?
+E poi un'uscita dell'autostrada ci porta dove, esattamente?
 
 Bubba:
-In un altro posto, in un'altra dimensione, in un altro secolo, o dentro uno degli [Scarti della Creazione | Scraps of Creation].
-Leggi i cartelli con attenzione. Alcuni dicono bugie e altri sono solo vecchissimi.
-
-Em:
-C'è un santo patrono per tutto questo?
-
-Bubba:
-C'è il Dio dell'Asfalto! Si è inventato il concetto di strada trilioni di anni fa.
-E poi è diventato la prima vittima della strada della storia, investito da un dio più grande di lui.
-
-Em:
-Una parabola ammonitrice sul crearsi il proprio assassino.
-
-Bubba:
-In questo mestiere nessuno impara mai la lezione, teso'.
+Ovunque e in qualunque tempo.
 
 ------------------------------------------------------------------------------------------------------------
+asphalt_god
+Il Dio dell'Asfalto
 
+Em:
+Perché la gallina ha attraversato la strada?
+
+Bubba:
+Per venerare il Dio dell'Asfalto! Ha inventato il concetto di strada, trilioni di anni fa.
+E poi è diventato il primo morto sulla strada, investito da un dio più grosso con un camion ancora più grosso.
+
+Em:
+Una favola morale sul fabbricarsi il proprio boia.
+
+Bubba:
+Nessun Dio impara mai questa lezione, mia cara deicida.
+
+------------------------------------------------------------------------------------------------------------
 eris_wife
 La tua ex moglie
 
 Em:
-Vorrei tutta la storia su te e la dea.
+Vorrei tutti i retroscena su te e la dea.
 
 Bubba:
-Per millenni hanno trattato Eris come una divinità da quattro soldi, e così lei ha cominciato a organizzare l'ascesa al trono.
-Poi, negli anni Novanta, si è innamorata di un meccanico.
+Per millenni hanno trattato Eris come una divinità di serie C, così ha iniziato a pianificare la sua scalata al trono.
+Poi negli anni Novanta si è innamorata di un meccanico.
 
 Em:
-Di te.
+Tu.
 
 Bubba:
-Di me, teso'! Anni passati sulla strada col vecchio camper, a rapinare banche lungo la [Route 666] attraverso tutte e tre le Americhe.
-Madonna santa, quella piega la probabilità. Ogni cassaforte al mondo si apre al primo colpo quando c'è lei appoggiata sopra.
+Io! Anni sulla strada col vecchio camper, a svaligiare banche lungo la [Route 666] scendendo giù per tutte e tre le Americhe.
+Lei piega la probabilità, darlin'. Ogni cassaforte e caveau si apre solo piegando appena il suo mignolo!
 
 Em:
-Ed è finita.
+E perché vi siete lasciati?
 
 Bubba:
-Dicembre 1992. La Eris del 2012 ha fatto fuori [Maat] a ritroso, e la mia Eris è dovuta tornare a scalare verso il trono per non far peggiorare il paradosso.
-L'idea era che, se raggiungeva la vetta, poteva decidere di non farlo nel 2012.
-Poi l'aspetto Padre di [YHWH] è morto e il trono è rimasto vuoto; così lei ci si è seduta sopra e nessun dio ha avuto il fegato di dirle di no.
+L'Eris del 2012 ha ucciso [Maat] retroattivamente tirandole addosso la Torre Omega, e la mia Eris è dovuta tornare a scalare verso il trono per evitare che il paradosso peggiorasse.
+L'idea era che, se avesse raggiunto la cima, avrebbe potuto decidere di non farlo nel 2012.
+Ma non credo stia funzionando, le dimensioni stanno collassando lo stesso.
 
 Em:
 E ha ereditato l'intero sistema giudiziario di ogni dimensione.
 
 Bubba:
-Senza neanche un po' di addestramento! E quindi lo gestisce a modo suo, caotico e a casaccio.
-Ed è gelosa di te, teso', motivo per cui la probabilità continua a insultarti in faccia.
-Comunque, per la cronaca: io la amo ancora e non sono mai stato innamorato di te, neanche per un secondo.
-
-Em:
-Un sollievo, sinceramente.
+Senza mezza giornata di addestramento! Quindi lo manda avanti a modo suo, caotico e arbitrario.
+Ma non ha alcun potere sopra il territorio del Vaticano.
 
 ------------------------------------------------------------------------------------------------------------
-
 judicial_dimension
 La Dimensione Giudiziaria
 
 Em:
-Se un fantasma mi prende, cosa succede là dentro?
+Se un fantasma giudiziario mi acchiappa, cosa succede?
 
 Bubba:
-Ti tocca un processo. Eris ne fa miliardi contemporaneamente, quindi non aspettarti che ti dia tutta la sua attenzione.
-Ti puoi dichiarare colpevole, innocente, oppure puoi dichiarare colpevole a lei.
+Ti becchi un processo. Eris ne gestisce miliardi contemporaneamente, quindi non aspettarti tutta la sua attenzione.
+Puoi dichiararti colpevole, dichiararti innocente, oppure puoi dichiarare colpevole lei.
 
 Em:
-E quest'ultima opzione cosa comporta?
+E quest'ultima cosa cosa comporterebbe?
 
 Bubba:
-Vuol dire che la sfidi per il trono, teso'.
-E se l'ammazzi lassù, il trono celeste in cima alla [Torre Omega | Omega Tower] rimane vuoto e hai pochi giorni per scalarlo e prenderti il posto.
+Comporta che rivendichi il trono per te stessa, teso'.
+E se vinci la discussione ti prendi il posto.
 
 Em:
-E se non ci salgo?
+E se non la scalassi?
 
 Bubba:
-E ci salirà qualcun altro. Un dio, o una persona che hai incontrato, e scenderanno trasformati in qualunque cosa il trono faccia di loro.
-Le sedie vuote non rimangono mai vuote a lungo. È praticamente l'unica legge dell'universo che funziona sul serio.
+Ci salirà qualcun altro, rubandoti il posto che ti spetta di diritto.
+I troni vuoti nel cielo non restano mai vuoti.
 
 ------------------------------------------------------------------------------------------------------------
-
 gods
 Gli Dèi
 
 Em:
-Come muore davvero un dio? Il nostro sembra esserci riuscito.
+Come muore davvero un dio?
 
 Bubba:
 In due modi, teso'.
-Un dio esiste finché la gente crede in lui, e ben pochi degli antichi sono arrivati fin qua.
-Quando uno muore di fame in quel modo, il corpo diventa di pietra e cade nel [Deserto Bianco | White Desert], e non importa più niente a nessuno.
+Un dio esiste finché la gente è disposta a credere in lui, e ben pochi degli antichi sono arrivati fin qua.
+Quando uno muore di fame in quel modo, il corpo diventa di pietra e cade nel [Deserto Bianco | White Desert], e nessuno si ricorderà mai che sia esistito.
+Ci sono stato, ed è cosparso di fantastiliardi di statue di dèi morti e dimenticati a perdita d'occhio.
 
 Em:
 E l'altro modo?
 
 Bubba:
-Deicidio. In quel caso il corpo rimane attaccato alla realtà fisica e comincia a marcire, mentre la coscienza resta ancora sveglia dentro.
-Maat sta sotto i nostri piedi con una torre piantata dentro.
-E YHWH è in orbita a farsi grattare dai rottami dei satelliti, con i suoi pezzi che cadono giù.
+Deicidio.
+Il corpo rimane ancorato alla realtà fisica e comincia a marcire, mentre la sua coscienza resta ancora sveglia dentro.
+Maat sta sotto i nostri piedi con una torre gigantesca conficcata dentro e la mente ancora intatta.
+E [Dio | God] è in orbita a farsi fare a pezzi dai detriti dei satelliti, con le sue parti che piovono giù.
 
 Em:
-Che cadono addosso alla gente.
+Che cadono addosso alla gente?
 
 Bubba:
-E che regalano una parte del loro potere! Persone senza nemmeno un filo di talento magico raccolgono abilità divine da terra.
-È la caccia al tesoro del secolo, ed è fatta con i pezzi di un cadavere.
+E che concedono il potere delle [espressioni | Expression]! Persone senza nemmeno un filo di talento raccolgono [semi di espressione | Expression seeds] da terra.
 
 Em:
-E gli dèi sono in guerra con i maghi.
+E gli dèi sono in guerra con i maghi?
 
 Bubba:
 Perché la [Gilda dei Maghi | Guild of Wizards] conosce il [Rituale di Salomone | Ritual of Solomon], e quel rituale li può ammazzare.
-Saresti nervosa pure tu, teso'.
 
 ------------------------------------------------------------------------------------------------------------
-
 solomon_ritual
 Il Rituale di Salomone
 
-Em:
-Questo ha a che fare con i miei ricordi, vero?
 
 Bubba:
-Proprio così, uagliona. Siediti un momento.
-Il rituale dura una notte intera e richiede i tre pilastri della [Gilda dei Maghi | Guild of Wizards], un sacrificio e sette oggetti di valore storico o esoterico.
+Il rituale dura una notte intera e richiede i tre pilastri della [Gilda dei Maghi | Guild of Wizards], un sacrificio e sette artefatti di peso storico o esoterico.
 Riscrive il codice sorgente della magia in qualsiasi dimensione venga eseguito.
-A disposizione di tutti, riservata a pochi eletti, oppure spenta del tutto.
+Facile per tutti, riservata a pochi eletti, oppure spenta del tutto.
 
 Em:
 E l'ultimo cosa ha utilizzato?
 
 Bubba:
-La Corona Ferrea, la Lancia di Longino, la spada Tyrfing, l'argilla del golem di Praga, la fibbia del drago di Xia e un corno neolitico intagliato.
-Ne sono usciti tutti svuotati, ogni goccia di potere prosciugata.
+La Corona Ferrea, la Lancia di Longino, la spada Ghana, un frammento dell'anima di Ronald Reagan, la prima maschera mai creata e un corno fossile intagliato del Giurassico.
+Ci sono anche versioni ridotte, che usano un solo artefatto invece di sette per riscrivere una singola Leyline anziché l'intero sistema magico.
 
 Em:
 E il sacrificio.
 
 Bubba:
-Tu. Ti sei offerta volontaria.
-Hanno estratto i tuoi ricordi e tutto il tuo potenziale futuro per farne una lancia, ed è quella lancia che ha ucciso l'aspetto Padre di YHWH.
-Il novantadue percento della tua vita, teso', trasformato in un'arma.
+Hanno estratto i tuoi ricordi e tutto il tuo potenziale futuro e li hanno forgiati in una lancia, ed è quella lancia che ha ucciso l'aspetto Padre di [Dio | God].
+Il novantadue percento di ciò che ti rende ciò che sei, teso', trasformato in un'arma deicida.
 
 Em:
-Allora non è perduto. È solo da qualche altra parte, sotto un'altra forma.
+Allora non è andato perduto. È solo da qualche altra parte, forse fuori dalla Terra?
 
 Bubba:
 È esattamente quello che mi vado ripetendo dal primo gennaio.
-E non sei morta, e il tuo potenziale magico è salito invece di scendere, cosa che nessuno riesce a spiegarsi.
-
-Em:
-Quindi una donna ha rinunciato a tutto ciò che era, e i documenti burocratici la elencano come un ingrediente.
-
-Bubba:
-Ci sono anche versioni ridotte: un solo oggetto invece di sette, effetti temporanei.
-Comportano comunque un rischio enorme di morte o di amnesia.
-
-Em:
-Preferirei evitare il bis.
+E non sei morta, e il tuo potenziale magico è schizzato alle stelle invece di bruciarsi del tutto.
 
 ------------------------------------------------------------------------------------------------------------
-
 arcane_magic
 La Magia Arcana
 
 Em:
-Dato che a quanto pare sono una strega, spiegami l'arte.
+Dato che a quanto pare sono una strega, spiegami cos'è la magia in parole semplici per favore.
 
 Bubba:
-La magia è la realtà che si piega all'intenzione, e più la studi meno diventa logica.
-Scorre lungo [le leyline | Leylines], fiumi invisibili di potere che escono dai pozzi di petrolio e collegano luoghi d'importanza storica, religiosa o esoterica.
-Più ci stai vicina, più l'incantesimo tuo è potente e più è difficile da domare.
+La magia è la realtà che si piega all'intenzione, e più la studi meno diventa razionale.
+Scorre lungo [le leyline | Leylines], fiumi invisibili di potere che sgorgano dai pozzi di petrolio e collegano luoghi di peso storico, religioso o esoterico.
+Più sei vicina a una leyline, più il tuo incantesimo è forte e più è difficile da tenere a bada.
 
 Em:
 E starci dritta sopra?
 
 Bubba:
 Senza l'addestramento giusto la spezzi, teso'.
-E in un posto con una leyline spezzata farai fatica perfino ad accendere una candela con la magia.
-Metà del lavoro di un mago è geografia: trovare il punto dove il danno picchia più forte.
+E in un posto con una leyline spezzata puoi a malapena lanciare una GenericFireball.
+Metà del lavoro di un mago arcano è geografia: trovare il punto dove il danno picchia più duro.
 
 Em:
-E i modi per lanciare incantesimi?
+E come si lancia un incantesimo?
 
 Bubba:
-Tre.
-La magia rituale, che chiunque non sia un fesso completo può fare: segui i passaggi, non fai errori, zero consumo di MP; è la più potente e la più difficile da annullare.
-La magia simpatica, che condensa un rituale in parole, gesti delle mani e materiali catalizzatori: riduce le ore a secondi, e quella costa MP.
-E la metamagia, che sostituisce ogni elemento fisico con la pura fantasia. Più debole, silenziosa, ed è l'unico tipo che puoi unire insieme per creare incantesimi nuovi.
+In tre modi.
+La magia rituale, che chiunque non sia un perfetto idiota può fare: segui i passaggi, non fai errori, zero MP, ed è la più potente e la più difficile da spezzare.
+La magia simpatica, che condensa un rituale in parole, gesti delle mani e materiali catalizzatori, riducendo ore a secondi, e quella costa MP.
+E la metamagia, che rimpiazza ogni componente fisica con la pura immaginazione. Più debole, silenziosa, ed è l'unico tipo che puoi moltiplicare insieme per creare incantesimi nuovi.
 
 Em:
-E la psionica?
+Hai dimenticato la psionica!
 
 Bubba:
-Non è magia, si basa su principi diversi, ma la gente si confonde sempre.
-Non fare anche tu quella fine, teso'.
+Non è magia, teso', si basa su un fenomeno reale, e la gente li confonde continuamente.
+Non essere una di quelle persone, teso'.
 
 ------------------------------------------------------------------------------------------------------------
-
 camel_case
 La Legge del CamelCase
 
 Bubba:
-Questa la devi imparare prima di lanciare qualsiasi cosa, uagliona.
-Ogni incantesimo si scrive e si pronuncia in CamelCase. Parole appiccicate, con la lettera grande all'inizio di ciascuna.
-Le formule composte da più parole staccate sono trascendentali, livello divino: abbastanza forti da rimodellare la realtà come ti pare.
+Ogni incantesimo è scritto e pronunciato in CamelCase. Parole cucite insieme che devi recitare senza alcuna pausa in mezzo.
+Le formule composte da 3 a 6 parole sono trascendentali, abbastanza potenti da rimodellare la realtà a proprio piacimento.
 
 Em:
 E se un mortale ci mette uno spazio in mezzo?
 
 Bubba:
-L'universo la prende come una formula trascendentale e ti manda il conto!
-Nel migliore dei casi ti hexi le corde vocali. Ci sono casi peggiori, e ne ho incontrati due di persona.
+L'universo la interpreta come una formula trascendentale e ti manda il conto del rimbalzo magico.
+Nel migliore dei casi perdi le corde vocali. Ci sono casi peggiori che mi vengono in mente, ma ho appena cenato e non ho voglia di vomitare.
 
 Em:
-Ed è questo il motivo per cui trasalisci ogni volta che leggo ad alta voce.
+Ed è per questo che sussulti ogni volta che leggo un incantesimo!
 
 Bubba:
-Fai attenzione anche ai tuoi grimori! Un incantesimo scritto male comincia a moltiplicarsi nelle altre parole della pagina con copie di se stesso.
-Brucia il libro o si divorerà qualsiasi cosa ci lasci vicino.
+E occhio pure ai tuoi grimorie! Un incantesimo scritto male comincia a sanguinare sulle altre parole della pagina con copie di se stesso.
+Brucia il libro o si divorerà qualsiasi cosa gli lasci vicino.
 
 Em:
-Quindi il mio grimorio può sviluppare un certo appetito.
+Quindi il mio grimorio può trasformarsi in un'epidemia informativa?
 
 Bubba:
-I tuoi incantesimi attivi si scelgono anche mentre dormi, e ognuno ha un limite al giorno.
-Mettine due nello stesso posto e ottieni una fusione temporanea della coppia.
-Le versioni permanenti le compri ai distributori automatici o le vinci con un rituale.
-
-Em:
-Ai distributori automatici.
-
-Bubba:
-L'economia è ancora più strana della magia, teso'.
+Sì, ma vedi di non farlo!
 
 ------------------------------------------------------------------------------------------------------------
-
 sacred_magic
 La Magia Sacra
 
 Em:
-E la magia sacra è la stessa cosa con un'illuminazione migliore?
+E la magia sacra è la stessa cosa della magia arcana ma... dorata?
 
 Bubba:
-Niente affatto!
+Proprio no.
 La magia arcana sale dai pozzi di petrolio e scorre nelle leyline.
-La magia sacra la fanno gli dèi e scende su chiunque li preghi e li invochi.
-Stessi tre metodi (rituali, simpatica e metamagia) più i miracoli, che non hanno nessuna spiegazione scientifica o magica e rompono ogni regola scritta.
+La magia sacra viene prodotta dagli dèi e piove giù su chiunque li veneri e li invochi.
 
 Em:
 E quando il dio muore?
 
 Bubba:
-Gli incantesimi finiscono, teso'.
-La maggior parte del repertorio sacro in mano al Vaticano è diventata spazzatura inutile dal 1° gennaio 2001.
+Gli incantesimi pian piano smettono, teso'.
+La maggior parte dell'arsenale sacro che possiede il Vaticano è stato ridotto a carta straccia e sacri grimorie inceneriti dal primo gennaio 2001.
 
 Em:
 Per colpa mia.
 
-Bubba:
-Per colpa di una lancia fatta con la tua infanzia, che non è esattamente la stessa cosa.
-
 ------------------------------------------------------------------------------------------------------------
-
-factions
-Chi governa il mondo
-
-Em:
-Dammi la mappa di chi odia chi.
-
-Bubba:
-Gli [Dèi | Gods], fuori dal tempo, immuni alla Regola degli 80, comandati da Eris. In guerra con la Gilda, si scocciano degli archivisti, alleati col Collettivo.
-La [Gilda dei Maghi | Guild of Wizards], il vecchio Ordine Ermetico della Golden Dawn: sulla carta la più ricca e armata, ma inutile nella pratica perché spaccata tra i tradizionalisti della Thatcher e i seguaci di Crowley.
-L'[Archive Foundation], nata dalle ceneri dell'Internet Archive: paramilitari fissati a catalogare e pubblicare qualsiasi cosa, capaci di fermarti a un posto di blocco per pubblicare i messaggi del tuo telefono.
-
-Em:
-Questo è un profilo di minaccia, non una bibliotecaria.
-
-Bubba:
-Il [Collettivo Ipercapitalista | Hypercapitalist Collective], uno schema piramidale grande quanto un continente che gestisce il commercio tra le dimensioni.
-Hanno passato così tanto tempo sopra gli 80 che i loro corpi sono immuni al loop anche da fermi.
-Vendono vie di fuga a chi è chiuso nelle bolle e trafficano in qualunque cosa, ricordi ed emozioni compresi. Controllano pure l'unica acqua pulita rimasta, tutto il resto è allungato con l'LSD.
-E le [Esoteric Heavy Industries], che fabbricano manici di scopa volanti, reattori a fusione e tutto quello che sta in mezzo.
-
-Em:
-E cosa li rende speciali?
-
-Bubba:
-Le loro merci se ne hexano del loop. Sposta un oggetto della EHI sotto gli 80 e non si resetterà.
-Nessuno ha mai visto le loro fabbriche o i loro operai. La merce compare semplicemente nei magazzini quando nessuno guarda.
-
-Em:
-E compri da loro lo stesso.
-
-Bubba:
-Lo fanno tutti, teso'. È proprio così che sono diventati quello che sono.
-
-------------------------------------------------------------------------------------------------------------
-
 vatican_empire
 Il Sacro Vaticano Impero
 
-Em:
-E quelli che vogliono bruciarmi al rogo.
 
 Bubba:
-Una teocrazia cattolica che comanda in Italia, Spagna, Polonia e Germania dell'Est, erede diretta del Sacro Romano Impero.
-Il Papa comanda su tutto, i politici locali sbrigano le carte burocratiche.
-Là dentro sono legali solo la magia sacra e la tecnomagia. Chi pratica l'arcano finisce dritto al rogo.
+Una teocrazia cattolica che tiene in pugno Italia, Spagna, Polonia e Germania dell'Est, erede diretta del Sacro Romano Impero.
+Il Papa comanda ogni cosa, i politici locali sbrigano le scartoffie.
+Lì dentro sono legali solo la magia sacra e la tecnomagia. Ai praticanti arcani tocca il rogo.
 
 Em:
-Solo il rogo?
+Soltanto il rogo?
 
 Bubba:
-O l'arruolamento. L'[Umbra Excidii] è un corpo arcano che deve dare la caccia agli altri praticanti dell'arcano sul territorio imperiale.
-Hanno trovato l'unica scappatoia nella loro legge e l'hanno riempita di guardie.
+O l'arruolamento. L'[Umbra Excidii] è un corpo arcano il cui compito è dare la caccia agli altri praticanti arcani sul suolo imperiale.
+Hanno trovato l'unica scappatoia nella loro stessa legge e ci hanno piazzato il personale.
 
 Em:
 E il Papa attuale?
 
 Bubba:
-Pietro II, al secolo Joseph Ratzinger, eletto dopo che Giovanni Paolo II è morto per l'attentato del maggio 1981.
-E da quando YHWH è morto, la Città del Vaticano l'hanno montata sui motori liminali e vola a circa 800 metri sopra Roma col nome di Cittadella del Vaticano.
-Qualsiasi infedele che si avvicina troppo si prende una scarica di cannoni Gauss.
+Pietro II, al secolo Joseph Ratzinger, eletto dopo che Giovanni Paolo II è morto per via dell'attentato alla sua vita nel maggio 1981.
+E da quando [Dio | God] è morto, la Città del Vaticano è stata equipaggiata con motori liminali e fluttua a circa 800 metri sopra Roma come Cittadella del Vaticano.
+Qualsiasi infedele che si avvicini si becca sul muso una raffica di cannoni a rotaia Gauss con danno Sacro.
 
-Em:
-Una chiesa a cui hanno dovuto dire che il suo dio era morto e che ha risposto decollando.
-
-Bubba:
-Ha pure dichiarato guerra a [Jenna di Northpoint | Jenna of Northpoint], la chiama l'Anticristo e si rifiuta di riconoscerla come la reincarnazione di Cristo.
-Quindi non sei nemmeno in cima alla lista, teso'. Sei seconda.
+Ha pure dichiarato guerra a [Jenna di Northpoint | Jenna of Northpoint]: la chiama l'Anticristo e rifiuta di riconoscerla come la propria reincarnazione.
+Quindi non sei nemmeno in cima alla lista di morte del Papa, teso'. Sei seconda.
 
 Em:
 Non mi sono mai sentita così confortata dalla burocrazia.
 
 ------------------------------------------------------------------------------------------------------------
-
 wizards_guild
 La Gilda dei Maghi
 
 Em:
-E i maghi sono rimasti segreti fino a quando?
+La magia è rimasta un segreto fino a quando?
 
 Bubba:
-Finché Margaret Thatcher non ha mostrato la magia in diretta TV durante le Falkland, usando [Okeanus].
-L'incantesimo d'acqua definitivo, teso'. Ha inghiottito la flotta argentina e ha fatto a fette i marinai con getti d'acqua a pressione assurda, mentre tutto il pianeta guardava.
-Dopodiché ogni iperpotenza ha fatto partire una corsa agli armamenti arcani.
+Fino a quando Margaret Thatcher non ha sbattuto la magia in diretta televisiva durante la guerra delle Falkland, usando [Okeanus].
+L'incantesimo d'acqua definitivo, uagliona. Si è divorato la flotta argentina e ha segato i marinai a metà con getti d'acqua ad altissima pressione, mentre l'intero pianeta stava a guardare sotto shock.
+Subito dopo, ogni singola iperpotenza ha fatto partire una corsa agli armamenti arcani.
 
 Em:
 E prima di quella trasmissione?
 
 Bubba:
-Fondata da Re Salomone nel 950 a.C., ha comandato il mondo in silenzio da allora.
-Rifondata all'inizio del Novecento da Sir Aleister Crowley col sostegno della casa reale di Britannia, come una specie di ordine cavalleresco. Ecco da dove vengono i titoli di Sir e Lady.
-Ogni scuola di magia ha una fazione interna, ma le vere decisioni spettano ai tre pilastri: passato, presente e futuro.
+La magia arcana è stata scoperta da Re Salomone nel 950 a.C., guidando silenziosamente il mondo da allora.
+La Gilda dei Maghi è stata fondata all'inizio del Novecento da Sir Aleister Crowley col sostegno della casa reale di Britannia, come una specie di ordine cavalleresco. Ecco da dove vengono quegli sciocchi titoli di Sir e Lady nella Gilda.
+Ogni scuola di magia ha una fazione dentro, ma le decisioni vere spettano solo ai tre pilastri: passato, presente e futuro.
 
 Em:
-E i pilastri di quest'anno?
+E i pilastri quali sono?
 
 Bubba:
-Sir Aleister Crowley per il passato, Lady Margaret Thatcher per il presente, e "il Padre" Shoko Asahara per il futuro.
-Un pilastro smette di invecchiare finché ricopre la carica, di solito per cinquant'anni.
+Sir Aleister Crowley per il passato, Lady Margaret Thatcher per il presente, e "il Padre" dal nome cancellato per il futuro.
+Un pilastro smette di invecchiare finché fa il suo lavoro, di solito per cinquant'anni.
 Crowley non ha mai accettato di andarsene nemmeno una volta, e nessuno nella Gilda lo può costringere. Conosce incantesimi che nemmeno gli dèi conoscono.
 
 Em:
-E proteggono anche il mondo dagli orrori extradimensionali, presumo nel tempo libero.
+E nel tempo libero proteggono pure il mondo dagli orrori extradimensionali, presumo.
 
 Bubba:
-Sta proprio scritto nelle sue mansioni, teso'. Come pure ricostruire la tecnologia tramite la magia per chiunque tiri fuori i soldi per pagare.
+Fa davvero parte della descrizione del lavoro, teso'.
+E anche ricostruire con la magia la tecnologia precedente all'Y2K per chiunque sia disposto a pagare.
 
 ------------------------------------------------------------------------------------------------------------
-
 naguka
 I Naguka
 
 Em:
-Qualcuno al mercato aveva la pelle verde e parlava come un bambino di cinque anni.
+Qualcuno al mercato aveva la pelle verde e faceva headbanging così forte che ho pensato rischiasse l'autodecapitazione!
 
 Bubba:
-Un [Naguka], uagliona, e vedi di fare la brava e comportarti bene con loro.
-Decine di milioni di anni fa un nostro antenato andò a vivere sottoterra nel sistema di caverne scavato da [Magamui].
-Si sono interrati e si sono evoluti in parallelo, ma sono umani a tutti gli effetti, e possono fare figli con noi. L'ibrido tra un goblin e un essere umano si chiama orco.
+Un goblin [Naguka], uagliona, e vedi di mostrare buone maniere con loro.
+Decine di milioni di anni fa un nostro antenato se n'è andato a vivere sottoterra nel sistema di caverne scavato da [Magamui].
+Si sono evoluti in parallelo ma sono umani e condividono un antenato comune con noi Sapiens, e possono pure fare figli con noi. L'ibrido tra goblin e umano si chiama orco.
 
 Em:
 E quando sono risaliti?
 
 Bubba:
-Maggio 1970. I sovietici hanno scavato troppo a fondo col Pozzo Superprofondo di Kola e i goblin sono saliti su per il buco.
-Negli anni Novanta si sono fatti strada conquistando la Scandinavia, hanno scoperto il black metal norvegese e la maggior parte di loro ha iniziato a venerare i [Mahyem] come dèi e a dipingersi la faccia col corpse paint prima di ogni battaglia.
+Maggio 1970. I sovietici hanno scavato troppo a fondo col Pozzo Superprofondo di Kola e i goblin sono saliti su per il buco a milioni.
+Negli anni Novanta si sono fatti strada conquistando la Scandinavia, hanno scoperto il black metal norvegese e la maggior parte di loro ha iniziato a venerare i [Junehem] come dèi e a dipingersi la faccia col corpse paint prima di ogni battaglia.
 
 Em:
 Ovvio.
 
 Bubba:
-Il Sacro Vaticano Impero è l'unica iperpotenza ad avere rapporti ufficiali con loro, e l'evangelizzazione in realtà è una campagna di reclutamento per farsi un esercito.
-Un'ultima cosa: i Naguka hanno accesso all'inconscio collettivo dei goblin.
-Fai del male a uno di loro e ti ritrovi la specie intera alle spalle, e sapranno pure il perché.
+Il Sacro Vaticano Impero è l'unica iperpotenza ad avere relazioni formali con loro, e l'evangelizzazione è in realtà una campagna di arruolamento per un esercito.
+Un'altra cosa: i Naguka hanno accesso all'inconscio collettivo dei goblin.
+Fai del male a uno di loro e ti ritroverai l'intera specie alle calcagna, e sapranno pure il perché.
 
 ------------------------------------------------------------------------------------------------------------
-
 verden
 I Verden
 
 Em:
-E quelli blu dai volti più gentili?
+E che mi dici dei goblin blu con le facce più gentili?
 
 Bubba:
-I [Verden], teso', e somigliano ai Naguka solo nella faccia.
-I Naguka sotto sotto sono umani. I Verden sono veri goblin, evoluti in un'altra dimensione, con una biologia totalmente diversa.
-Fanno le uova, si riproducono per scissione e se gli tagli un braccio e lo pianti a terra ne nasce un nuovo Verden.
+I [Verden], teso', e somigliano ai Naguka solo all'apparenza.
+I Naguka sotto sotto sono umani. I Verden sono veri goblin, evolutisi in un'altra dimensione con una biologia del tutto diversa.
+Possono deporre uova, possono anche riprodursi per scissione.
+E se pianti un loro arto mozzato nel terreno ci crescono nuovi Verden.
 
 Em:
-E sono arrivati dai Campi Verdi.
+E venivano dai Campi Verdi.
 
 Bubba:
-Dimensione 77, ed erano una volta la specie più avanzata del multiverso.
-Poi, migliaia di anni fa, hanno buttato ogni pezzo della loro tecnologia dentro al sole e se ne sono andati a fare i contadini e a studiare la magia.
-Nessuno, nemmeno i Naguka, sa il perché.
+Dimensione 77: un tempo erano una delle specie più progredite di tutto il multiverso.
+Poi, migliaia di anni fa, hanno sparato ogni singolo pezzo di tecnologia che avevano dritto nel loro sole, per mettersi a fare i contadini e studiare la magia.
 
 Em:
-E adesso sono qui.
+E ora sono qua.
 
 Bubba:
-Lo [Squishing] ha reso i Campi Verdi invivibili, così si sono trasferiti sulla Terra, vanno pazzi per la nostra tecnologia e si sono integrati.
-Parlano un MarkovSpeak fluente, che è già molto più di quello che fanno i loro cugini.
-E hanno imparato a leggere l'inconscio collettivo dei goblin per via magica, così sanno cosa farà un'orda Naguka prima ancora che lo faccia.
+Lo [Squishing] ha reso i Campi Verdi un disastro dimensionale invivibile, così si sono trasferiti sulla Terra e si sono integrati con la società umana.
+Parlano un MarkovSpeak fluente, che è molto più di quanto riescano a fare i loro cugini da pseudo evoluzione convergente.
+E hanno imparato a leggere l'inconscio collettivo dei goblin tramite associazioni noosferiche, così sanno cosa farà un'orda di Naguka prima ancora che lo faccia.
 
 Em:
 In sola lettura, immagino.
 
 Bubba:
-In sola lettura, uagliona. Non ci possono scrivere dentro un nuovo nemico o un'idea nuova, ed è l'unica grazia di tutta questa faccenda.
+In sola lettura. Non ci possono scrivere dentro un nuovo nemico, o un'idea nuova.
 
 ------------------------------------------------------------------------------------------------------------
-
-mahyem
-Mahyem
+junehem
+Junehem
 
 Em:
-Spiegami come fa un gruppo musicale a diventare degli dèi.
+Spiegami come fa una band black metal a diventare degli dèi.
 
 Bubba:
-Venerazione di massa, teso'. I Naguka li adorano, e un dio esiste finché la gente ci crede.
-Adesso possono muovere l'inconscio collettivo dei goblin con la loro musica, e guidano le orde che cercano di scendere dalla Scandinavia per invadere l'Europa.
+Fede di massa, uagliona. I Naguka li adorano, e un dio campa finché la gente ci crede.
+Ora possono guidare l'inconscio collettivo dei goblin con la loro musica, e stanno guidando le orde che cercano di scendere attraverso la Scandinavia.
+Fanno concerti negli stadi con sessantamila goblin che urlano i testi in un inglese maccheronico, e ogni esibizione è praticamente una messa a energia altissima.
 
 Em:
 E nessuno li ha fermati.
 
 Bubba:
-Ogni governo del pianeta ha provato ad ammazzarli, in tutti i modi possibili.
-Ormai sono divinità del metal. Non possono morire finché anche un solo goblin continua a credere in loro.
+Tutti i governi del pianeta hanno provato a farli fuori, in ogni modo immaginabile.
+Ormai sono divinità del metal. Non possono morire finché anche un solo goblin fa ancora headbanging per loro.
 
 Em:
 E quello che è stato pugnalato?
 
 Bubba:
-[Euronymous]. È sopravvissuto alla coltellata di Varg ed è uscito dal trauma cerebrale con la sindrome dell'idiot savant acquisita.
+[Hieronymus]. È sopravvissuto alla coltellata del Conte Grissnack ed è uscito dal trauma cerebrale con la sindrome dell'idiot savant acquisita.
 Uno dei più potenti psionici in vita.
 Il resto della band vive come dèi, mentre lui ha abbandonato del tutto il palco.
 Nessuno ha la minima idea di dove sia, teso', e mi piacerebbe un sacco offrirgli un caffè.
 
 ------------------------------------------------------------------------------------------------------------
-
 magamui
 Magamui
 
 Em:
-C'è qualcosa all'interno del pianeta, non è vero?
+C'è qualcosa dentro al pianeta, non è vero?
 
 Bubba:
-Una larva, teso'. Aliena, grande un quarto della Luna, arrotolata attorno al nucleo della Terra da milioni di anni.
-Si nutre dell'energia termica ed elettromagnetica del nucleo, e sta dormendo.
+Una larva, grande un quarto della Luna ed è rimasta avvolta attorno al nucleo della Terra per milioni di anni.
+Si nutre dell'energia termica ed elettromagnetica sprigionata dal nucleo.
+E sta dormendo... per ora.
 
 Em:
 Dorme, e poi?
 
 Bubba:
-E riesce comunque a prendere il controllo mentale di esattamente una persona alla volta, per autoconservazione.
-La paura è che, se mai dovesse crescere del tutto, potrebbe assoggettare la popolazione intera, e se mai lasciasse il pianeta per tornare nello spazio, ce ne andremmo insieme a lei.
+E riesce ancora a prendere il controllo mentale di una singola persona alla volta, principalmente per autoconservazione.
+La paura è che, se mai dovesse raggiungere la piena maturità, potrebbe controllare la mente dell'intera umanità.
+E SE mai dovesse lasciare il pianeta per tornarsene nello spazio, la Terra si spaccherà a metà come un uovo.
 
 Em:
-E qualcuno se ne sta occupando.
+E c'è qualcuno che gestisce la cosa?
 
 Bubba:
-La [Gilda dei Maghi | Guild of Wizards]. Il loro compito è scovare chiunque Magamui stia cavalcando al momento e ammazzarlo, perché alla creatura serve tempo per prendersene un altro.
+Ci pensa la [Gilda dei Maghi | Guild of Wizards], più o meno. Il loro compito è scovare chiunque Magamui stia cavalcando in quel momento e farlo fuori, perché alla larva serve tempo per prenderne un altro.
 
 Em:
-Quindi c'è una persona a spasso proprio adesso che è stata condannata a morte solo per essere stata posseduta.
+Quindi c'è una persona a spasso proprio adesso che è stata condannata a morte solo per essere stata posseduta da una larva aliena?
 
 Bubba:
-Ogni singolo giorno dell'anno, uagliona. Cerca di non sembrare interessante.
-Ha pure scavato la [Strada Serpentina | Serpentine Road], un tunnel a spirale che si apre da qualche parte in Antartide e scende giù fino al nucleo.
+Sì, e forse sono proprio io! Scherzo, Em, scherzo!
 
 ------------------------------------------------------------------------------------------------------------
-
 inverted_citadel
 La Cittadella Invertita
 
 Bubba:
-In fondo alla Strada Serpentina c'è una caverna attorno al nucleo, e una città costruita sulla superficie interna.
-Il nucleo pende nel mezzo come un piccolo sole e la città gli gira tutto attorno.
-Madonna santa, alzi lo sguardo e vedi altre strade a testa in giù, con le luci accese.
+In fondo alla Strada Serpentina in Antartide c'è una caverna rotonda attorno al nucleo, e una città scolpita tutta al suo interno.
+Il nucleo della Terra se ne sta appeso nel mezzo come un piccolo sole e la città gli gira tutta attorno.
+Alzi gli occhi e vedi altre strade ed edifici, teso', appesi a testa in giù.
 
 Em:
 Costruita da chi?
 
 Bubba:
-Una civiltà avanzata vissuta tra i dinosauri e noi, svanita nel nulla senza lasciare un solo documento scritto o un pezzo di tecnologia.
+Una civiltà avanzatissima vissuta tra i dinosauri e noi, sparita senza lasciare traccia.
 Solo una città vuota.
-I goblin ci si sono sistemati dentro e ne hanno fatto la loro capitale sotterranea.
-
-Em:
-Qualcuno ha costruito un mondo senza cielo e poi si è rifiutato di fornire spiegazioni.
-
-Bubba:
-È la cosa più comprensibile che abbia mai sentito sul loro conto.
+I goblin ci si sono fiondati dentro e ne hanno fatto la loro capitale sotterranea.
 
 ------------------------------------------------------------------------------------------------------------
-
 petrodemons
 I Petrodemoni
 
 Em:
-E il petrolio?
+È vero che il petrolio è senziente?
 
 Bubba:
-Una parte del petrolio è sveglia, uagliona.
-I [Petrodemoni | Petrodemons] sono entità fatte di petrolio senziente, e finché restano vicino a una leyline sono praticamente indistruttibili perché lei continua a rigenerarli.
+Una parte, teso'.
+I [Petrodemoni | Petrodemons] sono entità fatte di petrolio senziente, e finché restano vicino a una leyline sono praticamente indistruttibili perché continua a rigenerarli.
+Le leyline sgorgano dai giacimenti profondi di petrolio.
 
 Em:
-Da dove salta fuori una cosa del genere?
+Da dove salta fuori una roba del genere?
 
 Bubba:
-La teoria è che i dinosauri erano praticanti arcani naturali, capaci di lanciare incantesimi senza bisogno delle leyline, e una parte di quel potere è rimasta attaccata alle molecole del petrolio.
+La teoria più accreditata è che i dinosauri fossero maghi arcani naturali, capaci di lanciare incantesimi senza leyline, e una parte di quel potere è rimasta legata alle molecole del greggio.
 
 Em:
-E per ucciderne uno?
+Ed è perfino possibile uccidere un Petrodemone?
 
 Bubba:
-Prima spezzi apposta la leyline, e poi lo colpisci con armi normali o con la magia divina.
-Mannaggia, anche senza rigenerazione ci vuole un esercito intero.
-Ecco perché le iperpotenze preferiscono fare contratti con loro. I petrodemoni sanno spostare le leyline, e tutti vogliono che il loro fiume di potere venga spostato.
-
-Em:
-Ed Enrico Mattei?
-
-Bubba:
-Dicono che abbia trovato una pergamena in una tomba libica col rituale per evocarli e vincolarli, e che ci abbia provato per dare l'indipendenza energetica all'Italia.
-Il suo aereo è caduto nel 1962.
-Che i demoni siano reali o no, teso', sono la descrizione perfetta dell'industria petrolifera.
+Prima spezzi la leyline di proposito, poi lo colpisci con armi convenzionali o con la magia divina.
+Anche senza rigenerazione ci vuole un intero esercito.
+Ecco perché le iperpotenze preferiscono firmare contratti con loro: i petrodemoni sanno deviare le leyline e usarle come armi contro i praticanti arcani.
 
 ------------------------------------------------------------------------------------------------------------
-
 fantablack
 Fantablack
 
@@ -881,51 +778,47 @@ Em:
 Cos'è quel pigmento nero all'interno del camper?
 
 Bubba:
-[Fantablack], raschiato dalla superficie esterna della [Torre Omega | Omega Tower].
-Qualsiasi cosa dipinta con esso diventa immune alle bolle di loop temporale, quindi ogni veicolo dotato di motore liminale ha gli interni dipinti.
+Il [Fantablack], raschiato via dall'esterno della [Torre Omega | Omega Tower].
+Qualsiasi cosa dipinta con quello è immune alle bolle di loop temporale, quindi ogni veicolo dotato di motore liminale ha gli interni verniciati.
 
 Em:
 Costoso?
 
 Bubba:
-Parecchio, teso'! Ma un proiettile dipinto di Fantablack può ammazzare una persona dentro una bolla, ed è l'unico motivo per cui qualcuno si prende ancora il disturbo di sparare alla gente là dentro.
+Da morire. Ma un'arma ricoperta di quella roba può uccidere una persona dentro una bolla, ed è l'unico motivo per cui la gente si prende ancora la briga di assassinare qualcuno nelle bolle di loop temporale.
 
 Em:
-Ed è presente anche nel denaro.
+Ed è presente pure nei soldi.
 
 Bubba:
-Nella striscia di sicurezza di ogni banconota in euro, teso'.
-Pigmento arcano, più la regola che i nomi sono potere, più un nome stampato su decine di miliardi di banconote.
-È così che [Mario Draghi] è diventato un dio.
+Nella striscia di sicurezza di ogni singola banconota in euro, uagliona.
+Serve per il controllo totale del mercato.
 
 ------------------------------------------------------------------------------------------------------------
-
 mario_draghi
 Mario Draghi
 
 Em:
-Il governatore della banca centrale è un dio.
+Mario Draghi, il capo della banca centrale europea è un... dio?
 
 Bubba:
-Il suo nome è scritto su più banconote e registri di transazioni di quante volte il nome di Dio compare in tutte le Bibbie del mondo, teso'.
-Aggiungi il Fantablack nella striscia di sicurezza e ottieni un rituale attivo che non si ferma mai, dentro ogni portafoglio del continente.
+Il suo nome sta scritto su più banconote e registri di transazione di quante volte il nome di Dio compaia in tutte le Bibbie mai stampate, teso'.
+Aggiungi il Fantablack nella striscia di sicurezza e ottieni un rituale attivo di continuo, in ogni portafoglio del continente.
 
 Em:
-Ed ha funzionato.
+E ha funzionato.
 
 Bubba:
-È salito come divinità del mercato.
-Ha perso la sua individualità e il corpo fisico, è diventato un concetto astratto e un motore finanziario che fa girare l'economia del multiverso da dietro le quinte.
+È asceso come primo motore del mercato.
+Ha perso la sua individualità e il suo corpo fisico, diventando un concetto astratto e un motore finanziario che fa girare l'economia del multiverso da dietro le quinte.
 
 Em:
-Quindi non può essere privato di fedeli come gli altri.
+Quindi non può essere affamato di fedeli come gli altri dèi.
 
 Bubba:
-Per distruggerlo dovresti bruciare ogni singola banconota che porta il suo nome.
-Ecco perché tengo sempre un po' di contante, uagliona. Devozione!
+Per riuscire anche solo a percepirlo dovresti bruciare ogni singola banconota col suo nome sopra.
 
 ------------------------------------------------------------------------------------------------------------
-
 anoki_phones
 I Telefoni Anoki
 
@@ -933,67 +826,60 @@ Em:
 Perché il tuo telefono è più vecchio di me?
 
 Bubba:
-I [telefoni Anoki | Anoki phones] sono stati la prima tecnologia ricostruita con la magia.
-Parlano tra di loro lungo [le leyline | Leylines], e se sintonizzati come si deve possono chiamare l'oltretomba o un dio in linea diretta.
+I [telefoni Anoki | Anoki phones] sono stati la prima tecnologia ricostruita con la tecnomagia dopo l'evento Y2K.
+Parlano tra di loro lungo [le leyline | Leylines], e se sintonizzati come si deve possono raggiungere l'oltretomba o un dio in linea diretta.
 
 Em:
-Ed è una funzione che la gente desiderava.
+E ha i minigiochi?
 
 Bubba:
-Sono mattoni indistruttibili trasformati in talismani, teso'.
-Stabilizzano i loop locali, tengono lontane le fratture dimensionali e danno una spinta a certi incantesimi.
-Nessun camionista parte senza averne uno in tasca.
+Sì, un sacco!
+Sono mattoni indistruttibili che possono anche essere trasformati in talismani per attirare la fortuna, teso'.
 
 Em:
-E se sbaglio numero?
+E se sbaglio numero e chiamo l'oltretomba?
 
 Bubba:
-Sii educata e riattacca per prima.
+Non c'è più nessun oltretomba, darlin'.
+L'hai distrutto insieme a Dio.
+Ogni anima andrà nel vuoto.
 
 ------------------------------------------------------------------------------------------------------------
-
 truckers_society
 La Società dei Camionisti
 
 Bubba:
 La [Società dei Camionisti | Trucker's Society] riunisce i veri cavalieri della Strada, teso'.
-Non si limitano a trasportare merci. Mantengono aperte le linee tra comunità che vivono in realtà diverse.
+Mantengono aperte le linee tra comunità che vivono in diverse bolle di loop temporale.
 Risorse, informazioni e persone dentro e fuori dalle bolle di loop, con i loro ranghi e la loro rete per passarsi la voce su cosa c'è più avanti.
 
 Em:
 E tu sei un membro.
 
 Bubba:
-Sono un meccanico con le sue idee, che è abbastanza vicino da farmi avere una sedia al tavolo.
-Non rifiutare mai informazioni sulla strada da uno di loro e non mentire mai a uno di loro su quello che hai visto alle tue spalle.
+Membro onorario!
+Mi hanno nominato vicepresidente della loro associazione perché ho inventato l'unica cosa che permette loro di attraversare le bolle di loop temporale.
 
 ------------------------------------------------------------------------------------------------------------
-
 scraps_of_creation
 Gli Scarti della Creazione
 
 Em:
-E i piccoli mondi che continui a menzionare?
+Cosa sono questi Scarti della Creazione che continui a menzionare?
 
 Bubba:
-Dimensioni tascabili, teso'. Eoni fa gli dèi le usavano per mettere alla prova i loro poteri e la loro fantasia.
-Bozzetti di prova, in pratica, del tutto chiusi dal resto del multiverso.
+Dimensioni tascabili, teso'. Eoni fa gli dèi le usavano per fare il beta test dei loro poteri.
+Modalità sandbox universale, in pratica, e ora sono completamente sigillate fuori dal multiverso.
 
 Em:
 Fino al 1992.
 
 Bubba:
-Fino allo [Squishing]. Alcuni hanno cominciato a cadere nel mondo fisico da soli.
-Agli altri ci siamo arrivati per la prima volta col motore liminale, uscendo dalla [Strada Avvolgente | Encompassing Road].
-
-Em:
-Quindi stiamo violando la proprietà privata nelle brutte copie di qualcuno.
-
-Bubba:
-E alcune di queste brutte copie hanno ancora gli inquilini dentro, quindi pulisciti i piedi prima di entrare.
+Proprio così! Finché lo [Squishing] non ha cominciato a intensificare i suoi effetti.
+Alcune hanno cominciato a cadere e a riversarsi dentro il nostro mondo fisico,
+e alcune altre ancora su nell'etere, le abbiamo raggiunte per la prima volta collaudando insieme il [Motore Liminale | Liminal Engine].
 
 ------------------------------------------------------------------------------------------------------------
-
 canadafrica
 Canadafrica
 
@@ -1002,76 +888,28 @@ La mappa è sbagliata. Le Americhe hanno una forma assurda.
 
 Bubba:
 Quella è la [Canadafrica], uno dei primi effetti visibili dello Squishing.
-Nel giro di una sola giornata l'intero Messico e il Sud America sono stati ridisegnati per sembrare l'Africa vista dall'orbita.
+Nel corso di un solo anno l'intera terra del Messico e del Sud America è stata rimodellata per sembrare l'Africa vista dall'orbita.
 
 Em:
 E la gente?
 
 Bubba:
-Ogni città e ogni abitante esattamente dove stavano prima, teso'. Non si è mossa una virgola a parte la linea della costa.
-Si sono svegliati nella stessa identica casa ma su una sagoma diversa.
-
-Em:
-L'universo ha ridisegnato un continente senza mettere a soqquadro una singola cucina.
-
-Bubba:
-Mannaggia, gli atlanti stradali sono diventati carta straccia in un pomeriggio. È quella la parte che mi ha messo più ansia.
+Ogni città e ogni abitante esattamente dove stavano prima, teso'.
+Si sono svegliati ogni giorno nella stessa identica casa ma su una sagoma leggermente diversa.
 
 ------------------------------------------------------------------------------------------------------------
-
 three_americas
 Le tre Americhe
 
 Em:
-E chi governa questo nuovo territorio?
+E chi governa le tre Americhe?
 
 Bubba:
-Nessuno governa tutto quanto. L'America non ha mai ottenuto l'indipendenza e non è mai diventata un paese unico.
-La Repubblica di Cascadia controlla la costa orientale, gli Stati Indipendenti del Midwest occupano il centro e il Protettorato Atlantico controlla la costa occidentale sotto [Britannia].
-
-Em:
-Questi punti cardinali sono tutti sballati.
-
-Bubba:
-Lo sono eccome, eppure tutti continuano a usarli lo stesso.
-Bill Clinton è il presidente del Midwest, e la [Route 666] scende dritta attraverso tutte e tre, ed è lì che ho passato la maggior parte della mia gioventù.
+Nessuno governa tutto quanto. L'America non ha mai conquistato la sua indipendenza e non è mai diventata un paese intero unico.
+La Repubblica di Cascadia controlla la costa orientale, gli Stati Indipendenti del Midwest controllano il centro e il Protettorato Atlantico controlla la costa occidentale sotto [Britannia].
+E la [Route 666] le attraversa tutte e tre, che è proprio la strada dove sono cresciuto.
 
 ------------------------------------------------------------------------------------------------------------
-
-new_york_bombing
-Il bombardamento teonucleare
-
-Em:
-C'è un vuoto nelle notizie di settembre.
-
-Bubba:
-L'11 settembre di quest'anno, teso'. Una cellula thatcheriana ha fatto esplodere tre ordigni teonucleari nel cuore di New York.
-Quelle cose non fanno nemmeno un graffio agli edifici.
-Disintegrano ogni anima nel raggio dell'esplosione, lasciando i corpi a camminare guidati solo dall'istinto e dalla biologia.
-
-Em:
-A camminare.
-
-Bubba:
-A camminare, respirare, andare a lavorare.
-Hanno dato la colpa ad Al Qaeda, e solo i tre pilastri della [Gilda dei Maghi | Guild of Wizards] conoscono la verità.
-I catalizzatori per quegli ordigni erano oggetti esauriti durante il [Rituale di Salomone | Ritual of Solomon].
-
-Em:
-Il rituale che ha usato me.
-
-Bubba:
-Gli stessi sette oggetti, teso'.
-Quello che restava del loro potenziale inespresso è stato convertito in quelle bombe.
-
-Em:
-Quindi gli avanzi della mia memoria sono stati trasformati in un'arma per ben due volte.
-
-Bubba:
-Ecco perché non parlo di quella notte, a meno che non me lo chieda tu.
-
-------------------------------------------------------------------------------------------------------------
-
 odds_and_ends
 Cose che nessuno ti dice
 
@@ -1081,17 +919,8 @@ La lava è quasi innocua dopo lo [Squishing]. Ti prosciuga gli MP invece di ince
 La lava evocata per via magica brucia ancora esattamente come prima, quindi controlla bene chi l'ha versata.
 
 Em:
-Ricevuto.
+Interessante.
 
 Bubba:
 La porfirina è il filo sottile che tiene insieme il sangue umano, il petrolio e [le leyline | Leylines], e metà della gente che la studia finisce a lavorare per le compagnie petrolifere.
 E le DPT sono malattie trasmesse dal pensiero. Le fermi con una diga mentale, che altro non è che carta d'alluminio arrotolata attorno alla testa.
-
-Em:
-Carta d'alluminio.
-
-Bubba:
-Carta d'alluminio, uagliona! Tutti i complottisti del ventesimo secolo avevano ragione, e nessuno di loro è stato contento di averla avuta.
-
-Em:
-Trovo che questo sia il fatto più sconvolgente che tu mi abbia riferito finora.

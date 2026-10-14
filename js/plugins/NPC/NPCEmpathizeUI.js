@@ -1148,6 +1148,11 @@
   Scene_NPCEmpathize.prototype.create = function () {
     _Scene_NPCEmpathize_create.call(this);
     this._travelingHour = _travelingHourIfOnTransport(this._eventId);
+    if (Scene_NPCEmpathize._openSelfReflection || (this._isSelfTalk && this._isSelfTalk() && Scene_NPCEmpathize._initialSocialMode)) {
+      Scene_NPCEmpathize._openSelfReflection = false;
+      Scene_NPCEmpathize._initialSocialMode = false;
+      this._socialMode = true;
+    }
     this._buildOverlay();
     this._render();
     setTimeout(() => { if (this._overlay) this._overlay.classList.add('npc-shown'); }, 16);

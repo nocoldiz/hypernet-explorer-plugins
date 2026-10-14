@@ -813,7 +813,15 @@
         },
         grant: (a, p, arg) => a.addState(arg),
         inflict: (a, p, arg) => $gameTroop.aliveMembers().forEach(e => {
-            if (Math.random() < Math.min(1, INFLICT_CHANCE * p * e.stateRate(arg))) e.addState(arg);
+            const rawRate = e.traitsPi ? e.traitsPi(Game_BattlerBase.TRAIT_STATE_RATE, arg) : e.stateRate(arg);
+            if (Math.random() < Math.min(1, INFLICT_CHANCE * p * rawRate)) {
+                e.addState(arg);
+                if (e._bseAfflictedAt) {
+                    const enemyLvl = (window.BSE && BSE.Helpers && BSE.Helpers.getBattlerLevel)
+                        ? BSE.Helpers.getBattlerLevel(e) : (e.level || 99);
+                    e._bseAfflictedAt[arg] = enemyLvl;
+                }
+            }
         }),
         coolHeat: (a, p) => {
             const crime = window.CrimeSystem;
@@ -870,6 +878,9 @@
         }
     };
 
+    let _isExecuting = false;
+    const isExecuting = () => _isExecuting;
+
     const activate = (actor, power) => {
         if (inBattle()) actor._expressionSpent = true;
         else actor._expressionDay = today();
@@ -878,7 +889,12 @@
         const effects = chosenEffects(actor, power);
         const p = potency(power);
         manifest(power);
-        effects.forEach(e => { if (EFFECTS[e.key]) EFFECTS[e.key](actor, p, e.arg); });
+        _isExecuting = true;
+        try {
+            effects.forEach(e => { if (EFFECTS[e.key]) EFFECTS[e.key](actor, p, e.arg); });
+        } finally {
+            _isExecuting = false;
+        }
         announce(actor, power, effects);
         if (actor.refresh) actor.refresh();
     };
@@ -1213,6 +1229,7 @@
         MAX_LEEWAY,
         randomize,
         isUnlockItem,
+        isExecuting,
         // For the tests and for anything that wants to fire a power by hand.
         fire,
         ready,

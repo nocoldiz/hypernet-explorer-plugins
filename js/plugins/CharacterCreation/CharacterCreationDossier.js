@@ -1003,7 +1003,7 @@
       // order of the rest (alphabetical), so the cards below are drawn in the
       // order the choices already arrive in.
       const suggestedSymbols = (window.CCOrigins && window.CCOrigins.SUGGESTED_ORIGINS)
-        || ["origin_train", "origin_camper", "origin_space", "origin_stranded", "origin_lot", "origin_dungeon", "origin_ceo", "origin_patron_vault"];
+        || ["origin_train", "origin_dungeon", "origin_camper", "origin_space", "origin_stranded", "origin_lot", "origin_ceo", "origin_patron_vault"];
       const allChoices = stepData.choices || [];
       const suggestedEntries = [];
       const otherEntries = [];

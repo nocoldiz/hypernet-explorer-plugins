@@ -23,7 +23,8 @@
     "zoomIn": "Zoom avanti",
     "zoomOut": "Zoom indietro",
     "kick": "Calcio",
-    "run": "Corri"
+    "run": "Corri",
+    "remoteTalk": "Parla a distanza (Tieni premuto Azione)"
   },
   "unassigned": "Non assegnato"
 }

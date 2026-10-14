@@ -1069,7 +1069,7 @@
         "The Guild has voted, which is to say two of us shouted."
       ],
       "signoffs": [
-        "Mages' Guild, seal of the third circle."
+        "Wizard Guild, seal of the third circle."
       ]
     },
     "1": {
@@ -1799,7 +1799,7 @@
         "Countersigned by an office that would rather stay a signature."
       ]
     },
-    "Mages Guild": {
+    "Wizard Guild": {
       "family": "arcane",
       "titlePrefix": [
         "WORKING",
@@ -2367,7 +2367,7 @@
         "The Guild has voted to spend real money, which has happened twice in its history."
       ],
       "signoffs": [
-        "Mages' Guild, first circle seal. We do not use it lightly."
+        "Wizard Guild, first circle seal. We do not use it lightly."
       ]
     },
     "1": {

@@ -397,7 +397,16 @@
       const loadout = presetLoadout(preset);
       // A dossier's purse is the money a game STARTS with, so a latecomer
       // brings their kit and their gear but not a second founding fortune.
-      if (!joining) $gameParty.gainGold(loadout.money);
+      if (!joining) {
+        $gameParty.gainGold(loadout.money);
+        if (preset.knowledge !== undefined || preset.id === 10 || /aleister\s*crowley|alesteir\s*crowley/i.test(preset.name || "")) {
+          const kp = preset.knowledge !== undefined ? preset.knowledge : 9999;
+          if (typeof $gameSystem !== "undefined" && $gameSystem) {
+            $gameSystem._knowledgePoints = Math.max($gameSystem._knowledgePoints || 0, kp);
+            $gameSystem._initialKpGranted = true;
+          }
+        }
+      }
       if (loadout.fromClass) {
         const SE = window.StartingEquipment || {};
         if (SE.equipRandomCompatibleWeapon) SE.equipRandomCompatibleWeapon(actor, preset.classId);

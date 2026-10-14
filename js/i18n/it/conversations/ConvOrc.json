@@ -144,7 +144,7 @@
       "La commessa mi ha dato la borsa grande senza chiedere. Rispetto.",
       "Ogni sedia su cui mi siedo fa un rumore. Tutte quante.",
       "Ho questa faccia e basta. Il broncio è di serie.",
-      "Ho visto un manifesto della Gilda dei Maghi. Un sacco di BIG-HEAD. Cervelloni, volevo dire.",
+      "Ho visto un manifesto della Gilda degli Stregoni. Un sacco di BIG-HEAD. Cervelloni, volevo dire.",
       "Qualcuno mi deve {cinque euro|una birra|delle scuse}. Me lo ricordo.",
       "Le mani sanno di {olio di motore|cipolla|sapone}. Poteva andare peggio.",
       "Lo specchio dice che mi serve un taglio. Il barbiere dice che gli serve una poltrona più grande.",
@@ -670,7 +670,7 @@
       "Il cibo umano è troppo piccolo e troppo pulito. Mi ci abituo.",
       "Dicevano che non avrei mai trovato il mio posto. Il posto l'ho trovato. Sugli autobus, invece, non ci sto.",
       "Ho un fondo pensione. I goblin riderebbero fino a star male.",
-      "Uno della Gilda dei Maghi voleva studiare il mio udito. Ho detto di no. Un no educato.",
+      "Uno della Gilda degli Stregoni voleva studiare il mio udito. Ho detto di no. Un no educato.",
       "Città tranquilla. Testa tranquilla. Strano, il silenzio.",
       "L'autista ora mi aspetta. Sa che arrivo tardi.",
       "Il pub all'angolo ha uno sgabello col mio nome. Rinforzato.",
@@ -817,7 +817,7 @@
         "Pezzi di altri mondi cadono nel nostro. Ho trovato {un sasso blu|un pesce strano|un cappello} nel parco.",
         "Lo Squishing è cominciato nel 1992. Le cose sono diventate strane. Più strane. Siamo ancora qui.",
         "Ho corso troppo dietro a un autobus. C'è mancato poco che finissi in loop. Ora cammino.",
-        "La Gilda dei Maghi dice di avere lo Squishing in pugno. Il pugno trema.",
+        "La Gilda degli Stregoni dice di avere lo Squishing in pugno. Il pugno trema.",
         "I Campi Verdi hanno preso uno squish brutto. I Verden sono venuti qui. Brava gente. Uova strane.",
         "Ora la lava è innocua. Ti succhia la magia. Comunque non ci metto piede.",
         "Mappa vecchia, strade nuove. Lo Squishing sposta le cose.",
@@ -2079,7 +2079,7 @@
         "lines": [
           [
             0,
-            "La Gilda dei Maghi parla tanto e non fa niente."
+            "La Gilda degli Stregoni parla tanto e non fa niente."
           ],
           [
             1,

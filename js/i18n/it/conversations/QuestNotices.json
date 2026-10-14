@@ -1405,7 +1405,7 @@
         "La Gilda ha votato, ossia due di noi hanno urlato."
       ],
       "signoffs": [
-        "Gilda dei Maghi, sigillo del terzo cerchio."
+        "Gilda degli Stregoni, sigillo del terzo cerchio."
       ],
       "family": "arcane"
     },
@@ -2473,6 +2473,27 @@
         "Pagato al rientro sulla linea. Sul campo non si paga nessuno.",
         "Northpoint tiene. Northpoint tiene sempre."
       ]
+    },
+    "Wizard Guild": {
+      "family": "arcane",
+      "titlePrefix": [
+        "OPERA",
+        "COMMISSIONE",
+        "RITO"
+      ],
+      "openers": [
+        "La Gilda ha votato, male, e il risultato è questo annuncio.",
+        "Un'opera è andata un po' di traverso e richiede mani che non siano le nostre.",
+        "Faccenda del terzo circolo, buttata in strada perché il secondo ha rifiutato."
+      ],
+      "caveats": [
+        "Non leggere ad alta voce niente di quel che trovi. È già successo.",
+        "La Gilda spiegherà dopo. La Gilda spiega sempre dopo."
+      ],
+      "signoffs": [
+        "Sigillato col terzo circolo, che è quello che paga.",
+        "Se ti parla mentre torni, non fa parte del contratto."
+      ]
     }
   },
   "eliteFamily": {
@@ -2704,7 +2725,7 @@
         "La Gilda ha votato di spendere soldi veri, cosa avvenuta due volte nella sua storia."
       ],
       "signoffs": [
-        "Gilda dei Maghi, sigillo del primo cerchio. Non lo usiamo alla leggera."
+        "Gilda degli Stregoni, sigillo del primo cerchio. Non lo usiamo alla leggera."
       ]
     },
     "1": {

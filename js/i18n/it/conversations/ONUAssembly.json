@@ -438,7 +438,7 @@
     },
     "guild": {
       "open": [
-        "Ha la parola la Gilda dei Maghi. {leader} si alza. {Si alza anche un secondo delegato della Gilda|Si alzano anche altri due delegati della Gilda|Le tre sedie della Gilda sono tutte occupate e tutte in disaccordo}.",
+        "Ha la parola la Gilda degli Stregoni. {leader} si alza. {Si alza anche un secondo delegato della Gilda|Si alzano anche altri due delegati della Gilda|Le tre sedie della Gilda sono tutte occupate e tutte in disaccordo}.",
         "{leader}, per la Gilda, {esordisce|viene interrotto dalla sua stessa delegazione|parla sopra la sua stessa delegazione}.",
         "La delegazione della Gilda {viene chiamata|discute brevemente al proprio interno|si accorda su chi parla}."
       ],

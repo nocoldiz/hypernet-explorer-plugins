@@ -385,9 +385,14 @@
 
   function maybeInitPresetPlant(mapId, eventId) {
     if (getRecord(mapId, eventId)) return;
-    const plantId = getPresetPlantId(eventId);
+    let plantId = getPresetPlantId(eventId);
     if (!plantId) return;
+    if (plantId.toLowerCase() === "sunflower") {
+      const plantKeys = Object.keys(PLANT_DB);
+      plantId = plantKeys[Math.floor(seededUnit(mapId) * plantKeys.length)];
+    }
     const def = PLANT_DB[plantId];
+    if (!def) return;
     const now = gameMinutes();
     // Deterministic per-plant roll (seeded by world seed + map/event) so preset
     // gardens reproduce identically instead of randomizing on every fresh load.
@@ -1997,6 +2002,7 @@
     wateredToday: (rec) => wateredToday(rec),
     waterPlot: (mapId, eventId, by) => waterPlot(mapId, eventId, by),
     harvestPlotFor: (mapId, eventId) => harvestPlotFor(mapId, eventId),
+    maybeInitPresetPlant: (mapId, eventId) => maybeInitPresetPlant(mapId, eventId),
   };
 
 })();

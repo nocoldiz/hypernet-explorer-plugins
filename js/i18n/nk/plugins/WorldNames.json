@@ -95,14 +95,15 @@
     "holyvaticanempire": "HOLY VATICAN EMPIRE",
     "hypercapitalistcollective": "HYPERCAPITALIST COLLECTIVE",
     "kukulkanascendancy": "KUKULKAN ASCENDANCY",
-    "magesguild": "MAGES GUILD",
+    "magesguild": "WIZARD GUILD",
     "ottomanempire": "OTTOMAN EMPIRE",
     "sanmarinorepublic": "SAN MARINO REPUBLIC",
     "sovietunion": "SOVIET UNION",
     "thedargos": "DA DARGOS",
     "thegods": "DA GODS",
     "thetourists": "DA TOURISTS",
-    "ussr": "USSR"
+    "ussr": "USSR",
+    "wizardguild": "WIZARD GUILD"
   },
   "title": {
     "abbot": "ABBOT",

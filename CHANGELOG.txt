@@ -1,13 +1,35 @@
 
+0.8.10a
+Maps:
+ . Fixed and expanded maps in omega tower
+
+Added:
+ - remotely talk to NPCs and party members
+
+Changed:
+ - translate askbubba to italian from start since changed
+ - renamed mages guild to wizard guild and shoko asahara to father
+ - bubba talk command uses random topic from askbubba file
+ - reworked ask bubba modal in alphabetical order
+ - rewritten by hand ask Bubba text 
+ - reworked news with sidebar, bigger text and inventory system style
+ - start in dungeon second suggested scenario below train, train hides bologna
+ - playtest, Crowley and grimorie starts begin with 9999 KP
+ - plants initialized as sunflower get random seeded from map and world seed
+ - reselected Ghent and low-level maps encounters to level 1 to 5
+ - abilities in expression system ignore level gaps for damage and status
+
 0.8.9a
 
 Maps:
- - added missing maps to epo
+ - added missing maps to repo
 
 Added:
  - auto sync selector in categorized battle skills
 
 Changed:
+ - reselected name-thematic enemy encounters for maps 1414, 1415, 619, 593 and 635
+ - abilities in expression system ignore level gaps for damage and status
  - reworked army screen to use global css and fixed sprites
 
 0.8.8a

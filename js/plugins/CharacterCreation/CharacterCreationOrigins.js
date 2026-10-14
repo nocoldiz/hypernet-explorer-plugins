@@ -2126,8 +2126,8 @@
   // This is the ONE place that block is listed: the dossier reads it to draw
   // its two headings rather than keeping a second copy.
   const SUGGESTED_ORIGINS = [
-    "origin_train", "origin_camper", "origin_space", "origin_stranded",     // i18n-ignore  choice symbols
-    "origin_lot", "origin_dungeon", "origin_ceo", "origin_patron_vault",    // i18n-ignore  choice symbols
+    "origin_train", "origin_dungeon", "origin_camper", "origin_space",       // i18n-ignore  choice symbols
+    "origin_stranded", "origin_lot", "origin_ceo", "origin_patron_vault",    // i18n-ignore  choice symbols
     // The player's own scenario closes the suggested block.
     "origin_patron_star", "origin_custom",                                  // i18n-ignore  choice symbols
   ];

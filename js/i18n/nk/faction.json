@@ -1,7 +1,7 @@
 {
   "factions": {
     "magesguild": {
-      "name": "MAGES GUILD",
+      "name": "WIZARD GUILD",
       "description": "DA ANCIENT, BUREAUCRATIC INSTITUTION REGULATIN' DA USE OF MAGIC ACROSS DA CONTINENT. DEY VALUE ORDER, TRADITION, AN' PERMITS!",
       "troops": {
         "apprenticemage": {
@@ -1632,6 +1632,51 @@
         },
         "warboss": {
           "name": "HORDE WARBOSS"
+        }
+      }
+    },
+    "wizardguild": {
+      "name": "WIZARD GUILD",
+      "description": "DA ANCIENT, BUREAUCRATIC INSTITUTION REGULATIN' DA USE OF MAGIC ACROSS DA CONTINENT. DEY VALUE ORDER, TRADITION, AN' PERMITS!",
+      "troops": {
+        "apprenticemage": {
+          "name": "APPRENTICE MAGE"
+        },
+        "guildinitiate": {
+          "name": "GUILD INITIATE"
+        },
+        "guildwarden": {
+          "name": "GUILD WARDEN"
+        },
+        "certifiedmage": {
+          "name": "CERTIFIED MAGE"
+        },
+        "battlemage": {
+          "name": "BATTLE MAGE"
+        },
+        "guildenforcer": {
+          "name": "GUILD ENFORCER"
+        },
+        "mysticarcher": {
+          "name": "MYSTIC ARCHER"
+        },
+        "seniormagister": {
+          "name": "SENIOR MAGISTER"
+        },
+        "warwizard": {
+          "name": "WAR WIZARD"
+        },
+        "archmage": {
+          "name": "ARCHMAGE"
+        },
+        "spellsniper": {
+          "name": "SPELL SNIPER"
+        },
+        "grandmasterwizard": {
+          "name": "GRANDMASTER WIZARD"
+        },
+        "scientist": {
+          "name": "ARCANE RESEARCHER"
         }
       }
     }

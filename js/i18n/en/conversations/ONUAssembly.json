@@ -438,7 +438,7 @@
   },
   "guild": {
    "open": [
-    "The Mages' Guild is recognised. {leader} rises. {A second Guild delegate also rises|Two other Guild delegates also rise|The Guild's three chairs are all occupied and all disagreeing}.",
+    "The Wizard Guild is recognised. {leader} rises. {A second Guild delegate also rises|Two other Guild delegates also rise|The Guild's three chairs are all occupied and all disagreeing}.",
     "{leader}, for the Guild, {begins|is interrupted by his own delegation|speaks over his own delegation}.",
     "The Guild delegation {is called|argues briefly among itself|settles on a speaker}."
    ],

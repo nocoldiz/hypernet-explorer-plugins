@@ -25,8 +25,8 @@
       "description": "Every road in every world of the multiverse is, underneath, the same road. Bubba's [liminal engine | liminalEngine] compresses the stretch ahead of a vehicle, and calibrated right it opens onto the Encompassing Road itself, where an ordinary exit can lead to another place, another dimension, another time, or the [Scraps of Creation | scrapsOfCreation].\n\nThe road predates every driver on it. Trillions of years ago the concept of a road was born from the God of Asphalt, who paved the first one and became the first victim of a hit-and-run."
     },
     "magesGuild": {
-      "title": "The Mages Guild",
-      "description": "Founded in 950 BC by King Solomon, the Mages Guild kept the world's hidden balance for millennia, until [Margaret Thatcher | ladyThatcher] revealed magic to the whole planet, live, by using it in the [Falklands | falklandsWar]. In the early 1900s [Sir Aleister Crowley | aleisterCrowley] refounded it under the British royal house as a pseudo-chivalric order, which is why its leadership still carries Sir and Lady.\n\nBesides rebuilding lost technology with magic for the world's governments, the Guild exists to defend reality from what the [Squishing | squishing] lets in. Inside it is split into as many currents as there are schools of magic, but every major decision runs through the Three Pillars, who stand for past, present and future. In 2001 the seats belong to Sir Aleister Crowley, Lady Margaret Thatcher and 'the Father', [Shoko Asahara | shokoAsahara].\n\nA Pillar does not age while they hold the seat, and a term runs fifty years. Crowley has never stepped down, and nobody left in the Guild is in a position to make him."
+      "title": "The Wizard Guild",
+      "description": "Founded in 950 BC by King Solomon, the Wizard Guild kept the world's hidden balance for millennia, until [Margaret Thatcher | ladyThatcher] revealed magic to the whole planet, live, by using it in the [Falklands | falklandsWar]. In the early 1900s [Sir Aleister Crowley | aleisterCrowley] refounded it under the British royal house as a pseudo-chivalric order, which is why its leadership still carries Sir and Lady.\n\nBesides rebuilding lost technology with magic for the world's governments, the Guild exists to defend reality from what the [Squishing | squishing] lets in. Inside it is split into as many currents as there are schools of magic, but every major decision runs through the Three Pillars, who stand for past, present and future. In 2001 the seats belong to Sir Aleister Crowley, Lady Margaret Thatcher and [the Father | shokoAsahara].\n\nA Pillar does not age while they hold the seat, and a term runs fifty years. Crowley has never stepped down, and nobody left in the Guild is in a position to make him."
     },
     "hypercapitalistCollective": {
       "title": "Hypercapitalist Collective",
@@ -34,7 +34,7 @@
     },
     "emTheMemoryWitch": {
       "title": "Em, the Memory Witch",
-      "description": "Em was born in 1984 in [Wimbledon | topicWimbledon], Britannia. She wanted to be a witch at a time when magic was only a fairy tale.\n\n[Margaret Thatcher | ladyThatcher], secretly a power in the [Mages Guild | magesGuild], chose her as the focus of the [Solomon Ritual | solomonRitual]. The price was 92% of her memories. They were forged into the Spear of Memory, the weapon that killed the Father aspect of [YHWH | topicYHWH].\n\nEm woke up alone on Ritual Island on 1 January 2001. She has no past she can reach, and a power she is still learning to control. Now she travels with Bubba in the [camper | topicCamper] they share, heading to Beagle for a meeting she barely remembers agreeing to."
+      "description": "Em was born in 1984 in [Wimbledon | topicWimbledon], Britannia. She wanted to be a witch at a time when magic was only a fairy tale.\n\n[Margaret Thatcher | ladyThatcher], secretly a power in the [Wizard Guild | magesGuild], chose her as the focus of the [Solomon Ritual | solomonRitual]. The price was 92% of her memories. They were forged into the Spear of Memory, the weapon that killed the Father aspect of [YHWH | topicYHWH].\n\nEm woke up alone on Ritual Island on 1 January 2001. She has no past she can reach, and a power she is still learning to control. Now she travels with Bubba in the [camper | topicCamper] they share, heading to Beagle for a meeting she barely remembers agreeing to."
     },
     "camelcaseMagic": {
       "title": "CamelCase Magic",
@@ -54,7 +54,7 @@
     },
     "theGods": {
       "title": "The Gods",
-      "description": "The gods are at open war with the [Mages Guild | magesGuild], whom they suspect of preparing another [Solomon Ritual | solomonRitual]. A god exists in proportion to how many people still believe in it, which is why so few from antiquity are left.\n\nA god that dies of neglect turns to stone and falls into the [White Desert | topicWhiteDesert], and nobody minds. Deicide is different: the body stays anchored to physical reality and rots, with the consciousness still awake inside it. [Maat | maat] is one recent case, pierced by the [Omega Tower | omegaTower] and buried hundreds of kilometres down. The Father aspect of [YHWH | topicYHWH] is another: his body still orbits the Earth in the debris the [Kessler Syndrome | kesslerSyndrome] set loose. Every impact knocks another piece off the corpse, and it is those pieces that fall. Whoever touches one takes a share of his power, enough to grant abilities to someone who cannot cast a spell."
+      "description": "The gods are at open war with the [Wizard Guild | magesGuild], whom they suspect of preparing another [Solomon Ritual | solomonRitual]. A god exists in proportion to how many people still believe in it, which is why so few from antiquity are left.\n\nA god that dies of neglect turns to stone and falls into the [White Desert | topicWhiteDesert], and nobody minds. Deicide is different: the body stays anchored to physical reality and rots, with the consciousness still awake inside it. [Maat | maat] is one recent case, pierced by the [Omega Tower | omegaTower] and buried hundreds of kilometres down. The Father aspect of [YHWH | topicYHWH] is another: his body still orbits the Earth in the debris the [Kessler Syndrome | kesslerSyndrome] set loose. Every impact knocks another piece off the corpse, and it is those pieces that fall. Whoever touches one takes a share of his power, enough to grant abilities to someone who cannot cast a spell."
     },
     "scrapsOfCreation": {
       "title": "The Scraps of Creation",
@@ -102,7 +102,7 @@
     },
     "magamui": {
       "title": "Magamui",
-      "description": "An alien larva a quarter the size of the Moon, wrapped around the Earth's core for millions of years, feeding on the heat and electromagnetism it produces.\n\nDormant as it is, it can still take mental control of one person at a time, mostly to keep itself safe. There is reason to think that would extend to the whole human population at full maturity, and that its leaving the Earth would be catastrophic.\n\nPart of the [Mages Guild | magesGuild]'s job is finding whoever is currently under its control and killing them, since taking a new host costs Magamui time it would rather not spend."
+      "description": "An alien larva a quarter the size of the Moon, wrapped around the Earth's core for millions of years, feeding on the heat and electromagnetism it produces.\n\nDormant as it is, it can still take mental control of one person at a time, mostly to keep itself safe. There is reason to think that would extend to the whole human population at full maturity, and that its leaving the Earth would be catastrophic.\n\nPart of the [Wizard Guild | magesGuild]'s job is finding whoever is currently under its control and killing them, since taking a new host costs Magamui time it would rather not spend."
     },
     "invertedCitadel": {
       "title": "The Inverted Citadel",
@@ -122,7 +122,7 @@
     },
     "solomonRitual": {
       "title": "The Solomon Ritual",
-      "description": "A rite that lasts a whole night. It needs the Three Pillars of the [Mages Guild | magesGuild], one sacrifice, and seven artifacts of great historical or magical weight. Each artifact used loses all its power. The power it never spent can be turned into a [theonuclear device | theonuclearBombingNewYork].\n\nIt was last performed on the night of 31 December 2000. Six of the seven artifacts are known: the Iron Crown of the Holy Roman Emperors, the Spear of Longinus, the Norse sword Tyrfing, clay from the Golem of Prague, the dragon clasp of Xia, and a Neolithic bone horn.\n\nThe ritual rewrites the rules of magic in its dimension. It can make magic easy for anyone, limit it to a chosen few, or switch it off. Magic stayed a fairy tale for centuries because so few could use it. [Crowley | aleisterCrowley] found the ritual again in the early 1900s and quietly opened magic to everyone.\n\nThe 2001 ritual had another goal. It drained the memories and the future of [Em | emTheMemoryWitch], who volunteered as the sacrifice, and forged them into a spear that could kill the Father aspect of [YHWH | topicYHWH]. Em survived. She lost 92% of her memories, and came out far more powerful than before. Nobody knows why.\n\nSmaller versions use one artifact instead of seven. Their effects fade, and the caster risks death or memory loss every time."
+      "description": "A rite that lasts a whole night. It needs the Three Pillars of the [Wizard Guild | magesGuild], one sacrifice, and seven artifacts of great historical or magical weight. Each artifact used loses all its power. The power it never spent can be turned into a [theonuclear device | theonuclearBombingNewYork].\n\nIt was last performed on the night of 31 December 2000. Six of the seven artifacts are known: the Iron Crown of the Holy Roman Emperors, the Spear of Longinus, the Norse sword Tyrfing, clay from the Golem of Prague, the dragon clasp of Xia, and a Neolithic bone horn.\n\nThe ritual rewrites the rules of magic in its dimension. It can make magic easy for anyone, limit it to a chosen few, or switch it off. Magic stayed a fairy tale for centuries because so few could use it. [Crowley | aleisterCrowley] found the ritual again in the early 1900s and quietly opened magic to everyone.\n\nThe 2001 ritual had another goal. It drained the memories and the future of [Em | emTheMemoryWitch], who volunteered as the sacrifice, and forged them into a spear that could kill the Father aspect of [YHWH | topicYHWH]. Em survived. She lost 92% of her memories, and came out far more powerful than before. Nobody knows why.\n\nSmaller versions use one artifact instead of seven. Their effects fade, and the caster risks death or memory loss every time."
     },
     "fantablack": {
       "title": "Fantablack",
@@ -150,15 +150,15 @@
     },
     "ladyThatcher": {
       "title": "Lady Margaret Thatcher",
-      "description": "Prime Minister of [Britannia | topicBritannia], and the pillar of the present in the [Mages Guild | magesGuild]. She was deep inside the Guild long before the [Falklands War | falklandsWar], where she drowned the Argentine fleet with [Okeanus | okeanus] in front of the cameras.\n\nWhen the Guild needed someone to sacrifice in the [Solomon Ritual | solomonRitual], she picked [Em | emTheMemoryWitch]. She had taken the girl in years before and taught her real magic. All along she was shaping Em for the ritual.\n\nThings did not go to plan. Em lost ninety-two percent of her memories but came out far more powerful than before, and learned metamagic on her own. Thatcher now watches her old student with unease."
+      "description": "Prime Minister of [Britannia | topicBritannia], and the pillar of the present in the [Wizard Guild | magesGuild]. She was deep inside the Guild long before the [Falklands War | falklandsWar], where she drowned the Argentine fleet with [Okeanus | okeanus] in front of the cameras.\n\nWhen the Guild needed someone to sacrifice in the [Solomon Ritual | solomonRitual], she picked [Em | emTheMemoryWitch]. She had taken the girl in years before and taught her real magic. All along she was shaping Em for the ritual.\n\nThings did not go to plan. Em lost ninety-two percent of her memories but came out far more powerful than before, and learned metamagic on her own. Thatcher now watches her old student with unease."
     },
     "aleisterCrowley": {
       "title": "Sir Aleister Crowley",
-      "description": "Crowley refounded the [Mages Guild | magesGuild] in the early 1900s as a knightly order, backed by the royal house of [Britannia | topicBritannia]. That is why its leaders are still called Sir and Lady. He has held the seat of the past ever since and refuses to step down. Nobody can make him. He knows spells even the gods have never heard of.\n\nIn April 1900 he tried to seize the Golden Dawn's vault by force and was thrown down the stairs at [Blythe Road | blytheRoadBattle]. What he called up afterwards has been redacted from every record.\n\nIn 1918 he summoned Lam, one of the [Tourists | theTourists]. The spell only worked one way, and Lam is still stuck on Earth.\n\nA pillar does not age, but Crowley's body is wearing out anyway. Everyone knows he needs a new one, and nobody knows what he plans to become."
+      "description": "Crowley refounded the [Wizard Guild | magesGuild] in the early 1900s as a knightly order, backed by the royal house of [Britannia | topicBritannia]. That is why its leaders are still called Sir and Lady. He has held the seat of the past ever since and refuses to step down. Nobody can make him. He knows spells even the gods have never heard of.\n\nIn April 1900 he tried to seize the Golden Dawn's vault by force and was thrown down the stairs at [Blythe Road | blytheRoadBattle]. What he called up afterwards has been redacted from every record.\n\nIn 1918 he summoned Lam, one of the [Tourists | theTourists]. The spell only worked one way, and Lam is still stuck on Earth.\n\nA pillar does not age, but Crowley's body is wearing out anyway. Everyone knows he needs a new one, and nobody knows what he plans to become."
     },
     "shokoAsahara": {
-      "title": "The Father, Shoko Asahara",
-      "description": "One of the three pillars of the [Mages Guild | magesGuild]: he holds the seat of the future. Before that he led a cult behind one of the deadliest terror attacks in living memory.\n\nInside the Guild he is known as a master of levitation. Nobody doubts his power, only his methods.\n\nHis seat is the Guild's most disputed choice. Nobody outside the inner circle knows why a mass murderer was given a say over the future of magic. [Crowley | aleisterCrowley] despises him and does not hide it."
+      "title": "The Father",
+      "description": "One of the three pillars of the [Wizard Guild | magesGuild]: he holds the seat of the future. Before that he led a cult behind one of the deadliest terror attacks in living memory.\n\nInside the Guild he is known as a master of levitation. Nobody doubts his power, only his methods.\n\nHis seat is the Guild's most disputed choice. Nobody outside the inner circle knows why a mass murderer was given a say over the future of magic. [Crowley | aleisterCrowley] despises him and does not hide it."
     },
     "blytheRoadBattle": {
       "title": "The Battle of Blythe Road",
@@ -266,7 +266,7 @@
     },
     "topicBritannia": {
       "title": "Britannia",
-      "description": "The successor to the British Empire, a parliamentary monarchy with [Margaret Thatcher | ladyThatcher] as Prime Minister.\n\nIts royal house backed [Sir Aleister Crowley | aleisterCrowley] when he refounded the [Mages Guild | magesGuild] as a knightly order in the early 1900s. That is where the Guild's Sir and Lady still come from.\n\nAcross the ocean it holds the Cascadia Protectorate on the west coast of [the three Americas | threeAmericas], and the Eastern Seaboard is aligned with it."
+      "description": "The successor to the British Empire, a parliamentary monarchy with [Margaret Thatcher | ladyThatcher] as Prime Minister.\n\nIts royal house backed [Sir Aleister Crowley | aleisterCrowley] when he refounded the [Wizard Guild | magesGuild] as a knightly order in the early 1900s. That is where the Guild's Sir and Lady still come from.\n\nAcross the ocean it holds the Cascadia Protectorate on the west coast of [the three Americas | threeAmericas], and the Eastern Seaboard is aligned with it."
     },
     "topicBuildMenu": {
       "title": "Build",
@@ -403,14 +403,6 @@
     "topicFriday": {
       "title": "Friday",
       "description": "The day of the week [Em | emTheMemoryWitch] forgot for months, after one of her [spell fusions | progressFusion] went wrong. It was one of the small memories she lost long before the big one.\n\nFriday is odd in the sky too. On a Friday, Earth has three moons on the [star map | galaxyOverview] instead of one."
-    },
-    "topicMahyem": {
-      "title": "Mahyem",
-      "description": "A black metal band out of Norway that the [Naguka | naguka] goblin hordes worship as literal [gods | theGods]. Belief keeps them alive: every government on the planet has tried to kill them and none has managed it. Their music steers the [goblin collective unconscious | goblinHorde], and the hordes marching down through Scandinavia into Europe march to it."
-    },
-    "topicEuronymous": {
-      "title": "Euronymous",
-      "description": "The member of [Mahyem | topicMahyem] who survived Varg's knife. The brain trauma left him with acquired savant syndrome and one of the most powerful psionic minds alive. He walked away from the stage while the rest of the band went on living as gods, and nobody knows where he is now."
     },
     "topicTritunnelWest": {
       "title": "Tritunnel West",

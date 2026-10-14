@@ -673,7 +673,7 @@
       "Qui mi chiamano 'straniero', 'visitatore', 'alieno'. Tutte e tre le parole sono vere. Mi piacciono tutte.",
       "I vicini mi hanno portato {una lasagna|uno sformato|una torta} quando ho traslocato. È un trattato?",
       "Ho nostalgia di un posto che non ha mai avuto un tramonto così. Che confusione.",
-      "La Gilda dei Maghi mi ha mandato una lettera cortese per il visto. Con sigillo di ceralacca. L'ho incorniciata.",
+      "La Gilda degli Stregoni mi ha mandato una lettera cortese per il visto. Con sigillo di ceralacca. L'ho incorniciata.",
       "Gli umani vivono così poco e sono così indaffarati. Ogni loro pomeriggio è prezioso. Cerco di non sprecarlo.",
       "Ho provato a spiegare il viaggio superluminale a un tassista. Lui mi ha spiegato i sensi unici. Ha vinto lui.",
       "La mia guida è del 1999 ed è già vecchia. Il vostro mondo corre così in fretta.",
@@ -730,7 +730,7 @@
         "I rottami del nostro specchio sono ancora lassù a catturare la luce. Un brillantino molto costoso.",
         "Gli umani lanciano razzi fatti di corazza per passare. Un'idea coraggiosissima. La ammiriamo da sotto.",
         "Potremmo trascinare i detriti nel Sole, ma i calcoli per tanti pezzi ci fanno male alla testa. Alla testona.",
-        "Abbiamo chiesto alla Gilda dei Maghi un incantesimo di pulizia. Ci hanno chiesto come si scrive. Nessuno lo sapeva.",
+        "Abbiamo chiesto alla Gilda degli Stregoni un incantesimo di pulizia. Ci hanno chiesto come si scrive. Nessuno lo sapeva.",
         "Una notte un satellite rotto è caduto davanti alla mia finestra. L'ho fotografato. Sfocato. Come tutte le mie migliori.",
         "I detriti girano velocissimi. Più di ottanta, molto di più. Anche il cielo ha un problema di velocità.",
         "I nostri ingegneri hanno fatto una rete per i detriti. I detriti hanno fatto tanti piccoli buchi nella rete.",
@@ -809,7 +809,7 @@
         "Alcuni umani dicono che rapiamo la gente. Sono quelli di Titania. Noi chiediamo solo le indicazioni con gentilezza.",
         "I Dargos ci fanno fare brutta figura. Noi portiamo cartoline. Loro scherzi. Per favore distingueteci.",
         "Prima del 1999 abbiamo studiato come salutarvi. Il piano finale era 'un bel biscotto'.",
-        "La Gilda dei Maghi ha accolto i nostri primi diplomatici con molta formalità. I diplomatici hanno portato una torta. È andata bene.",
+        "La Gilda degli Stregoni ha accolto i nostri primi diplomatici con molta formalità. I diplomatici hanno portato una torta. È andata bene.",
         "Nel 1975 una studiosa ha visto la vostra prima trasmissione ed è caduta dalla sedia. Chiamiamo quel giorno 'la Caduta'.",
         "Siamo venuti in visita, con le migliori intenzioni. Forse per sempre. È permesso?",
         "I vecchi film umani ci mostrano mentre invadiamo. Li abbiamo guardati inorriditi. Poi abbiamo comprato i seguiti.",
@@ -2191,7 +2191,7 @@
           ],
           [
             1,
-            "Dillo alla Gilda dei Maghi. Ti trasformano in un tritone."
+            "Dillo alla Gilda degli Stregoni. Ti trasformano in un tritone."
           ],
           [
             0,

@@ -144,7 +144,7 @@
       "Shop lady gave me the big bag without asking. Respect.",
       "Every chair I sit on makes a noise. Every single one.",
       "My face is just like this. Grumpy comes as standard.",
-      "Saw a Mages' Guild poster. Lot of BIG-HEADS. Big brains, I mean.",
+      "Saw a Wizard Guild poster. Lot of BIG-HEADS. Big brains, I mean.",
       "Somebody owes me {five euros|a beer|an apology}. I remember.",
       "Hands smell of {engine oil|onions|soap}. Could be worse.",
       "Mirror says I need a haircut. Barber says he needs a bigger chair.",
@@ -670,7 +670,7 @@
       "Human food's too small and too clean. Getting used to it.",
       "They said I'd never fit in. Fit in fine. Don't fit the buses.",
       "Got a pension plan. Goblins would laugh themselves sick.",
-      "Mages' Guild man asked to study my hearing. Said no. Polite no.",
+      "Wizard Guild man asked to study my hearing. Said no. Polite no.",
       "Town's quiet. Head's quiet. Strange, quiet.",
       "Bus driver waits for me now. Knows I run late.",
       "Corner pub's got a stool with my name on it. Reinforced.",
@@ -817,7 +817,7 @@
         "Bits of other worlds falling into ours. Found a {blue rock|weird fish|hat} in the park.",
         "Squishing started in 1992. Things got weird. Weirder. Still here.",
         "Ran too fast chasing a bus. Nearly got looped. Walk now.",
-        "Mages' Guild says they've got the Squishing in hand. Hand's shaking.",
+        "Wizard Guild says they've got the Squishing in hand. Hand's shaking.",
         "Green Fields got squished bad. Verden came here. Nice folk. Odd eggs.",
         "Lava's harmless now. Drains your magic. Still not stepping in it.",
         "Old map, new roads. Squishing moves things round.",
@@ -2079,7 +2079,7 @@
         "lines": [
           [
             0,
-            "The Mages' Guild talks big and does nothing."
+            "The Wizard Guild talks big and does nothing."
           ],
           [
             1,

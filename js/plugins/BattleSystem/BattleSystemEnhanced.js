@@ -1054,6 +1054,7 @@
      */
     function levelGapRulesApply() {
         if ($gameSystem && $gameSystem._isSandboxMode) return false;
+        if (window.Expression && typeof window.Expression.isExecuting === 'function' && window.Expression.isExecuting()) return false;
         const leader = $gameParty && $gameParty.leader ? $gameParty.leader() : null;
         if (leader && leader.name() === "Test") return false; // i18n-ignore: playtest character name
         return true;

@@ -160,6 +160,8 @@
     "archive": "Archive",
     "close": "Close",
     "allPapers": "All papers",
+    "papers": "Papers",
+    "articles": "Articles",
     "edition": "{weekday}, {date}",
     "noEdition": "No paper reached the newsstand on this day.",
     "byline": "By {name}",
@@ -242,7 +244,7 @@
           "skeptical": [
             "Organisers in {location} speak of a record year, but the numbers they publish keep changing. The first press release mentioned {thousands} visitors; a second one, issued an hour later, quietly raised the figure.\n\nThe council has not said how much it is spending. Independent counts from previous editions, including the tallies kept by the [Archive Foundation], suggest attendance rarely matches the promises printed on the posters.",
             "The festival is billed as a boost for shops and restaurants in {location}. No study has yet measured whether that boost outlasts the week itself.\n\nLocal traders we spoke to were divided. Several said takings rose; others said regular customers simply stayed home. The [Hypercapitalist Collective], a main sponsor, has kept its own sales figures private.",
-            "A protective ward over the main stage, sold to the council by a self-described member of the [Mages Guild], is said to keep rain away all week.\n\nThe Guild has no record of the contract. Meteorologists note that the forecast was dry anyway. We will report the weather, and the invoice, when both arrive."
+            "A protective ward over the main stage, sold to the council by a self-described member of the [Wizard Guild], is said to keep rain away all week.\n\nThe Guild has no record of the contract. Meteorologists note that the forecast was dry anyway. We will report the weather, and the invoice, when both arrive."
           ],
           "playful": [
             "The bunting is up, the food stalls are smoking and somebody has already lost a shoe in the fountain. {location} is in festival mode, and the town has decided that work can wait until next week.\n\nVisitors are advised to bring comfortable shoes, a good appetite and patience for the brass band that plays every hour, whether anyone asked or not. Latecomers will find a [broomstick] rack by the town hall.",
@@ -350,7 +352,7 @@
             "Archaeologists confirm a {discovery} beneath {location}",
             "Archive Foundation catalogues a {discovery} found outside {location}",
             "{discovery} unearthed during roadworks in {location}, site sealed for study",
-            "Mages Guild sends scholars to examine {location} {discovery}",
+            "Wizard Guild sends scholars to examine {location} {discovery}",
             "{location} museum to display {discovery} from next month"
           ],
           "scandalous": [
@@ -381,12 +383,12 @@
         "bodies": {
           "serious": [
             "Work on the site near {location} was suspended after workers reported an unusual find. A team from the regional university arrived the same afternoon and confirmed its significance.\n\nThe [Archive Foundation] has registered the discovery and will publish photographs and a preliminary report. The area will remain closed while specialists record the layers around it, a process expected to take {number} weeks.",
-            "Scholars from the [Mages Guild] and the national heritage office are examining the find outside {location}. Early tests suggest the area once sat on an active [leyline], which may explain its remarkable state of preservation.\n\nThe municipality has asked visitors to stay away from the excavation until it is secured.",
+            "Scholars from the [Wizard Guild] and the national heritage office are examining the find outside {location}. Early tests suggest the area once sat on an active [leyline], which may explain its remarkable state of preservation.\n\nThe municipality has asked visitors to stay away from the excavation until it is secured.",
             "Officials in {location} described the discovery as one of the most important in the region since the [Y2K Event]. Funding for further excavation has been requested from the regional government.\n\nLocal hoteliers have already reported an increase in bookings, and the town museum is preparing a temporary room for the first objects to be cleaned and catalogued."
           ],
           "scandalous": [
-            "Jackpot! What started as an ordinary Tuesday in {location} ended with diggers dropping their shovels and shouting for help.\n\nNow everybody wants a piece of it. The [Holy Vatican Empire] says it is holy. The [Mages Guild] says it is magical. The farmer who owns the field says it is his, and frankly we are on the farmer's side!",
-            "Spooky goings-on at the dig! Two workmen in {location} swear their torches died the moment the find was uncovered, and one says he heard whispering.\n\nIs it cursed? Experts laugh at the idea, and so does the [Mages Guild], but we notice none of them volunteered for the night shift. Our reporter tried to get close and was chased off by a very rude archaeologist.",
+            "Jackpot! What started as an ordinary Tuesday in {location} ended with diggers dropping their shovels and shouting for help.\n\nNow everybody wants a piece of it. The [Holy Vatican Empire] says it is holy. The [Wizard Guild] says it is magical. The farmer who owns the field says it is his, and frankly we are on the farmer's side!",
+            "Spooky goings-on at the dig! Two workmen in {location} swear their torches died the moment the find was uncovered, and one says he heard whispering.\n\nIs it cursed? Experts laugh at the idea, and so does the [Wizard Guild], but we notice none of them volunteered for the night shift. Our reporter tried to get close and was chased off by a very rude archaeologist.",
             "Forget the lottery: the field outside {location} might be the richest square metre in Europe! Collectors are already circling, and one of the [Hypercapitalists] is said to have flown in with a blank cheque.\n\nThe council insists the find belongs to the public. We will believe it when we see it in a museum and not in a private vault."
           ],
           "skeptical": [
@@ -532,7 +534,7 @@
         "bodies": {
           "serious": [
             "Wildlife officers confirmed several sightings in the countryside near {location} over the past month, the first verified records in the area for many years.\n\nThey attribute the recovery to restored wetlands and to the end of illegal tapping of the local [leyline], which had disturbed breeding grounds. The municipality has asked walkers to keep dogs on a lead.",
-            "Surveyors from the [Mages Guild] reported that the leyline running beneath {location} has fully recovered after years of damage. Ordinary spellcasting in the area is again possible.\n\nFarmers have reported healthier harvests, and the regional authority has added the site to its list of protected landscapes. Monitoring will continue for at least {number} months.",
+            "Surveyors from the [Wizard Guild] reported that the leyline running beneath {location} has fully recovered after years of damage. Ordinary spellcasting in the area is again possible.\n\nFarmers have reported healthier harvests, and the regional authority has added the site to its list of protected landscapes. Monitoring will continue for at least {number} months.",
             "Laboratory tests carried out over the winter found the public water supply of {location} entirely clean, with none of the additives common to supplies bought from the [Hypercapitalist Collective].\n\nThe municipality credits its new filtration plant and a spring that was only recently mapped. Officials expect the result to attract families and new businesses."
           ],
           "scandalous": [
@@ -609,22 +611,22 @@
         "bodies": {
           "serious": [
             "Emergency services in {location} worked through the night to reach residents cut off by the disaster. Officials confirmed that {hundreds} people have been moved to temporary shelters in schools and sports halls.\n\nThe [Archive Foundation] has opened a public register of missing persons. Road access remains limited, and drivers are asked to stay away from the area while engineers inspect bridges and power lines.",
-            "The regional government has declared a state of emergency in {location}. Teams from the [Mages Guild] are assisting the fire brigade, although damage to the local [leyline] has weakened their spells.\n\nThe priority remains the search for survivors. Donations are being collected at town halls across the region, and the [Truckers Society] has offered its convoys for relief supplies.",
+            "The regional government has declared a state of emergency in {location}. Teams from the [Wizard Guild] are assisting the fire brigade, although damage to the local [leyline] has weakened their spells.\n\nThe priority remains the search for survivors. Donations are being collected at town halls across the region, and the [Truckers Society] has offered its convoys for relief supplies.",
             "As the situation in {location} stabilises, the scale of the damage is becoming clear. Several districts are without power and drinking water, and authorities estimate that repairs will take months.\n\nOfficials said that the growing number of [time loop bubbles] nearby had complicated the evacuation, since rescue vehicles were forced to keep below the safe speed."
           ],
           "scandalous": [
-            "A night of terror! Shocked residents of {location} told our reporters how they fled their homes with nothing but their nightclothes as disaster struck without warning.\n\n\"I've never seen anything like it,\" sobbed one mother clutching her children. Our thoughts are with every family. But questions must be asked: where were the expensive [Mages Guild] wards the council paid for?",
+            "A night of terror! Shocked residents of {location} told our reporters how they fled their homes with nothing but their nightclothes as disaster struck without warning.\n\n\"I've never seen anything like it,\" sobbed one mother clutching her children. Our thoughts are with every family. But questions must be asked: where were the expensive [Wizard Guild] wards the council paid for?",
             "HEROES! While officials dithered, ordinary folk in {location} rolled up their sleeves. A plumber, a schoolteacher and a dishwasher from the [Goblin Horde] pulled {number} people from the wreckage with their bare hands.\n\nThe town is in mourning for those who were lost, but it is also proud. The council says it will hold an inquiry. We say: start by giving these heroes a medal.",
             "Who is to blame? Some in {location} point at [Eris], whose famous chaos seems to strike hardest where justice is weakest. Others blame landlords who cut corners on repairs.\n\nInsurance companies, meanwhile, are already muttering about 'acts of gods' to avoid paying out. We will be watching every claim, and we will name every company that leaves victims in the cold."
           ],
           "skeptical": [
             "A report delivered to the council of {location} last year warned that the area was at serious risk. Our reporters have seen a copy. Its recommendations were not carried out, and its cost estimates were never discussed.\n\nNone of this lessens the grief of the families affected. It does raise the question of how many other warnings sit unread in municipal drawers. The [Archive Foundation] has been asked to publish them.",
             "Officials in {location} attribute the disaster to the expanding [time loop bubbles] nearby. Scientists consulted by this paper say the link is plausible but unproven, and that ordinary weather would explain most of what happened.\n\nThe distinction matters. Blaming the [Squishing] places the event beyond anyone's responsibility; blaming poor drainage does not.",
-            "Protective wards sold to households in {location} for {amount} euros each did not prevent any damage, according to residents. The sellers claimed membership of the [Mages Guild], which says it has never heard of them.\n\nVictims hoping for refunds should keep their receipts. Most of the sellers' addresses, we found, belong to empty shops."
+            "Protective wards sold to households in {location} for {amount} euros each did not prevent any damage, according to residents. The sellers claimed membership of the [Wizard Guild], which says it has never heard of them.\n\nVictims hoping for refunds should keep their receipts. Most of the sellers' addresses, we found, belong to empty shops."
           ],
           "playful": [
             "It has been a terrible few days in {location}, but the town has decided to face it the way it faces everything: together, with plenty of tea. Volunteers have turned the parish hall into a shelter, a canteen and an impromptu lost-and-found for pets.\n\nThe [Truckers Society] arrived at dawn with blankets and soup, and refused to take a single euro.",
-            "Nobody in {location} will forget this week, but many will remember it for the kindness as much as the damage. Strangers shared beds, sandwiches and dry socks; a local choir sang in the shelter until the children fell asleep.\n\nCleanup will take time. The town has made a rota, a list and a large pot of stew. A [Mages Guild] apprentice is drying carpets with a spell.",
+            "Nobody in {location} will forget this week, but many will remember it for the kindness as much as the damage. Strangers shared beds, sandwiches and dry socks; a local choir sang in the shelter until the children fell asleep.\n\nCleanup will take time. The town has made a rota, a list and a large pot of stew. A [Wizard Guild] apprentice is drying carpets with a spell.",
             "The mud is slowly leaving {location}, one wheelbarrow at a time. Schoolchildren have painted cheerful signs for the rescue workers, and the bakery is giving away bread to anyone holding a shovel.\n\nThe mayor thanked everyone, then rolled up his trousers and joined in. The [Archive Foundation] has promised to remember every volunteer by name, which will take some time."
           ]
         },
@@ -818,7 +820,7 @@
         "bodies": {
           "serious": [
             "Public transport across {location} has been suspended after workers on the [Hypermetro train] network walked out over pay and safety conditions. The operator said that only emergency services would run.\n\nUnion representatives cited repeated incidents near [time loop bubbles] along the outer lines. Talks are scheduled for later this week, and commuters are advised to plan alternative journeys.",
-            "Large parts of {location} remained without electricity overnight after a fault on the [leyline] that feeds the municipal power station. Hospitals switched to reserve generators.\n\nEngineers from the [Mages Guild] are on site. Officials said full service could take {number} days to restore, and asked residents to limit use of heating and lighting.",
+            "Large parts of {location} remained without electricity overnight after a fault on the [leyline] that feeds the municipal power station. Hospitals switched to reserve generators.\n\nEngineers from the [Wizard Guild] are on site. Officials said full service could take {number} days to restore, and asked residents to limit use of heating and lighting.",
             "The [Hypercapitalist Collective] has ended its supply of clean water to {location} following a dispute over payment terms. The municipality has introduced rationing and opened distribution points in each district.\n\nThe mayor said negotiations would continue. In the meantime, residents are reminded that untreated supplies may contain additives and should be boiled or avoided."
           ],
           "scandalous": [
@@ -832,7 +834,7 @@
             "The new transport depot in {location} has been closed after it began drifting in and out of a [time loop bubble]. The bubble was marked on regional maps two years before construction started.\n\nThe planning office says it relied on an older survey. The [Archive Foundation] has published both maps, side by side, for anyone who wants to compare."
           ],
           "playful": [
-            "The lights went out in {location} on Thursday night, and something unexpected happened: people knocked on each other's doors. Board games came out of attics, candles came out of drawers and the old couple on the corner taught the street to play cards.\n\nPower is coming back slowly. Some residents say they are in no hurry. The [Mages Guild] apprentices are working on it.",
+            "The lights went out in {location} on Thursday night, and something unexpected happened: people knocked on each other's doors. Board games came out of attics, candles came out of drawers and the old couple on the corner taught the street to play cards.\n\nPower is coming back slowly. Some residents say they are in no hurry. The [Wizard Guild] apprentices are working on it.",
             "With the [Hypermetro train] on strike, {location} has taken to its bicycles, scooters and, in one case, a horse. Traffic has been slow but friendly, and the cafes along the main road are delighted.\n\nCommuters report sore knees and improved moods. The strike is expected to end soon, which some are calling a mixed blessing.",
             "The bridge is closed, and so the town of {location} has turned to an old ferryman who has rowed the river for forty years with hardly any customers. This week he has had {hundreds}.\n\nHe charges one euro, tells a story with every crossing and keeps an [Anoki phone] in his coat pocket \"for luck\". He says the bridge can stay closed as long as it likes."
           ]
@@ -876,7 +878,7 @@
         },
         "bodies": {
           "serious": [
-            "The regional health authority has confirmed a rise in cases in {location} and asked residents with symptoms to stay at home and contact their doctor before visiting a clinic.\n\nHospitals have postponed non-urgent procedures. Specialists from the [Mages Guild] are assisting with diagnosis, since several patients live near a disturbed [leyline]. Officials stressed that most cases are mild.",
+            "The regional health authority has confirmed a rise in cases in {location} and asked residents with symptoms to stay at home and contact their doctor before visiting a clinic.\n\nHospitals have postponed non-urgent procedures. Specialists from the [Wizard Guild] are assisting with diagnosis, since several patients live near a disturbed [leyline]. Officials stressed that most cases are mild.",
             "Pharmacies in {location} have reported shortages of common medicines, including antibiotics and fever treatments. The health authority said deliveries had been delayed by the [Rule of 80], which slows every supply convoy on the regional roads.\n\nThe [Truckers Society] has offered extra runs. Patients are asked not to stockpile and to buy only what they need.",
             "Health officials have advised residents of {location} not to drink tap water until further notice, after tests found contamination in part of the network. Bottled water is being distributed at {number} points across the town.\n\nThe source has not yet been identified. The [Archive Foundation] will publish laboratory results as soon as they are received."
           ],
@@ -888,12 +890,12 @@
           "skeptical": [
             "Reported cases in {location} have risen sharply this month. So has the number of tests carried out, which tripled after the clinic received new equipment.\n\nMore testing finds more cases; it does not necessarily mean more illness. Hospital admissions, a better measure of severity, have risen only slightly. The [Archive Foundation] publishes both figures, and both deserve reading.",
             "Local officials have linked the outbreak in {location} to disturbances in the nearby [leyline]. A municipal report on the condition of the town's sewers, completed last spring and never discussed by the council, may offer a simpler explanation.\n\nMagic makes a dramatic headline. Broken pipes make a cheaper one, and possibly a more accurate one.",
-            "Tinfoil headgear is being sold in {location} as protection against thought-transmitted disease. The practice is old and the folk belief is widespread, but no controlled study has measured whether it works.\n\nDoctors consulted by this paper describe the current illness as an ordinary infection. They recommend rest, fluids and washing hands. The [Mages Guild] declined to comment on hats."
+            "Tinfoil headgear is being sold in {location} as protection against thought-transmitted disease. The practice is old and the folk belief is widespread, but no controlled study has measured whether it works.\n\nDoctors consulted by this paper describe the current illness as an ordinary infection. They recommend rest, fluids and washing hands. The [Wizard Guild] declined to comment on hats."
           ],
           "playful": [
             "It's that time of year again in {location}: noses are red, scarves are wrapped tight and every kitchen smells of chicken soup. The local pharmacy has run out of tissues and is now offering sympathy and peppermints.\n\nDoctors advise rest, warm drinks and patience. The [Truckers Society] has promised to deliver lemons to anyone who asks nicely.",
             "The grandmothers of {location} have taken matters into their own hands. Their famous broth, a recipe some say is older than the [Holy Vatican Empire], is being delivered in pots to every house with a cough.\n\nThe doctors say it can't hurt. The patients say it helps. The grandmothers say nobody asked them, and keep stirring.",
-            "With half of {location} at home under blankets, the town has gone very quiet. The cats are delighted with the company, the postman has no one to chat to and the cafe is selling more tea than coffee for the first time in its history.\n\nEveryone is expected back on their feet soon. Until then, a [Mages Guild] apprentice is reading bedtime stories over the [Anoki phones]."
+            "With half of {location} at home under blankets, the town has gone very quiet. The cats are delighted with the company, the postman has no one to chat to and the cafe is selling more tea than coffee for the first time in its history.\n\nEveryone is expected back on their feet soon. Until then, a [Wizard Guild] apprentice is reading bedtime stories over the [Anoki phones]."
           ]
         },
         "banks": {
@@ -960,7 +962,7 @@
           "scandalous": [
             "Drama at the town hall! The mayor of {location} stormed out of a council meeting last night, slammed the door and announced his resignation on the steps, according to stunned onlookers.\n\nInsiders say the row was over a contract handed to a firm with friends in the [Hypercapitalist Collective]. Others whisper about a love letter read aloud by mistake. We are on the case!",
             "Lost ballots! Hundreds of votes from {location} were sent by fast courier, which drove a little too quickly and ended up stuck in a [time loop bubble]. The same envelopes arrive at the town hall every morning, and vanish every night.\n\nNow [Eris] herself has declared the result 'fun but invalid'. A new vote has been called. Taxpayers will foot the bill!",
-            "Spellbinding stuff! A candidate for mayor of {location} turns out to be a fully trained member of the [Mages Guild], and her rallies are packed.\n\nRivals cry foul, claiming she charmed voters with more than speeches. She laughs it off. Our reporter attended a rally and felt nothing unusual, apart from a strong urge to buy a raffle ticket."
+            "Spellbinding stuff! A candidate for mayor of {location} turns out to be a fully trained member of the [Wizard Guild], and her rallies are packed.\n\nRivals cry foul, claiming she charmed voters with more than speeches. She laughs it off. Our reporter attended a rally and felt nothing unusual, apart from a strong urge to buy a raffle ticket."
           ],
           "skeptical": [
             "The winning candidate in {location} promised lower property taxes. The budget the council inherited shows a deficit that leaves little room for cuts without reducing services.\n\nEither the promise will be broken or something else will be sacrificed. Voters may wish to watch which line of the budget changes first. The [Archive Foundation] has published the accounts.",
@@ -1103,18 +1105,18 @@
         },
         "bodies": {
           "serious": [
-            "Several hundred residents of {location} reported an unusual light in the sky shortly after nightfall. The event lasted around {number} minutes and was recorded by the regional observatory.\n\nThe [Mages Guild] has opened an inquiry and asked witnesses to submit photographs. Officials noted that phenomena of this kind have become more frequent since the [Squishing] began, and that no injuries were reported.",
+            "Several hundred residents of {location} reported an unusual light in the sky shortly after nightfall. The event lasted around {number} minutes and was recorded by the regional observatory.\n\nThe [Wizard Guild] has opened an inquiry and asked witnesses to submit photographs. Officials noted that phenomena of this kind have become more frequent since the [Squishing] began, and that no injuries were reported.",
             "The [Archive Foundation] has added the recent events in {location} to its public register of anomalies, together with {hundreds} witness statements collected over three nights.\n\nInvestigators found no sign of danger to residents. They have asked drivers in the area to respect the [Rule of 80] strictly, since anomalies often appear near the edges of [time loop bubbles].",
             "Engines stalled, headlights died and radios fell silent across {location} as a broad triangle of white light passed overhead. Witnesses reported a strong heat and scorched grass in a field outside the town.\n\nThe pattern matches previous sightings attributed to the [Dargos]. Their embassy, as usual, has declined to comment."
           ],
           "scandalous": [
             "Terror in the night sky! Shaking residents of {location} told us they woke to a sight that froze their blood, and one swears she heard it singing her name.\n\nIs it the [Squishing] tearing the sky apart? Is it aliens? Is it [Eris] playing tricks? Experts shrug. Our readers are buying candles, garlic and every good-luck charm in the shops!",
             "They're back, and they're laughing at us! A huge glowing triangle swooped over {location} last night, killing every car engine in town and leaving a field scorched in a perfect horseshoe.\n\nOld hands say it can only be the [Dargos], those three-metre pranksters from [Titania]. One farmer claims they repainted his barn. Officials say nothing. They never do!",
-            "Mirror madness! Dozens of people in {location} swear their reflections have started doing their own thing: yawning when they smile, waving when they don't, and in one case refusing to brush its hair.\n\nBarbers are in despair. A local priest has offered blessings. The [Mages Guild] says it is 'monitoring'. Monitoring! Meanwhile our reporter's reflection has gone on holiday."
+            "Mirror madness! Dozens of people in {location} swear their reflections have started doing their own thing: yawning when they smile, waving when they don't, and in one case refusing to brush its hair.\n\nBarbers are in despair. A local priest has offered blessings. The [Wizard Guild] says it is 'monitoring'. Monitoring! Meanwhile our reporter's reflection has gone on holiday."
           ],
           "skeptical": [
             "The image circulating in {location} shows a bright shape against a dark sky. It was taken with a long exposure, a technique known to turn ordinary lights into extraordinary smears.\n\nNo second photograph exists. The observatory recorded nothing unusual on its instruments. The [Archive Foundation] has filed the report as 'unconfirmed', which seems the fairest description.",
-            "Tour operators in {location} have raised the price of their evening ghost walks after one visitor reported a cold breath on the castle stairs. The castle has no heating and a broken window on that landing.\n\nThat is no proof that the castle is unhaunted. It is a reason to ask questions before paying {amount} euros. Even the [Mages Guild] recommends a scarf.",
+            "Tour operators in {location} have raised the price of their evening ghost walks after one visitor reported a cold breath on the castle stairs. The castle has no heating and a broken window on that landing.\n\nThat is no proof that the castle is unhaunted. It is a reason to ask questions before paying {amount} euros. Even the [Wizard Guild] recommends a scarf.",
             "Reports of a [Dargos] visit near {location} spread quickly. Records show that the same evening a licensed fireworks display took place two kilometres away, launched from a field that was later found scorched.\n\nThe Dargos do visit, and their pranks are well documented. Fireworks are better documented still, and considerably cheaper."
           ],
           "playful": [
@@ -1179,23 +1181,23 @@
         "bodies": {
           "serious": [
             "Residents of {location} woke this morning to find that the town had changed overnight in a manner that municipal officials have so far been unable to explain. No one was injured and services are running normally.\n\nThe [Archive Foundation] has documented the event and taken samples. Investigators have suggested a link with the [Squishing], which has produced similar anomalies elsewhere in Europe.",
-            "The municipality of {location} has opened an inquiry into the unusual event reported over the weekend. Officials confirmed that {hundreds} residents had contacted the town hall.\n\nA team from the [Mages Guild] found no trace of a spell or a broken [leyline]. The council has asked residents to remain calm and to report any further changes.",
+            "The municipality of {location} has opened an inquiry into the unusual event reported over the weekend. Officials confirmed that {hundreds} residents had contacted the town hall.\n\nA team from the [Wizard Guild] found no trace of a spell or a broken [leyline]. The council has asked residents to remain calm and to report any further changes.",
             "Observers in {location} have confirmed an anomaly that began on Monday and continues today. The regional university has sent a small team to record measurements.\n\nSimilar events have been documented near expanding [time loop bubbles], although no bubble is currently marked within the town limits. Officials stressed that there is no cause for alarm."
           ],
           "scandalous": [
-            "Pinch yourself, {location}! The whole town woke up today looking like somebody spilled a giant paint pot over it, and nobody has owned up!\n\nOne furious landlord says his property value has 'gone through the floor'. Another says it has never looked better. Insiders point the finger at a bored apprentice of the [Mages Guild]. The Guild says it was a quiet night. Very convenient!",
+            "Pinch yourself, {location}! The whole town woke up today looking like somebody spilled a giant paint pot over it, and nobody has owned up!\n\nOne furious landlord says his property value has 'gone through the floor'. Another says it has never looked better. Insiders point the finger at a bored apprentice of the [Wizard Guild]. The Guild says it was a quiet night. Very convenient!",
             "Feathered gangsters! The pigeons of {location} have set up their own market, and sources say they are trading stolen chips, shiny buttons and the occasional wedding ring.\n\nShopkeepers are furious. Tourists are fascinated. One pigeon was seen carrying a tiny [Anoki phone]. Who is running this racket? We have our suspicions, and they have beaks!",
             "Thursday has vanished in {location}! Workers simply skipped from Wednesday night to Friday morning, and now the bosses are refusing to pay for the missing day.\n\nThe unions are livid. The mayor blames the [Squishing]. Several residents blame [Eris], who is famously fond of this sort of joke. Either way, somebody owes {location} a day's wages!"
           ],
           "skeptical": [
             "Photographs of the strange colours of {location} were all taken at sunset, when the low light changes every surface. Pictures taken at noon show something much less dramatic.\n\nThat does not mean nothing happened. Several residents describe a real change they saw in daylight. A proper survey would settle it; so far nobody has commissioned one. The [Archive Foundation] has asked to.",
             "The figure of {hundreds} rubber ducks reported in {location} was given by the first person to see them. Nobody has since counted them, and the fountain has been cleaned twice.\n\nThe ducks were certainly there. Where they came from, and how many there really were, remain open questions. A toy wholesaler two streets away has not answered our calls. Neither has [Eris].",
-            "Residents who 'forgot Thursday' in {location} have been widely quoted. Municipal records show that the day in question was declared a local holiday by a council notice that few people read.\n\nThat explains the empty offices. It does not explain why so many residents insist they cannot remember the day at all, which deserves a closer look, perhaps from the [Mages Guild]."
+            "Residents who 'forgot Thursday' in {location} have been widely quoted. Municipal records show that the day in question was declared a local holiday by a council notice that few people read.\n\nThat explains the empty offices. It does not explain why so many residents insist they cannot remember the day at all, which deserves a closer look, perhaps from the [Wizard Guild]."
           ],
           "playful": [
             "Well, {location} looks different today. Overnight, for reasons nobody can explain, the town changed colour, and after the first shock most residents have decided they rather like it.\n\nThe tourist office has printed new postcards. The [Archive Foundation] has written it down. A local poet has already composed three sonnets, and promises more.",
             "The fountain in the main square of {location} is full of rubber ducks, and nobody knows how they got there. Children are delighted. Parents are delighted that the children are delighted.\n\nThe council has decided to leave them where they are for now. A sign has been put up asking visitors not to take any home. The [Truckers Society] has claimed one as a dashboard mascot.",
-            "The cats of {location} have started walking backwards, and they seem very proud of it. Vets say they are healthy, happy and as unbothered as cats usually are.\n\nSome owners have tried walking backwards too, out of solidarity. Results have been mixed and several flowerpots have been lost. The [Mages Guild] has declined to get involved, wisely."
+            "The cats of {location} have started walking backwards, and they seem very proud of it. Vets say they are healthy, happy and as unbothered as cats usually are.\n\nSome owners have tried walking backwards too, out of solidarity. Results have been mixed and several flowerpots have been lost. The [Wizard Guild] has declined to get involved, wisely."
           ]
         },
         "banks": {
@@ -1219,7 +1221,7 @@
       "magical": {
         "headlines": {
           "serious": [
-            "Mages Guild opens a new chapter house in {location}",
+            "Wizard Guild opens a new chapter house in {location}",
             "{location} library quarantines a grimoire after a misspelled spell spreads",
             "Portal to a Scrap of Creation opens in {location} metro station",
             "Fragment of the fallen Father lands near {location}; area cordoned off",
@@ -1253,12 +1255,12 @@
         },
         "bodies": {
           "serious": [
-            "The [Mages Guild] has inaugurated a chapter house in {location}, its first in the region. The building will offer instruction in ritual and sympathetic magic and provide wards for municipal buildings.\n\nThe council welcomed the investment. Observers note that the Guild's expansion comes as its conflict with the [Gods] deepens, and that the new house sits close to a strong [leyline].",
+            "The [Wizard Guild] has inaugurated a chapter house in {location}, its first in the region. The building will offer instruction in ritual and sympathetic magic and provide wards for municipal buildings.\n\nThe council welcomed the investment. Observers note that the Guild's expansion comes as its conflict with the [Gods] deepens, and that the new house sits close to a strong [leyline].",
             "The municipal library of {location} has sealed a section of its archive after a badly written spell began copying itself across neighbouring volumes. Staff noticed when a cookbook started reciting incantations.\n\nSpecialists in [CamelCase] magic are cataloguing the damage. Officials said the affected books would be burned if necessary, in accordance with established practice.",
-            "A fragment believed to come from the orbiting body of the Father aspect of [YHWH] has landed in fields outside {location}. Authorities have cordoned off the site and asked residents not to approach it.\n\nContact with such fragments is known to grant unpredictable powers. Teams from the [Holy Vatican Empire] and the [Mages Guild] are both seeking access to the site."
+            "A fragment believed to come from the orbiting body of the Father aspect of [YHWH] has landed in fields outside {location}. Authorities have cordoned off the site and asked residents not to approach it.\n\nContact with such fragments is known to grant unpredictable powers. Teams from the [Holy Vatican Empire] and the [Wizard Guild] are both seeking access to the site."
           ],
           "scandalous": [
-            "Abracadabra! Thousands of wizards have descended on {location} for convention week, and the town will never be the same. Hotel bars are full of pointy hats, flying carpets are blocking the high street and somebody turned the mayor's car into a pumpkin.\n\nThe mayor is not amused. The pumpkin, sources say, is doing fine. The [Mages Guild] promises to tidy up after itself. We'll see!",
+            "Abracadabra! Thousands of wizards have descended on {location} for convention week, and the town will never be the same. Hotel bars are full of pointy hats, flying carpets are blocking the high street and somebody turned the mayor's car into a pumpkin.\n\nThe mayor is not amused. The pumpkin, sources say, is doing fine. The [Wizard Guild] promises to tidy up after itself. We'll see!",
             "Blessed or cursed? A chunk of the fallen god landed on an allotment in {location}, right between the leeks and the potatoes, and the gardener who touched it now glows in the dark!\n\nHe says he feels marvellous and can hear his tomatoes thinking. The [Holy Vatican Empire] wants the chunk. The Guild wants the chunk. The gardener wants everybody off his leeks!",
             "Black-robed agents of the [Umbra Excidii] stormed a little witch shop in {location} at dawn, carrying out boxes of candles, crystals and, our spies say, a very angry cat.\n\nThe owner insists she only sold herbal teas. Neighbours are shocked. Is anyone safe from the Vatican's spell hunters? We will be watching every raid!"
           ],
@@ -1268,7 +1270,7 @@
             "Pilgrims are travelling to {location} to touch a stone said to be a fragment of the fallen Father, believed to grant powers. A geologist who examined it found ordinary granite.\n\nThat does not rule out every possibility. Genuine fragments of [YHWH] do exist, and their effects are well recorded. This particular stone, however, has yet to produce a single verified miracle."
           ],
           "playful": [
-            "The great wizard convention in {location} is over, and the town is counting what was left behind: {hundreds} pointed hats, a crate of wands, three owls and one apprentice who slept through the closing ceremony.\n\nThe lost property office has never been busier. The [Mages Guild] has promised to collect everything by Friday, owls included.",
+            "The great wizard convention in {location} is over, and the town is counting what was left behind: {hundreds} pointed hats, a crate of wands, three owls and one apprentice who slept through the closing ceremony.\n\nThe lost property office has never been busier. The [Wizard Guild] has promised to collect everything by Friday, owls included.",
             "The garden gnomes of {location} came to life on Tuesday and, rather than causing trouble, began tending the town's flowerbeds with remarkable dedication. The parks have never looked so tidy.\n\nThe gardeners' union has raised concerns. The gnomes have offered to share their tea. A solution involving a rota and plenty of biscuits is expected. The [Archive Foundation] has photographed the gnomes, who posed.",
             "Pupils from {location} have won the regional [CamelCase] spelling bee, correctly running together every word of a fiendishly long incantation without a single gap.\n\nThe winning team celebrated with lemonade and a very small, very safe firework spell. Their teacher says she is proud, and slightly worried about what they will do next."
           ]
@@ -1314,7 +1316,7 @@
           "serious": [
             "Wildlife officers in {location} have confirmed that several pairs of griffins are nesting on the town's tallest buildings. Residents are advised not to approach the nests and to keep small pets indoors during the breeding season.\n\nSuch creatures have been seen more often since the [Squishing] began to draw fragments of other dimensions into our own. The [Archive Foundation] is maintaining a public register of sightings.",
             "Engineers inspecting old foundations beneath {location} have found an extensive labyrinth, occupied by a Minotaur who greeted them politely and asked for news of the outside world.\n\nThe municipal authorities are negotiating the terms of his residence. Specialists believe the labyrinth may have fallen from one of the [Scraps of Creation]. Public access is not planned for now.",
-            "A minor deity of uncertain origin has settled among the temple ruins outside {location}. Its existence, like that of all the [Gods], depends on the number of people willing to believe in it, currently estimated at {number}.\n\nThe [Mages Guild] has asked to observe the site. The deity has not responded, and local farmers report unusually good weather."
+            "A minor deity of uncertain origin has settled among the temple ruins outside {location}. Its existence, like that of all the [Gods], depends on the number of people willing to believe in it, currently estimated at {number}.\n\nThe [Wizard Guild] has asked to observe the site. The deity has not responded, and local farmers report unusually good weather."
           ],
           "scandalous": [
             "Sausage thief with wings! A huge griffin swooped down on a butcher's shop in {location} and flew off with a whole string of prize sausages, leaving the poor butcher shaking his fist at the sky.\n\n\"I've been robbed by a monster!\" he roared. Locals are furious, tourists are thrilled and our photographer got the shot of the year. The [Archive Foundation] wants a copy. They'll have to buy the paper like everyone else!",
@@ -1328,7 +1330,7 @@
           ],
           "playful": [
             "The griffins of {location} have settled in well. They keep the pigeons in order, sunbathe on the church roof and sometimes swoop down to inspect the market, where the fishmonger has learned to keep a spare herring handy.\n\nResidents say the town has never felt safer, or louder at dawn. The [Archive Foundation] has photographed them all.",
-            "The Minotaur who lives beneath {location} held his first open day on Sunday, welcoming {hundreds} visitors with hand-drawn maps of the labyrinth and a tray of homemade biscuits.\n\nOnly two visitors got lost, and both were found by teatime. The Minotaur says he enjoys the company and hopes to start a book club. He is very fond of the [Mages Guild] histories.",
+            "The Minotaur who lives beneath {location} held his first open day on Sunday, welcoming {hundreds} visitors with hand-drawn maps of the labyrinth and a tray of homemade biscuits.\n\nOnly two visitors got lost, and both were found by teatime. The Minotaur says he enjoys the company and hopes to start a book club. He is very fond of the [Wizard Guild] histories.",
             "A family of centaurs living outside {location} entered the regional relay race this year and won by a margin that the organisers described as 'frankly unfair'. The trophy has been placed in the centaurs' stable, next to the hay.\n\nThe other teams have asked for a separate category next year. The centaurs have agreed, and offered free riding lessons. The [Truckers Society] wants to race them."
           ]
         },

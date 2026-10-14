@@ -75,7 +75,8 @@
         zoomIn: 81,    // Q
         zoomOut: 69,   // E
         kick: 67,      // C
-        run: 16        // Shift
+        run: 16,       // Shift
+        remoteTalk: 90 // Z (Action)
     };
 
     // Default gamepad mappings
@@ -93,7 +94,8 @@
         zoomIn: 4,     // LB
         zoomOut: 5,    // RB
         kick: 7,       // RT
-        run: 6         // LT
+        run: 6,        // LT
+        remoteTalk: 0  // A button (Action)
     };
 
     // Command display names - now handled by translations
@@ -153,7 +155,7 @@
     // twin in the Input helpers below.
     const CORE_ACTIONS = ['ok', 'cancel', 'shift', 'menu', 'pageup', 'pagedown', 'up', 'down', 'left', 'right'];
     // Every action the config UI lists as rebindable.
-    const MAPPABLE_ACTIONS = ['ok', 'cancel', 'shift', 'menu', 'pageup', 'pagedown', 'up', 'down', 'left', 'right', 'zoomIn', 'zoomOut', 'kick', 'run'];
+    const MAPPABLE_ACTIONS = ['ok', 'cancel', 'shift', 'menu', 'pageup', 'pagedown', 'up', 'down', 'left', 'right', 'zoomIn', 'zoomOut', 'kick', 'run', 'remoteTalk'];
 
     function rebuildMapper(mapper, mapping) {
         const managed = new Set(Object.keys(mapping));
@@ -710,7 +712,7 @@
     };
 
     Window_KeyList.prototype.maxItems = function() {
-        return 15; // 14 commands + 1 reset option
+        return MAPPABLE_ACTIONS.length + 1; // commands + 1 reset option
     };
 
     Window_KeyList.prototype.itemHeight = function() {
@@ -775,7 +777,7 @@
     };
 
     Window_ButtonList.prototype.maxItems = function() {
-        return 15; // 14 commands + 1 reset option
+        return MAPPABLE_ACTIONS.length + 1; // commands + 1 reset option
     };
 
     Window_ButtonList.prototype.itemHeight = function() {
