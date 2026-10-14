@@ -319,7 +319,7 @@
       "whole": "Whole piece"
     }
   },
-  "backToBoard": "BACK TO THE BOARD",
+  "backToBoard": "BACK",
   "appearanceHeader": "Look",
   "detailsHeader": "Details",
   "carrying": "carrying {n}",
@@ -440,7 +440,7 @@
       "title": "Making a piece",
       "items": {
         "back": {
-          "name": "Back to the board",
+          "name": "Back",
           "text": "Returns to the list of pieces."
         },
         "look": {

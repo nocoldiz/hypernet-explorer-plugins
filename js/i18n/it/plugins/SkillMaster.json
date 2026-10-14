@@ -216,6 +216,26 @@
     "save": "Salva",
     "edit": "Modifica",
     "discard": "Disfa",
+    "step": {
+      "core": "Nucleo",
+      "element": "Elemento",
+      "shape": "Forma",
+      "modifiers": "Modificatori",
+      "identity": "Identità",
+      "all": "Tutto",
+      "next": "Avanti",
+      "prev": "Indietro",
+      "stepOf": "Passo {step} di {total}: {title}",
+      "stepHint": {
+        "core": "Scegli il fondamento della tua magia.",
+        "element": "Infondi un'affinità elementale o lasciala neutra.",
+        "shape": "Definisci il bersaglio e l'area di effetto.",
+        "modifiers": "Potenzia con forza, alterazioni di stato e meccaniche.",
+        "identity": "Dai un nome alla creazione e incidila nel grimorie."
+      },
+      "noneElement": "Neutro",
+      "noneElementDesc": "Colpisce senza affinità elementale."
+    },
     "write": {
       "name": "Dagli un nome",
       "description": "Scrivi la descrizione",

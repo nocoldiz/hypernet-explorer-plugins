@@ -216,6 +216,26 @@
     "save": "Save",
     "edit": "Edit",
     "discard": "Unmake",
+    "step": {
+      "core": "Core",
+      "element": "Element",
+      "shape": "Shape",
+      "modifiers": "Modifiers",
+      "identity": "Identity",
+      "all": "All",
+      "next": "Next",
+      "prev": "Back",
+      "stepOf": "Step {step} of {total}: {title}",
+      "stepHint": {
+        "core": "Choose the foundation of your magic.",
+        "element": "Infuse an elemental affinity or leave it neutral.",
+        "shape": "Define targeting and area of effect.",
+        "modifiers": "Enhance with power, status effects and mechanics.",
+        "identity": "Name your creation and inscribe it into your grimorie."
+      },
+      "noneElement": "Neutral",
+      "noneElementDesc": "Strikes without elemental affinity."
+    },
     "write": {
       "name": "Name it",
       "description": "Write its description",

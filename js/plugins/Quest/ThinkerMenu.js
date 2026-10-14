@@ -2639,8 +2639,7 @@
 
             const name = hidden
                 ? `<span class="blueprint-name-locked">${escapeHtml(b.text().blueprintLocked)}</span>`
-                : `<span class="blueprint-name ${window.ItemSystemUtils.rarityClass(
-                       isBenchItem(item) && b ? b.rarityOf(item) : rarityOf(item))}">${escapeHtml(displayName(item))}</span>`;
+                : `<span class="blueprint-name">${escapeHtml(displayName(item))}</span>`;
             const icon = hidden
                 ? `<span class="blueprint-icon-locked">?</span>`
                 : `<span class="menu-icon menu-icon--32" style="--icon-col:${item.iconIndex % 16};--icon-row:${Math.floor(item.iconIndex / 16)}"></span>`;
@@ -2730,7 +2729,7 @@
 
             const title = document.getElementById('forge-piece-title');
             if (title) {
-                title.className = 'title ' + (parts.rarityCls || '');
+                title.className = 'title';
                 title.textContent = parts.title;
             }
             const ctx = document.getElementById('forge-piece-context');
@@ -2761,11 +2760,25 @@
             return html;
         }
 
-        // A label/value pair, the one row shape every detail page in the game
-        // reads its facts off.
+        // Every fact on the card is a tag in the header's pill style: the label
+        // muted, the value bright.
+        pillHTML(label, val, pillClass) {
+            return `<div class="inspect-meta-item inspect-pill${pillClass ? ' ' + pillClass : ''}">` +
+                `<span class="inspect-pill-lbl">${escapeHtml(String(label).replace(/\s*:\s*$/, ''))}:</span> ` +
+                `<span class="inspect-meta-val inspect-pill-val">${val}</span>` +
+                `</div>`;
+        }
+
+        pillTextHTML(text, pillClass) {
+            return `<div class="inspect-meta-item inspect-pill${pillClass ? ' ' + pillClass : ''}"><span class="inspect-meta-val inspect-pill-val">${text}</span></div>`;
+        }
+
+        specBlock(rowsHTML) {
+            return `<div class="inspect-quick-pills inspect-pill-block">${rowsHTML}</div>`;
+        }
+
         specRow(label, value) {
-            return `<div class="inspect-spec-row"><span class="inspect-spec-label">${escapeHtml(label)}</span>` +
-                `<span class="inspect-spec-value">${escapeHtml(value)}</span></div>`;
+            return this.pillHTML(label, escapeHtml(value));
         }
 
         sectionTitle(label) {
@@ -2848,7 +2861,7 @@
                     trades += this.specRow(T('Blacksmith.tagsNeed'), levelName(taggedTier(item, tags)));
                 }
             }
-            right += `<div class="inspect-spec-grid">${trades}</div>`;
+            right += this.specBlock(trades);
 
             const bill = this.billHTML(recipe, yields);
             if (bill) right += this.sectionTitle(t.materials) + `<div class="inspect-spec-grid">${bill}</div>`;
@@ -2958,7 +2971,7 @@
                     T('Thinker.tradeLabel', { spec: b.specLabel(trade.name), level: b.levelLabel(trade.level) }),
                     reclaim > 0 ? T('Thinker.reclaimChance', { pct: reclaim }) : '');
                 if (held > 0) facts += this.specRow(bt.salvageYields, String(held));
-                body += `<div class="inspect-spec-grid">${facts}</div>`;
+                body += this.specBlock(facts);
                 if (known && !starter && !$gameSystem.hasCrafted(item.id) && !b.isSandbox()) {
                     body += `<p class="ui-prose">${escapeHtml(T('Thinker.knownBySkill', {
                         spec: b.specLabel(trade.name), level: b.levelLabel(trade.level)
@@ -3310,68 +3323,107 @@
         // its slot and type, what it is worth and what it weighs.
         metadataHTML(item) {
             const t = bsText();
-            const et = T.obj('Equip');
-            const rows = [];
+            let html = '';
 
-            const PARAMS = [
-                ['hp', 0], ['mp', 1], ['str', 2], ['con', 3],
-                ['int', 4], ['wis', 5], ['dex', 6], ['psi', 7]
-            ];
-            let bonuses = '';
-            for (const [key, idx] of PARAMS) {
-                const v = (item.params && item.params[idx]) || 0;
-                if (!v) continue;
-                bonuses += this.specRow(et[key] || key, (v > 0 ? '+' : '') + v);
+            // 1. Specifications (Unit Weight, Market Value, Type, Slot, Rarity, Scaling...)
+            const specs = [];
+            if (window.ItemSystemUtils && window.ItemSystemUtils.getItemWeight) {
+                const w = window.ItemSystemUtils.getItemWeight(item);
+                if (w > 0) {
+                    const weightVal = w / 1000;
+                    const weightText = weightVal >= 0.01 ? `${weightVal.toFixed(2)} kg` : `${w} g`;
+                    specs.push([T('Inventory.section.unitWeight'), weightText]);
+                }
             }
+            const val = ((item.price || 0) / 100).toFixed(2);
+            specs.push([T('Inventory.section.marketValue'), `${val} €`]);
 
             const sys = $dataSystem || {};
             if (DataManager.isWeapon(item)) {
                 const wt = (sys.weaponTypes || [])[item.wtypeId];
-                if (wt) rows.push([t.weaponType, tr(wt)]);
-            } else {
+                if (wt) specs.push([T('Inventory.spec.label.weaponType') || t.weaponType, tr(wt)]);
+                const scales = window.WeaponScaling ? window.WeaponScaling.readScales(item) : null;
+                if (scales && scales.length && window.WeaponScaling.chipsHTML) {
+                    specs.push([T('Inventory.spec.label.scaling'), window.WeaponScaling.chipsHTML(scales)]);
+                }
+            } else if (DataManager.isArmor(item)) {
                 const at = (sys.armorTypes || [])[item.atypeId];
-                if (at) rows.push([t.armorType, tr(at)]);
+                if (at) specs.push([T('Inventory.spec.label.armorType') || t.armorType, tr(at)]);
             }
             const slot = (sys.equipTypes || [])[item.etypeId];
-            if (slot) rows.push([t.slot, tr(slot)]);
+            if (slot) specs.push([T('Inventory.spec.label.equipSlot') || t.slot, tr(slot)]);
             const rarity = rarityOf(item);
-            if (rarity && rarity.name) rows.push([t.rarity, tr(rarity.name)]);
-            rows.push([t.value, money(item.price || 0)]);
-            if (window.ItemSystemUtils && window.ItemSystemUtils.getItemWeight) {
-                rows.push([t.weight, window.ItemSystemUtils.formatWeight(
-                    window.ItemSystemUtils.getItemWeight(item))]);
+            if (rarity && rarity.name) specs.push([t.rarity, tr(rarity.name)]);
+
+            if (specs.length) {
+                const specPills = specs.map(([label, v]) => this.pillHTML(label, v)).join('');
+                html += this.sectionTitle(T('Inventory.section.specifications')) + this.specBlock(specPills);
             }
-            // Anything else the entry declares (Range, Movement, Level, ...) is
-            // shown as written, so a note tag added later surfaces by itself.
-            // Bookkeeping the smith wrote on the piece, and the model it is
-            // drawn with, are not properties of the thing itself.
-            const SKIP = /^(Recipe|Craft|CraftLevel|Category|Lore|Weight|Forge\w*|Forged|model3d|3DModel|GearTags|Enchanted|EnchantSpell)$/i;
+
+            // 2. Attribute Modifiers (params)
+            const PARAMS = [
+                ['hp', 0], ['mp', 1], ['str', 2], ['con', 3],
+                ['int', 4], ['wis', 5], ['dex', 6], ['psi', 7]
+            ];
+            const et = T.obj('Equip') || {};
+            let bonuses = '';
+            for (const [key, idx] of PARAMS) {
+                const v = (item.params && item.params[idx]) || 0;
+                if (!v) continue;
+                const lbl = (typeof TextManager !== 'undefined' && TextManager.param) ? TextManager.param(idx) : (et[key] || key);
+                bonuses += this.pillHTML(lbl, (v > 0 ? '+' : '') + v, v > 0 ? 'inspect-pill--gain' : 'inspect-pill--loss');
+            }
+            if (bonuses) {
+                html += this.sectionTitle(T('Inventory.section.attributeModifiers') || T('Blacksmith.bonuses')) + this.specBlock(bonuses);
+            }
+
+            // 3. Special Properties & Traits (traits, hands, specialLines)
+            const traitsList = window.ItemSystemUtils
+                ? (window.ItemSystemUtils.traitLines(item) || []).concat(window.ItemSystemUtils.handLines(item) || [])
+                : [];
+            const specials = (window.ItemSystemUtils && window.ItemSystemUtils.specialLines)
+                ? window.ItemSystemUtils.specialLines(item) : [];
+            let specialPills = '';
+            if (traitsList.length) {
+                specialPills += traitsList.map(text => this.pillTextHTML(escapeHtml(text))).join('');
+            }
+            if (specials.length) {
+                specialPills += specials.map(text =>
+                    `<div class="inspect-meta-item inspect-pill inspect-pill--special"><span class="inspect-meta-val inspect-pill-val">${escapeHtml(text)}</span></div>`
+                ).join('');
+            }
+            if (specialPills) {
+                html += this.sectionTitle(T('Inventory.section.specialProperties')) + this.specBlock(specialPills);
+            }
+
+            // 4. Blueprints & Components (note tags)
+            const noteTags = [];
+            const SKIP = /^(movement|weight|category|uncraftable|damagetype|geartags|enchanted|enchantspell|hitsounds?|weaponsounds?|pickupsound|reloadsound|.*sounds?|scale|twohanded|onehanded|martialarts|nunchaku|needrestore|leisure|medicine|cures|treats|lore|allergens?|antiallergic|calories|fat|protein|recipe|craft|craftlevel|forge.*|model3d|3dmodel|lookauto|auto)$/i;
             for (const key of Object.keys(item.meta || {})) {
                 if (SKIP.test(key)) continue;
                 const val = item.meta[key];
-                rows.push([key, val === true ? T('Blacksmith.yes') : String(val)]);
+                if (key.toLowerCase() === 'nature') {
+                    const str = String(val).toLowerCase() === 'both' ? 'Mundane' : String(val);
+                    const k = 'Inventory.nature.' + str.toLowerCase();
+                    noteTags.push({ name: T('Inventory.nature.label') || 'Nature', value: T.has(k) ? T(k) : str });
+                    continue;
+                }
+                const name = key.charAt(0).toUpperCase() + key.slice(1);
+                const displayVal = val === true ? (T('Inventory.spec.yes') || T('Blacksmith.yes')) : String(val);
+                noteTags.push({ name: name, value: displayVal });
+            }
+            if (noteTags.length) {
+                const tagPills = noteTags.map(tag => this.pillHTML(tag.name, escapeHtml(tag.value))).join('');
+                html += this.sectionTitle(T('Inventory.section.blueprints')) + this.specBlock(tagPills);
             }
 
-            let table = '';
-            for (const [label, val] of rows) table += this.specRow(label, val);
-
-            let lore = '';
+            // 5. Lore / Flavour
             if (window.ItemSystemUtils && window.ItemSystemUtils.loreFor) {
                 const text = window.ItemSystemUtils.loreFor(item);
-                if (text) lore = `<p class="ui-prose">${escapeHtml(text)}</p>`;
+                if (text) html += `<p class="ui-prose">${escapeHtml(text)}</p>`;
             }
 
-            // Its special abilities, as the backpack card reads them out.
-            const specials = (window.ItemSystemUtils && window.ItemSystemUtils.specialLines)
-                ? window.ItemSystemUtils.specialLines(item) : [];
-            const specialHTML = specials.length
-                ? this.sectionTitle(T('Inventory.section.special')) +
-                    specials.map(text => `<div class="inspect-bullet-item">${escapeHtml(text)}</div>`).join('')
-                : '';
-
-            return specialHTML + (bonuses ? this.sectionTitle(T('Blacksmith.bonuses')) + `<div class="inspect-spec-grid">${bonuses}</div>` : '') +
-                (table ? this.sectionTitle(T('Blacksmith.specs')) + `<div class="inspect-spec-grid">${table}</div>` : '') +
-                lore;
+            return html;
         }
 
         // -------------------------------------------------- piece preview

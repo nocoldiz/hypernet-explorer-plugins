@@ -157,10 +157,10 @@
   "randomApplied": "Synced {n} random skills.",
   "statLocked": "{name} needs {stat} base; this character has {value}."
  },
- "sync": {
+  "sync": {
   "label": "Auto Sync",
   "manual": "Manual",
-  "best": "Best",
+  "best": "Reactive",
   "auto": "Automatic",
   "manualDesc": "Manual selection: new skills only fill empty slots.",
   "bestDesc": "Syncs best skills against current enemies at battle start.",

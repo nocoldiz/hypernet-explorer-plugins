@@ -830,6 +830,7 @@
 
     window.WorldMapView = {
         focusAt: focusWorldMapAt,
+        isFullscreen: () => currentMapState === 3,
         // The M key's own toggle, exposed so the menu's world-map pocket can be
         // opened from somewhere other than the key: from the pockets page, and
         // from the quick list held open on the field (UI/QuickMainMenuLayout.js
@@ -4296,10 +4297,10 @@
         // a button. It is rewritten with every square the pointer crosses, so
         // it is watched by delegation rather than bound each time.
         el.addEventListener('pointerover', ev => {
-            if (ev.target.closest('.wm-show-map, .wm-note-btn, .wm-taxi-btn')) chromePointerIn = true;
+            if (ev.target.closest('.wm-show-map, .wm-note-btn, .wm-taxi-btn, .wm-travel-btn')) chromePointerIn = true;
         });
         el.addEventListener('pointerout', ev => {
-            if (ev.target.closest('.wm-show-map, .wm-note-btn, .wm-taxi-btn')) chromePointerIn = false;
+            if (ev.target.closest('.wm-show-map, .wm-note-btn, .wm-taxi-btn, .wm-travel-btn')) chromePointerIn = false;
         });
         el.addEventListener('click', ev => {
             const mmBtn = ev.target.closest('#wm-minimap-btn');
@@ -4316,6 +4317,14 @@
                 ev.stopPropagation();
                 if (setSheetView(String(viewBtn.dataset.wmView))) SoundManager.playCursor();
                 TouchInput.clear();
+                return;
+            }
+            const travel = ev.target.closest('[data-wm-travel-at]');
+            if (travel) {
+                ev.stopPropagation();
+                const at = String(travel.dataset.wmTravelAt).split(',');
+                const pin = pinAtSquare(Number(at[0]), Number(at[1]));
+                if (pin) bookPinTravel(pin);
                 return;
             }
             const taxi = ev.target.closest('[data-wm-taxi-at]');
@@ -4406,25 +4415,26 @@
             action = T('WorldMap.hint.needVehicle');
         }
         chromeReadoutEl.style.display = 'block';
+
+        const travelBtn = (picked && pin && pin.destName) ? travelButtonMarkup(square, pin, transport) : '';
+        const taxiBtn = (picked ? taxiButtonMarkup(square) : '');
+        const travelRow = (picked && (travelBtn || taxiBtn))
+            ? `<div class="wm-read-buttons wm-read-travel-buttons">${travelBtn}${taxiBtn}</div>`
+            : '';
+
+        const noteBtn = picked
+            ? `<div class="inspect-btn focusable wm-note-btn" data-wm-note-at="${square.x},${square.y}">` +
+              `${escapeSheet(T('WorldMap.note.write'))}</div>`
+            : '';
+        const showMapBtn = `<div class="inspect-btn focusable wm-show-map" data-wm-show="${square.x},${square.y}">` +
+            `${escapeSheet(T('WorldMap.preview.showMap'))}</div>`;
+        const utilRow = `<div class="wm-read-buttons">${noteBtn}${showMapBtn}</div>`;
+
         chromeReadoutEl.innerHTML =
             `<div class="wm-read-head">${escapeSheet(T('WorldMap.read.square', { place: window.WorldMapTransfer.squareLabel(square.x, square.y) }))}</div>` +
             rows + (action ? `<div class="wm-read-action">${escapeSheet(action)}</div>` : '') +
-            // The two buttons share one row: they are the same kind of thing
-            // done to the same square, so they read as a pair and not a stack.
-            '<div class="wm-read-buttons">' +
-            // Writing on a square is deliberate: it is offered on the square
-            // that has been picked, and nowhere else.
-            (picked
-                ? `<div class="inspect-btn focusable wm-note-btn" data-wm-note-at="${square.x},${square.y}">` +
-                  `${escapeSheet(T('WorldMap.note.write'))}</div>`
-                : '') +
-            (picked ? taxiButtonMarkup(square) : '') +
-            // Build the square and look at it before walking onto it. The
-            // square is built for the look and thrown away again, so the
-            // button is offered for any square, catalogued or bare ground.
-            `<div class="inspect-btn focusable wm-show-map" data-wm-show="${square.x},${square.y}">` +
-            `${escapeSheet(T('WorldMap.preview.showMap'))}</div>` +
-            '</div>';
+            travelRow +
+            utilRow;
     }
 
     // Hangs the readout off the right of its square, or off the left when the
@@ -4462,16 +4472,31 @@
         chromeReadoutEl.style.top = Math.round(y) + 'px';
     }
 
+    function travelButtonMarkup(square, pin, transport) {
+        if (!pin || !pin.destName) return '';
+        const canTravel = !!transport;
+        const label = T('FastTravel.ui.travel');
+        const hint = canTravel
+            ? T('WorldMap.hint.travel', { place: pin.name })
+            : T('WorldMap.hint.needVehicle');
+        return `<div class="inspect-btn focusable wm-travel-btn${canTravel ? '' : ' inspect-btn--disabled'}" ` +
+            `data-wm-travel-at="${square.x},${square.y}" title="${escapeSheet(hint)}">${escapeSheet(label)}</div>`;
+    }
+
     // A cab to the picked square, priced exactly as the Hail page prices it
     // (FastTravelSystem.taxiQuote). A square no cab reaches shows the reason
-    // instead of a fare, and the button stays up so a press says it aloud.
+    // in its tooltip and toast, and the button stays up so a press says it aloud.
     function taxiButtonMarkup(square) {
         const FT = window.FastTravelSystem;
         if (!FT || typeof FT.taxiQuote !== 'function') return '';
         const quote = FT.taxiQuote(square.x, square.y);
-        const label = quote.refusal || T('WorldMap.hint.taxi', { fare: quote.fareText, time: quote.timeText });
+        const taxiName = T('FastTravel.transport.taxi');
+        const label = quote.fareText ? `${taxiName} (${quote.fareText})` : taxiName;
+        const hint = quote.refusal || (quote.fareText && quote.timeText
+            ? T('WorldMap.hint.taxi', { fare: quote.fareText, time: quote.timeText })
+            : taxiName);
         return `<div class="inspect-btn focusable wm-taxi-btn${quote.refusal ? ' inspect-btn--disabled' : ''}" ` +
-            `data-wm-taxi-at="${square.x},${square.y}">${escapeSheet(label)}</div>`;
+            `data-wm-taxi-at="${square.x},${square.y}" title="${escapeSheet(hint)}">${escapeSheet(label)}</div>`;
     }
 
     // Shut the chart and take the cab: the ride is the taxi interior and the
@@ -4480,14 +4505,14 @@
         const FT = window.FastTravelSystem;
         if (!FT || typeof FT.taxiToSquare !== 'function') return false;
         const quote = FT.taxiQuote(x, y);
-        if (quote.refusal) return FT.taxiToSquare(x, y);
+        if (quote.refusal) return FT.taxiToSquare(x, y, true);
         currentMapState = savedMinimapState();
         clearFullscreenCache();
         destroyChrome();
         clearSelectedSquare();
         refreshWorldMapDisplay();
         TouchInput.clear();
-        return FT.taxiToSquare(x, y);
+        return FT.taxiToSquare(x, y, true);
     }
 
     // The coordinates of the square under the pointer, bottom right, in the

@@ -4497,9 +4497,13 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         return !!($gameMap && $gameMap.mapId && $gameMap.mapId() === TAXI_STARSHIP_MAP_ID);
     }
 
+    let taxiFromWorldMap = false;
+
     // Open ground: the world map, or a map tagged <Exterior> that is not one of
     // the roofed procedural places (Game_Map.isExterior already knows those).
     function taxiOnOpenGround() {
+        if (taxiFromWorldMap) return true;
+        if (window.WorldMapView && typeof window.WorldMapView.isFullscreen === 'function' && window.WorldMapView.isFullscreen()) return true;
         if (!$gameMap || !$gameMap.mapId || !$gameMap.mapId()) return false;
         if ($gameMap.mapId() === TAXI_WORLD_MAP_ID) return true;
         if (typeof $gameMap.isExterior === 'function') return !!$gameMap.isExterior();
@@ -4829,27 +4833,32 @@ Scene_Map.prototype.printTravelCoordinates = function () {
      * charged, the party is put in the taxi and the travel timer runs.
      * Answers false (and plays the buzzer) when no cab goes there.
      */
-    window.FastTravelSystem.taxiToSquare = function (x, y) {
+    window.FastTravelSystem.taxiToSquare = function (x, y, fromWorldMap) {
         x = Math.floor(Number(x)); y = Math.floor(Number(y));
-        const quote = window.FastTravelSystem.taxiQuote(x, y);
-        const scene = SceneManager._scene;
-        const ready = scene && scene._fastTravelDestWindow && typeof scene.closeFastTravelWindow === 'function';
-        if (quote.refusal || quote.fare == null || !ready) {
-            if (window.SoundManager) SoundManager.playBuzzer();
-            if (quote.refusal && window.ParchmentToast) ParchmentToast.show(quote.refusal, { severity: 'warning' });
-            return false;
+        if (fromWorldMap) taxiFromWorldMap = true;
+        try {
+            const quote = window.FastTravelSystem.taxiQuote(x, y);
+            const scene = SceneManager._scene;
+            const ready = scene && scene._fastTravelDestWindow && typeof scene.closeFastTravelWindow === 'function';
+            if (quote.refusal || quote.fare == null || !ready) {
+                if (window.SoundManager) SoundManager.playBuzzer();
+                if (quote.refusal && window.ParchmentToast) ParchmentToast.show(quote.refusal, { severity: 'warning' });
+                return false;
+            }
+            const dest = taxiSquareDestination(x, y);
+            const data = getFastTravelData();
+            data.selectedTransport = TAXI_TRANSPORT;
+            data.ccLandingPending = false;
+            if ($gameMap.mapId() === TAXI_WORLD_MAP_ID) {
+                $gameVariables.setValue(playerXVar, $gamePlayer.x);
+                $gameVariables.setValue(playerYVar, $gamePlayer.y);
+            }
+            if (window.SoundManager) SoundManager.playOk();
+            executeTravel(dest, Math.max(0, Math.floor(quote.fare)), false);
+            return true;
+        } finally {
+            taxiFromWorldMap = false;
         }
-        const dest = taxiSquareDestination(x, y);
-        const data = getFastTravelData();
-        data.selectedTransport = TAXI_TRANSPORT;
-        data.ccLandingPending = false;
-        if ($gameMap.mapId() === TAXI_WORLD_MAP_ID) {
-            $gameVariables.setValue(playerXVar, $gamePlayer.x);
-            $gameVariables.setValue(playerYVar, $gamePlayer.y);
-        }
-        if (window.SoundManager) SoundManager.playOk();
-        executeTravel(dest, Math.max(0, Math.floor(quote.fare)), false);
-        return true;
     };
 
     if (window.HypernetOS && window.HypernetOS.registerApp) {

@@ -1964,6 +1964,98 @@
     WaterWakes.updateSprites(this);
   };
 
+  // The mask mirror reflections wear, culling anything outside the white
+  // or light-glass pane of the mirror event (preventing bleed onto walls and frames).
+  let _mirrorMaskFilter = null;
+  let _mirrorMaskFailed = false;
+  let _mirrorMaskContext = -1;
+  function getMirrorMaskFilter() {
+    if (_mirrorMaskFailed || !PIXI.Filter) return null;
+    try {
+      if (!_mirrorMaskFilter) _mirrorMaskFilter = buildMirrorMaskFilter();
+      linkMirrorMaskOnRenderer(_mirrorMaskFilter);
+    } catch (e) {
+      _mirrorMaskFilter = null;
+      _mirrorMaskFailed = true;
+      if (typeof mirrorContainer !== "undefined" && mirrorContainer) mirrorContainer.filters = null;
+      console.warn("MovementInteractionSystem: mirror reflection mask unavailable.", e);
+      return null;
+    }
+    return _mirrorMaskFilter;
+  }
+
+  function linkMirrorMaskOnRenderer(filter) {
+    const renderer = typeof Graphics !== "undefined" && Graphics.app && Graphics.app.renderer;
+    if (!renderer || !renderer.gl || !renderer.shader || !filter.program) return;
+    const uid = renderer.CONTEXT_UID;
+    if (_mirrorMaskContext === uid) return;
+    const programs = filter.program.glPrograms || {};
+    let linked = programs[uid];
+    if (!linked) {
+      try {
+        linked = renderer.shader.generateShader(filter);
+      } catch (e) {
+        delete programs[uid];
+        throw e;
+      }
+    }
+    if (!linked || !linked.program) {
+      delete programs[uid];
+      throw new Error("mirror mask did not link on the renderer context"); // i18n-ignore: diagnostic
+    }
+    _mirrorMaskContext = uid;
+  }
+
+  function buildMirrorMaskFilter() {
+    const filter = new PIXI.Filter(null, `
+      varying vec2 vTextureCoord;
+      uniform sampler2D uSampler;
+      uniform sampler2D uMirror;
+      uniform vec2 uMirrorSize;
+      uniform float uUseMirror;
+      uniform highp vec4 inputSize;
+      uniform highp vec4 outputFrame;
+
+      void main(void) {
+        vec2 screen = vTextureCoord * inputSize.xy + outputFrame.xy;
+        vec4 color = texture2D(uSampler, vTextureCoord);
+
+        float keep = 1.0;
+
+        if (uUseMirror > 0.5) {
+          vec4 mirrorTex = texture2D(uMirror, screen / uMirrorSize);
+
+          // Discard outside the mirror event sprite
+          float hasMirror = step(0.01, mirrorTex.a);
+
+          // Mirror glass is white / light-cyan / light-gray:
+          // Keep only pixels where the mirror event is white/light screen
+          float isWhiteGlass = step(0.50, mirrorTex.g) *
+                               step(0.50, mirrorTex.b) *
+                               step(0.40, mirrorTex.r) *
+                               step(mirrorTex.r - 0.12, mirrorTex.b) *
+                               step(mirrorTex.r - 0.12, mirrorTex.g);
+
+          float isCyanGlass = step(0.50, mirrorTex.b) *
+                              step(0.45, mirrorTex.g) *
+                              step(mirrorTex.r + 0.12, mirrorTex.b);
+
+          float isGlass = max(isWhiteGlass, isCyanGlass);
+
+          keep = hasMirror * isGlass;
+        }
+
+        gl_FragColor = vec4(color.rgb, color.a * keep);
+      }
+    `, {
+      uMirror: PIXI.Texture ? PIXI.Texture.EMPTY : null,
+      uMirrorSize: [1, 1],
+      uUseMirror: 0
+    });
+    filter.padding = 0;
+    return filter;
+  }
+
   // --- Mirror Reflection System ---
   // An event named "Mirror" reflects whoever stands on the tile in front of it
   // (the tile in the mirror's own facing direction). The reflection is the same
@@ -1990,6 +2082,10 @@
         if (spriteset._tilemap) {
           spriteset._baseSprite.addChild(mirrorContainer);
         }
+      }
+      const mask = getMirrorMaskFilter();
+      if (mask && mirrorContainer && !mirrorContainer.filters) {
+        mirrorContainer.filters = [mask];
       }
     },
 
@@ -2062,6 +2158,10 @@
       };
       // A faint cool cast so the reflection reads as glass rather than a twin.
       sprite.setBlendColor([20, 25, 45, 30]);
+      const mask = getMirrorMaskFilter();
+      if (mask && mirrorContainer && !mirrorContainer.filters) {
+        mirrorContainer.filters = [mask];
+      }
       return sprite;
     },
 
@@ -2095,12 +2195,88 @@
       mirrorSprites.delete(mirror);
     },
 
+    updateMirrorMask(spriteset, activeMirrors) {
+      const mask = getMirrorMaskFilter();
+      if (!mask || !mask.uniforms) return;
+      if (!activeMirrors || activeMirrors.size === 0) {
+        mask.uniforms.uUseMirror = 0;
+        return;
+      }
+
+      const renderer = Graphics.app && Graphics.app.renderer;
+      if (!renderer || !PIXI.RenderTexture) {
+        mask.uniforms.uUseMirror = 0;
+        return;
+      }
+
+      const w = Graphics.width;
+      const h = Graphics.height;
+      let rt = this._maskTexture;
+      if (!rt || rt.baseTexture.destroyed || rt.width !== w || rt.height !== h) {
+        if (rt && !rt.baseTexture.destroyed) rt.destroy(true);
+        rt = this._maskTexture = PIXI.RenderTexture.create({ width: w, height: h, resolution: 1 });
+        if (rt.baseTexture && typeof PIXI.SCALE_MODES !== "undefined") {
+          rt.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+        }
+      }
+
+      if (!this._maskContainer) {
+        this._maskContainer = new PIXI.Container();
+        this._maskSprites = [];
+      }
+
+      let i = 0;
+      for (const mirror of activeMirrors) {
+        const charSprite = ReflectionSystem.findCharacterSprite(spriteset, mirror);
+        if (!charSprite || !charSprite.texture || !charSprite.texture.valid) continue;
+
+        charSprite.update();
+
+        let maskSprite = this._maskSprites[i];
+        if (!maskSprite) {
+          maskSprite = new PIXI.Sprite();
+          this._maskSprites.push(maskSprite);
+          this._maskContainer.addChild(maskSprite);
+        }
+
+        maskSprite.visible = true;
+        maskSprite.texture = charSprite.texture;
+        maskSprite.anchor.set(charSprite.anchor.x, charSprite.anchor.y);
+        maskSprite.position.set(charSprite.x, charSprite.y);
+        maskSprite.scale.set(charSprite.scale.x, charSprite.scale.y);
+        maskSprite.rotation = charSprite.rotation;
+        i++;
+      }
+
+      for (let j = i; j < this._maskSprites.length; j++) {
+        this._maskSprites[j].visible = false;
+      }
+
+      if (i === 0) {
+        mask.uniforms.uUseMirror = 0;
+        return;
+      }
+
+      try {
+        renderer.render(this._maskContainer, rt, true, null, false);
+      } catch (e) {
+        mask.uniforms.uUseMirror = 0;
+        return;
+      }
+
+      mask.uniforms.uMirror = rt;
+      mask.uniforms.uMirrorSize = [w, h];
+      mask.uniforms.uUseMirror = 1;
+    },
+
     update() {
       const mirrors = this.mirrors();
       if (!mirrors.length) {
         if (mirrorSprites.size > 0) {
           for (const mirror of Array.from(mirrorSprites.keys())) this.removeSprite(mirror);
         }
+        const mask = getMirrorMaskFilter();
+        if (mask && mask.uniforms) mask.uniforms.uUseMirror = 0;
         return;
       }
 
@@ -2108,6 +2284,7 @@
       if (!mirrorContainer || !SceneManager._scene || !SceneManager._scene._spriteset) return;
 
       const active = new Set();
+      const spriteset = SceneManager._scene._spriteset;
 
       for (const mirror of mirrors) {
         if (!mirror || mirror._erased) continue;
@@ -2136,6 +2313,8 @@
       for (const mirror of Array.from(mirrorSprites.keys())) {
         if (!active.has(mirror)) this.removeSprite(mirror);
       }
+
+      this.updateMirrorMask(spriteset, active);
     },
 
     cleanup() {
@@ -2147,6 +2326,15 @@
           mirrorContainer.parent.removeChild(mirrorContainer);
         }
         mirrorContainer = null;
+      }
+      if (this._maskTexture) {
+        if (!this._maskTexture.baseTexture.destroyed) this._maskTexture.destroy(true);
+        this._maskTexture = null;
+      }
+      if (this._maskContainer) {
+        this._maskContainer.destroy({ children: true });
+        this._maskContainer = null;
+        this._maskSprites = null;
       }
       mirrorSprites.clear();
       this.invalidate();

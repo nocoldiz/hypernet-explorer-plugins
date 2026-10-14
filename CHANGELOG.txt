@@ -1,8 +1,23 @@
+0.8.12a
+
+Maps:
+ - Starting skyscraper interior walls
+ - Finished many procedural housese
+
+Changed:
+ - reworked spell making into a step by step progress
+ - reworked skill auto sync selector and renamed best to reactive
+ - crafting uses the tag system from itemsysteminventory
+
+Fixed:
+ - mirror events filter what is not white
+ - fix buttons in travel on worldmap
+
 
 0.8.11a
 
 Changed:
- - em model in conversation always lighted up and not darkened
+ - em model in conversation always lighted up and framing fit
  - reworked ask bubba menu layout and styling
 
 Fixed:

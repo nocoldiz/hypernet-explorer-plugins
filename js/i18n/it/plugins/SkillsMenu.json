@@ -161,7 +161,7 @@
   "sync": {
     "label": "Sincronizzazione automatica",
     "manual": "Manuale",
-    "best": "Migliori",
+    "best": "Reattiva",
     "auto": "Automatica",
     "manualDesc": "Selezione manuale: le nuove abilità occupano solo gli slot liberi.",
     "bestDesc": "Sincronizza le migliori abilità contro i nemici a inizio battaglia.",

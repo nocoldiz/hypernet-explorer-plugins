@@ -7982,6 +7982,7 @@
             this._craftEditingId = null;
             this._craft = this.craftDefaultBuild(kind);
         }
+        this._craftStep = 0;
         this._craftFocus = 0;
         this._craftChip = 0;
         this._craftChipAt = {};
@@ -8630,6 +8631,152 @@
         return tr('groupHint.' + group, { max: groupMax(group, this._craft ? this._craft.kind : 'spell') });
     };
 
+    Proto.craftSetStep = function (step) {
+        step = Math.max(0, Math.min(5, step | 0));
+        this._craftStep = step;
+        const focusMap = {
+            0: CRAFT_ROWS.indexOf('core'),
+            1: CRAFT_ROWS.indexOf('element'),
+            2: CRAFT_ROWS.indexOf('shape'),
+            3: CRAFT_ROWS.indexOf('power'),
+            4: CRAFT_ROWS.indexOf('name'),
+            5: 0
+        };
+        if (focusMap[step] !== undefined && focusMap[step] >= 0) {
+            this._craftFocus = focusMap[step];
+        }
+        SoundManager.playCursor();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.craftNextStep = function () {
+        const cur = (this._craftStep === undefined) ? 0 : this._craftStep;
+        if (cur < 4) this.craftSetStep(cur + 1);
+        else if (cur === 4) this.craftWrite();
+    };
+
+    Proto.craftPrevStep = function () {
+        const cur = (this._craftStep === undefined) ? 0 : this._craftStep;
+        if (cur > 0) this.craftSetStep(cur - 1);
+    };
+
+    Proto.craftStepPickTag = function (group, key) {
+        const build = this._craft;
+        if (!build) return;
+        if (key === 'none_element') {
+            const currentElem = build.tags.find(k => groupOf(k) === 'element');
+            if (currentElem) this.craftRemoveTag(currentElem);
+            else SoundManager.playOk();
+            return;
+        }
+        if (key === 'none_power') {
+            const currentPow = build.tags.find(k => groupOf(k) === 'power');
+            if (currentPow) this.craftRemoveTag(currentPow);
+            else SoundManager.playOk();
+            return;
+        }
+        if (build.tags.includes(key)) {
+            if (group === 'element' || group === 'power') {
+                this.craftRemoveTag(key);
+            } else {
+                SoundManager.playOk();
+            }
+            return;
+        }
+        this.craftAddTag(key);
+    };
+
+    Proto.renderCraftStepperHTML = function () {
+        const build = this._craft;
+        const cur = (this._craftStep === undefined) ? 0 : this._craftStep;
+        const isDone = (s) => {
+            if (!build) return false;
+            if (s === 0) return build.tags.some(k => groupOf(k) === 'core');
+            if (s === 1) return build.tags.some(k => groupOf(k) === 'element');
+            if (s === 2) return build.tags.some(k => groupOf(k) === 'shape');
+            if (s === 3) return build.tags.some(k => ['power', 'rider', 'refine', 'payoff', 'mechanic'].includes(groupOf(k)));
+            if (s === 4) return !!build.name;
+            return false;
+        };
+        const stepKeys = ['core', 'element', 'shape', 'modifiers', 'identity'];
+        const items = stepKeys.map((key, idx) => {
+            const active = cur === idx;
+            const done = isDone(idx);
+            const num = idx + 1;
+            const label = tr('step.' + key);
+            return `
+                <div class="sm-craft-step-tab focusable ${active ? 'active' : ''} ${done ? 'is-done' : ''}"
+                     onclick="SceneManager._scene.craftSetStep(${idx})" title="${esc(label)}">
+                    <span class="sm-craft-step-num">${num}</span>
+                    <span class="sm-craft-step-label">${esc(label)}</span>
+                </div>`;
+        });
+        items.push(`
+            <div class="sm-craft-step-tab sm-craft-step-all focusable ${cur === 5 ? 'active' : ''}"
+                 onclick="SceneManager._scene.craftSetStep(5)" title="${esc(tr('step.all'))}">
+                <span class="sm-craft-step-label">${esc(tr('step.all'))}</span>
+            </div>`);
+        return `<div class="sm-craft-stepper">${items.join('')}</div>`;
+    };
+
+    Proto.renderCraftStepOptionsHTML = function (group) {
+        const build = this._craft;
+        if (!build) return '';
+        const rows = this.craftCatalogueRows(group);
+        let html = '';
+        if (group === 'element') {
+            const hasElem = build.tags.some(k => groupOf(k) === 'element');
+            html += `
+                <div class="sm-craft-card-opt focusable ${!hasElem ? 'selected' : ''}"
+                     onclick="SceneManager._scene.craftStepPickTag('element', 'none_element')"
+                     title="${esc(tr('step.noneElementDesc'))}">
+                    <div class="sm-craft-opt-header">
+                        <strong class="sm-craft-opt-name">${esc(tr('step.noneElement'))}</strong>
+                        <span class="sm-craft-opt-cost">0 KP</span>
+                    </div>
+                    <div class="sm-craft-opt-desc">${esc(tr('step.noneElementDesc'))}</div>
+                </div>`;
+        }
+        rows.forEach(row => {
+            const isChosen = row.have;
+            const isShut = !isChosen && !row.verdict.ok;
+            const costHint = row.def.kp ? `${row.def.kp} KP` : '';
+            const cxHint = row.def.cx ? `+${row.def.cx.toFixed(1)} cx` : '';
+            const badges = [costHint, cxHint].filter(Boolean).join(' · ');
+            html += `
+                <div class="sm-craft-card-opt focusable ${isChosen ? 'selected' : ''} ${isShut ? 'is-shut' : ''}"
+                     onclick="SceneManager._scene.craftStepPickTag('${group}', '${row.key}')"
+                     title="${esc(tagInfo(row.key))}">
+                    <div class="sm-craft-opt-header">
+                        <strong class="sm-craft-opt-name">${esc(tagName(row.key))}</strong>
+                        ${badges ? `<span class="sm-craft-opt-cost">${esc(badges)}</span>` : ''}
+                    </div>
+                    <div class="sm-craft-opt-desc">${esc(tagInfo(row.key))}</div>
+                    ${isShut ? `<div class="sm-craft-opt-shut">${esc(whyText(row.verdict))}</div>` : ''}
+                </div>`;
+        });
+        return `<div class="sm-craft-opts-grid">${html}</div>`;
+    };
+
+    Proto.renderCraftStepNavHTML = function (curStep, verdict, owed) {
+        if (curStep === 5) return '';
+        const hasPrev = curStep > 0;
+        const isLast = curStep === 4;
+        const prevBtn = hasPrev
+            ? `<div class="inspect-btn focusable sm-craft-nav-btn sm-craft-nav-prev" onclick="SceneManager._scene.craftPrevStep()">&lt; ${esc(tr('step.prev'))}</div>`
+            : `<div class="sm-craft-nav-spacer"></div>`;
+        const nextBtn = !isLast
+            ? `<div class="inspect-btn focusable sm-craft-nav-btn sm-craft-nav-next" onclick="SceneManager._scene.craftNextStep()">${esc(tr('step.next'))} &gt;</div>`
+            : `<div class="inspect-btn focusable sm-craft-nav-btn sm-craft-nav-write ${verdict.ok ? '' : 'unusable'}" onclick="SceneManager._scene.craftWrite()">
+                 ${esc(this._craftEditingId ? tr('rewrite') : tr('writeIt'))} <span class="sm-forge-cost">&middot; ${owed} KP</span>
+               </div>`;
+        return `
+            <div class="sm-craft-step-nav">
+                ${prevBtn}
+                ${nextBtn}
+            </div>`;
+    };
+
     Proto.renderCraftBench = function (knowledge) {
         const leftBox = document.getElementById('left-page-content');
         const rightBox = document.getElementById('right-page-content');
@@ -8649,6 +8796,9 @@
             return rowLabel;
         };
         const activate = (row) => `SceneManager._scene.craftActivateRow(${CRAFT_ROWS.indexOf(row)})`;
+
+        const curStep = (this._craftStep === undefined) ? 0 : this._craftStep;
+        const isStepMode = curStep !== 5;
 
         // Who the entry is: five triggers in one compact block.
         const anim = (build.animationId && typeof $dataAnimations !== 'undefined' && $dataAnimations)
@@ -8700,7 +8850,7 @@
             blockText = (blockText ? blockText + ' ' : '') + tr('dropped', { tags: this._craftDropped.map(tagName).join(', ') });
         }
         const actionsHTML = `
-            <div class="inspect-actions sm-forge-actions">
+            <div class="inspect-actions sm-forge-actions" style="${(curStep === 4 || curStep === 5) ? '' : 'display:none;'}">
                 <div class="inspect-btn focusable ${focusOn('catalogue') ? 'selected' : ''}" onclick="SceneManager._scene.openCraftCatalogue(null)">${esc(tr('catalogue'))}</div>
                 <div class="inspect-btn focusable ${focusOn('randomize') ? 'selected' : ''}" onclick="SceneManager._scene.craftRandomize()">${esc(tr('randomize'))}</div>
                 <div class="inspect-btn focusable ${focusOn('create') ? 'selected' : ''} ${verdict.ok ? '' : 'unusable'}" onclick="SceneManager._scene.craftWrite()">
@@ -8710,6 +8860,41 @@
             ${blockText ? `<div class="sm-craft-block">${esc(blockText)}</div>` : ''}`;
 
         const craftTitle = spell ? tr('titleSpell') : tr('titleSkill');
+        const stepPanesHTML = `
+            <div class="sm-craft-step-pane" data-step="0" style="${curStep === 0 || curStep === 5 ? '' : 'display:none;'}">
+                ${isStepMode ? `<div class="sm-craft-step-intro"><strong>${esc(tr('step.core'))}</strong>: ${esc(tr('step.stepHint.core'))}</div>` : ''}
+                ${chipSection('core')}
+                ${this.renderCraftStepOptionsHTML('core')}
+                ${this.renderCraftStepNavHTML(0, verdict, owed)}
+            </div>
+            <div class="sm-craft-step-pane" data-step="1" style="${curStep === 1 || curStep === 5 ? '' : 'display:none;'}">
+                ${isStepMode ? `<div class="sm-craft-step-intro"><strong>${esc(tr('step.element'))}</strong>: ${esc(tr('step.stepHint.element'))}</div>` : ''}
+                ${chipSection('element')}
+                ${this.renderCraftStepOptionsHTML('element')}
+                ${this.renderCraftStepNavHTML(1, verdict, owed)}
+            </div>
+            <div class="sm-craft-step-pane" data-step="2" style="${curStep === 2 || curStep === 5 ? '' : 'display:none;'}">
+                ${isStepMode ? `<div class="sm-craft-step-intro"><strong>${esc(tr('step.shape'))}</strong>: ${esc(tr('step.stepHint.shape'))}</div>` : ''}
+                ${chipSection('shape')}
+                ${this.renderCraftStepOptionsHTML('shape')}
+                ${this.renderCraftStepNavHTML(2, verdict, owed)}
+            </div>
+            <div class="sm-craft-step-pane" data-step="3" style="${curStep === 3 || curStep === 5 ? '' : 'display:none;'}">
+                ${isStepMode ? `<div class="sm-craft-step-intro"><strong>${esc(tr('step.modifiers'))}</strong>: ${esc(tr('step.stepHint.modifiers'))}</div>` : ''}
+                ${chipSection('power')}
+                ${this.renderCraftStepOptionsHTML('power')}
+                ${chipSection('rider')}
+                ${chipSection('refine')}
+                ${chipSection('payoff')}
+                ${chipSection('mechanic')}
+                ${this.renderCraftStepNavHTML(3, verdict, owed)}
+            </div>
+            <div class="sm-craft-step-pane" data-step="4" style="${curStep === 4 || curStep === 5 ? '' : 'display:none;'}">
+                ${isStepMode ? `<div class="sm-craft-step-intro"><strong>${esc(tr('step.identity'))}</strong>: ${esc(tr('step.stepHint.identity'))}</div>` : ''}
+                ${K.section({ icon: CRAFT_SECTION_ICONS.identity, title: tr('identity'), body: identHTML })}
+                ${this.renderCraftStepNavHTML(4, verdict, owed)}
+            </div>`;
+
         leftBox.innerHTML = `
             <div class="page-header-bar sm-bench-header">
               <div class="back-button focusable" onclick="SceneManager._scene.closeCraftBench()">${esc(tr('back'))}</div>
@@ -8720,9 +8905,9 @@
               <div class="backpack-tab sm-bench-tab focusable ${spell ? 'active' : ''}" onclick="SceneManager._scene.openCraftBench('spell')">${esc(tr('titleSpell'))}</div>
               <div class="backpack-tab sm-bench-tab focusable ${!spell ? 'active' : ''}" onclick="SceneManager._scene.openCraftBench('skill')">${esc(tr('titleSkill'))}</div>
             </div>
+            ${this.renderCraftStepperHTML()}
             <div id="craft-form-box" class="ui-scroll sm-kit-scroll sm-craft-rows">
-                ${K.section({ icon: CRAFT_SECTION_ICONS.identity, title: tr('identity'), body: identHTML })}
-                ${CRAFT_CHIP_ROWS.map(chipSection).join('')}
+                ${stepPanesHTML}
             </div>
             ${actionsHTML}`;
 
@@ -9004,6 +9189,14 @@
             return;
         }
 
+        if (Input.isTriggered('pageup')) {
+            this.craftPrevStep();
+            return;
+        } else if (Input.isTriggered('pagedown')) {
+            this.craftNextStep();
+            return;
+        }
+
         const max = this.craftFocusRows();
         const prev = this._craftFocus;
         const prevChip = this._craftChip || 0;
@@ -9031,6 +9224,14 @@
         // Coming onto an entry row always offers the harmless chip first, so a
         // held Down can never land the cursor on Discard.
         if (this._craftFocus !== prev) this._craftChip = 0;
+        if (this._craftStep !== 5 && this._craftFocus !== prev) {
+            const row = CRAFT_ROWS[this._craftFocus];
+            if (row === 'core') this._craftStep = 0;
+            else if (row === 'element') this._craftStep = 1;
+            else if (row === 'shape') this._craftStep = 2;
+            else if (['power', 'rider', 'refine', 'payoff', 'mechanic', 'catalogue'].includes(row)) this._craftStep = 3;
+            else if (['name', 'icon', 'animation', 'description', 'lore', 'randomize', 'create'].includes(row)) this._craftStep = 4;
+        }
         const cursorMoved = prevCursor >= 0 && this._craftFocus === prev && this.craftChipCursor(chipRow) !== prevCursor;
         if (this._craftFocus !== prev || this._craftChip !== prevChip || cursorMoved) {
             SoundManager.playCursor();

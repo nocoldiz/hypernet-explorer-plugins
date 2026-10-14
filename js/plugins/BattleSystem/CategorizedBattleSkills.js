@@ -2804,59 +2804,58 @@
                 .skill-sync-selector-bar {
                     display: flex;
                     flex-direction: column;
-                    gap: 4px;
+                    gap: 5px;
                     margin: 4px 0 8px 0;
-                    padding: 6px 8px;
-                    background: rgba(0, 0, 0, 0.2);
-                    border-radius: 4px;
-                    border: 1px solid rgba(255, 255, 255, 0.08);
                     box-sizing: border-box;
                 }
                 .skill-sync-selector-row {
                     display: flex;
                     align-items: center;
-                    gap: 8px;
+                    gap: 6px;
                 }
                 .skill-sync-selector-label {
-                    font-family: var(--font-ui, sans-serif);
-                    font-size: 0.8em;
+                    font-family: var(--font-heading, 'Lora', serif);
+                    font-size: var(--fs-body, 0.92em);
                     font-weight: bold;
-                    color: var(--text-text-alt-4, #b0a898);
+                    color: var(--text-card-dark, #2b251f);
                     white-space: nowrap;
                 }
                 .skill-sync-modes {
-                    display: inline-flex;
-                    gap: 4px;
-                    flex: 1;
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 5px;
                 }
                 .skill-sync-mode-btn {
-                    flex: 1;
-                    text-align: center;
+                    padding: 5px 11px;
+                    border-radius: 4px;
+                    background: transparent;
+                    border: 1px solid var(--border-gold-amber-30, rgba(187, 161, 109, 0.3));
+                    color: var(--text-card-dark, #2b251f);
                     font-family: var(--font-ui, sans-serif);
-                    font-size: 0.76em;
-                    padding: 3px 6px;
-                    border-radius: 3px;
+                    font-size: var(--fs-body, 0.88em);
                     cursor: pointer;
-                    background: rgba(255, 255, 255, 0.05);
-                    border: 1px solid rgba(255, 255, 255, 0.12);
-                    color: var(--text-text-alt-4, #b0a898);
-                    transition: all 0.15s ease;
+                    transition: 0.15s ease;
                     user-select: none;
+                    outline: none;
                 }
                 .skill-sync-mode-btn:hover {
-                    border-color: var(--text-primary-hover, #f0c674);
-                    color: var(--text-primary-hover, #f0c674);
+                    background: var(--bg-primary-hover-translucent-35, rgba(240, 198, 116, 0.2));
+                    border-color: var(--text-primary-hover, #b8860b);
+                    color: var(--text-primary-hover, #b8860b);
                 }
-                .skill-sync-mode-btn.active {
-                    background: rgba(240, 198, 116, 0.18);
-                    border-color: var(--text-primary-hover, #f0c674);
-                    color: var(--text-primary-hover, #f0c674);
+                .skill-sync-mode-btn.active,
+                .skill-sync-mode-btn.selected {
+                    background: var(--chip-active-bg, rgba(184, 134, 11, 0.25));
+                    border-color: var(--chip-active-fg, #b8860b);
+                    color: var(--chip-active-fg, #b8860b);
                     font-weight: bold;
+                    box-shadow: 0 2px 4px var(--shadow-gold-amber-50, rgba(0, 0, 0, 0.15));
                 }
                 .skill-sync-desc {
+                    margin-top: 3px;
                     font-family: var(--font-ui, sans-serif);
-                    font-size: 0.72em;
-                    color: var(--text-text-alt-4, #888);
+                    font-size: var(--fs-caption, 0.78em);
+                    color: var(--text-card-medium, #6e6557);
                     line-height: 1.3;
                 }
                 .skill-lock-btn {
@@ -3347,7 +3346,7 @@
         }
         SoundManager.playCursor();
         this._dndLastLeftPageKey = null;
-        this.renderUISkillCards();
+        this.refreshUISkill();
     };
 
     Scene_Skill.prototype.toggleUILock = function (skillId) {
@@ -3357,7 +3356,7 @@
         BattleLoadout.toggleLock(actor, skillId);
         SoundManager.playCursor();
         this._dndLastLeftPageKey = null;
-        this.renderUISkillCards();
+        this.refreshUISkill();
     };
 
     // 1-9 while a skill is being read drops it into that slot of the carried
@@ -3663,6 +3662,8 @@
         // The strip's own state belongs in the key too: reversing the sort
         // leaves the list the same LENGTH, so without it the page would keep
         // showing the old order.
+        const barKey = this._skillBar
+            ? `${this._skillBar.query}|${this._skillBar.sortKey}|${this._skillBar.sortDir}` : '';
         const syncKey = `${BattleLoadout.syncMode(actor)}_${BattleLoadout.lockedIds(actor).sort().join(',')}`;
         const leftPageKey = `${actor.actorId()}_${this._dndSelectedTypeIndex}_${list.length}_${carriedKey}_${this._dndInspectSkillId || 0}_${barKey}_${syncKey}`;
 
@@ -3692,7 +3693,7 @@
             const currentMode = BattleLoadout.syncMode(actor);
             const syncTitle = typeof T === 'function' && T.has && T.has('SkillsMenu.sync.label') ? T('SkillsMenu.sync.label') : 'Auto sync';
             const manualLabel = typeof T === 'function' && T.has && T.has('SkillsMenu.sync.manual') ? T('SkillsMenu.sync.manual') : 'Manual';
-            const bestLabel = typeof T === 'function' && T.has && T.has('SkillsMenu.sync.best') ? T('SkillsMenu.sync.best') : 'Best';
+            const bestLabel = typeof T === 'function' && T.has && T.has('SkillsMenu.sync.best') ? T('SkillsMenu.sync.best') : 'Reactive';
             const autoLabel = typeof T === 'function' && T.has && T.has('SkillsMenu.sync.auto') ? T('SkillsMenu.sync.auto') : 'Automatic';
 
             let descText = "";
@@ -3705,16 +3706,16 @@
             }
 
             autoSyncHTML = `
-                <div class="skill-sync-selector-bar">
-                    <div class="skill-sync-selector-row">
-                        <span class="skill-sync-selector-label">${escapeHtml(syncTitle)}:</span>
-                        <div class="skill-sync-modes">
-                            <span class="skill-sync-mode-btn ${currentMode === 'manual' ? 'active' : ''}" onclick="SceneManager._scene.setUISyncMode('manual')">${escapeHtml(manualLabel)}</span>
-                            <span class="skill-sync-mode-btn ${currentMode === 'best' ? 'active' : ''}" onclick="SceneManager._scene.setUISyncMode('best')">${escapeHtml(bestLabel)}</span>
-                            <span class="skill-sync-mode-btn ${currentMode === 'auto' ? 'active' : ''}" onclick="SceneManager._scene.setUISyncMode('auto')">${escapeHtml(autoLabel)}</span>
-                        </div>
+                <div class="skill-sync-selector-bar cc-bio-section">
+                    <div class="skill-sync-selector-row cc-bio-section-title">
+                        <span class="skill-sync-selector-label">${escapeHtml(syncTitle)}</span>
                     </div>
-                    <div class="skill-sync-desc">${escapeHtml(descText)}</div>
+                    <div class="skill-sync-modes cc-bio-chips-row">
+                        <button type="button" class="skill-sync-mode-btn cc-bio-chip ${currentMode === 'manual' ? 'selected active' : ''}" onclick="SceneManager._scene.setUISyncMode('manual')">${escapeHtml(manualLabel)}</button>
+                        <button type="button" class="skill-sync-mode-btn cc-bio-chip ${currentMode === 'best' ? 'selected active' : ''}" onclick="SceneManager._scene.setUISyncMode('best')">${escapeHtml(bestLabel)}</button>
+                        <button type="button" class="skill-sync-mode-btn cc-bio-chip ${currentMode === 'auto' ? 'selected active' : ''}" onclick="SceneManager._scene.setUISyncMode('auto')">${escapeHtml(autoLabel)}</button>
+                    </div>
+                    <div class="skill-sync-desc cc-bio-note">${escapeHtml(descText)}</div>
                 </div>
             `;
         }

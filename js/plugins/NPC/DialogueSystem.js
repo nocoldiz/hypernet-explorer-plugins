@@ -475,8 +475,12 @@ Imported.DialogueSystem = true;
             const bottom = neckAt.y - span * BUST_BELOW_NECK;
             const height = (box.max.y - bottom) * BUST_HEADROOM;
             const vHalf = (camera.fov * Math.PI / 180) / 2;
+            const hHalf = Math.atan(Math.tan(vHalf) * (camera.aspect || 1));
+            const halfW = Math.max(Math.abs(box.max.x - headAt.x), Math.abs(headAt.x - box.min.x)) * 1.08;
+            const distV = (height / 2) / Math.tan(vHalf);
+            const distH = halfW / Math.tan(hHalf);
             const center = new THREE.Vector3(headAt.x, bottom + height / 2, headAt.z);
-            return { center, distance: Math.max((height / 2) / Math.tan(vHalf), 0.1) };
+            return { center, distance: Math.max(distV, distH, 0.1) };
         }
 
         function context(width, height) {
@@ -3160,7 +3164,7 @@ Imported.DialogueSystem = true;
         // The board carries far more entries than a plain choice list, so it is
         // written a size down from one.
         const baseFont   = (typeof this.standardFontSize === 'function') ? this.standardFontSize() : 26;
-        const scaledFont = Math.round(baseFont * sc.sy * (this._htmlChoiceGrid ? 0.62 : 0.85));
+        const scaledFont = Math.round(baseFont * sc.sy * (this._htmlChoiceGrid ? 0.72 : 0.85));
         const idx        = this._index >= 0 ? this._index : 0;
         if (this._htmlChoiceOriginalIndices) {
             this._htmlChoiceEls.forEach((el, vi) => {
@@ -5015,17 +5019,16 @@ Imported.DialogueSystem = true;
     // notices away, so gating the board on it hid the whole of it.
     const STORY_ASK_SWITCH = 100;                   // story mode
     const STORY_ASK_COLS   = 2;                     // columns of the grid
-    const STORY_ASK_MAX_COLS = 4;                   // as wide as the board goes
+    const STORY_ASK_MAX_COLS = 3;                   // as wide as the board goes
 
     // The board grows sideways rather than downwards: a couple of topics stand
     // in two columns, a script that has grown a long bank of them is dealt out
-    // over as many as four, so the whole of it is on screen at once whatever
+    // over as many as three, so the whole of it is on screen at once whatever
     // the writer adds.
     function storyAskCols(groups) {
         const most = (groups || []).reduce(
             (n, g) => (g.side ? n : Math.max(n, g.scenes ? g.scenes.length : 0)), 0);
         if (most <= 4)  return STORY_ASK_COLS;
-        if (most <= 12) return 3;
         return STORY_ASK_MAX_COLS;
     }
 
