@@ -4807,6 +4807,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             if (stale && stale.parentNode) stale.parentNode.removeChild(stale);
             const btn = document.createElement('div');
             btn.id = id;
+            btn.style.whiteSpace = 'nowrap';
             document.body.appendChild(btn);
             btn.className = 'title-plate title-ctl-btn';
             // Swallow the press so it never reaches the free-look drag behind it.
@@ -4827,12 +4828,14 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         _refreshControlLabels() {
             const pad = PAD.connected();
             const lang = activeLanguage();
+            let changed = false;
             if (this._nextButton &&
                 (pad !== this._nextPadConnected || lang !== this._nextLabelLang)) {
                 this._nextPadConnected = pad;
                 this._nextLabelLang = lang;
                 this._nextButton.textContent =
                     T('Titlescreen.hyperverse.nextBody') + (pad ? ' (R3)' : ' ›');
+                changed = true;
             }
             if (this._catalogButton &&
                 (pad !== this._catalogPadConnected || lang !== this._catalogLabelLang)) {
@@ -4840,7 +4843,9 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 this._catalogLabelLang = lang;
                 this._catalogButton.textContent =
                     T('Titlescreen.hyperverse.catalogButton') + (pad ? ' (L3)' : '');
+                changed = true;
             }
+            if (changed) this.layout();
         }
 
         // ---- CATALOG panel ---------------------------------------------------
@@ -5089,47 +5094,68 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             this.layout();
         }
 
-        // Everything hugs the bottom-right corner of the canvas and scales with
-        // it: CATALOG at the bottom, NEXT above it, and the readout above both.
-        // The catalog panel takes the readout's slot (they are never up at the
-        // same time). Their inner type is sized in em off INFO_BASE_FONT, so a
-        // resize only has to move the box font-size.
+        // Controls hug the top-right corner on the same upper row (CATALOG,
+        // NEXT BODY, and the ROADMAP button side-by-side) with the catalog panel
+        // opening directly below them.
         layout() {
             const rect = TitleLayout.rect();
             const s = TitleLayout.scale(rect);
             const width = s => Math.round(Math.min(340 * s, rect.width * 0.3)) + 'px';
 
             const road = document.getElementById('title-roadmap-box') ||
-                         document.getElementById('title-disclaimer') ||
-                         document.getElementById('title-language') ||
-                         document.getElementById('title-bg-switch');
+                         document.getElementById('title-disclaimer');
             const roadRect = road ? road.getBoundingClientRect() : null;
-            const topBelowRoadmap = (roadRect && roadRect.height > 0)
-                ? (roadRect.bottom - rect.top) / s + 8
-                : 90;
 
-            if (this._nextButton) {
-                TitleLayout.place(this._nextButton, { right: 18, top: Math.round(topBelowRoadmap) });
+            let rowTop = 90;
+            let nextRight = 18;
+            let roadH = 24;
+
+            if (road && roadRect && roadRect.height > 0) {
+                rowTop = (roadRect.top - rect.top) / s;
+                roadH = roadRect.height / s;
+                const roadW = roadRect.width / s;
+                nextRight = 18 + roadW + 6;
+            } else {
+                const above = document.getElementById('title-language') ||
+                              document.getElementById('title-bg-switch');
+                const aboveRect = above ? above.getBoundingClientRect() : null;
+                if (aboveRect && aboveRect.height > 0) {
+                    rowTop = (aboveRect.bottom - rect.top) / s + 8;
+                }
             }
 
-            const nextRect = (this._nextButton && this._nextButton.offsetHeight > 0)
+            if (this._nextButton) {
+                const nextH = (this._nextButton.offsetHeight > 0) ? this._nextButton.offsetHeight / s : 22;
+                const nextTop = rowTop + (roadH - nextH) / 2;
+                TitleLayout.place(this._nextButton, { right: Math.round(nextRight), top: Math.round(nextTop) });
+            }
+
+            const nextRect = (this._nextButton && this._nextButton.offsetWidth > 0)
                 ? this._nextButton.getBoundingClientRect()
                 : null;
-            const topBelowNext = (nextRect && nextRect.height > 0)
-                ? (nextRect.bottom - rect.top) / s + 6
-                : topBelowRoadmap + 30;
+            const nextW = (nextRect && nextRect.width > 0)
+                ? nextRect.width / s
+                : ((this._nextButton && this._nextButton.offsetWidth > 0) ? this._nextButton.offsetWidth / s : 110);
+            const catRight = nextRight + nextW + 6;
 
             if (this._catalogButton) {
-                TitleLayout.place(this._catalogButton, { right: 18, top: Math.round(topBelowNext) });
+                const catH = (this._catalogButton.offsetHeight > 0) ? this._catalogButton.offsetHeight / s : 22;
+                const catTop = rowTop + (roadH - catH) / 2;
+                TitleLayout.place(this._catalogButton, { right: Math.round(catRight), top: Math.round(catTop) });
             }
 
             if (this._catalogPanel) {
                 const catRect = (this._catalogButton && this._catalogButton.offsetHeight > 0)
                     ? this._catalogButton.getBoundingClientRect()
                     : null;
-                const panelTop = (catRect && catRect.height > 0)
-                    ? (catRect.bottom - rect.top) / s + 6
-                    : topBelowNext + 30;
+                const nextRectNow = (this._nextButton && this._nextButton.offsetHeight > 0)
+                    ? this._nextButton.getBoundingClientRect()
+                    : null;
+                const roadBottom = (roadRect && roadRect.height > 0) ? (roadRect.bottom - rect.top) / s : 0;
+                const nextBottom = (nextRectNow && nextRectNow.height > 0) ? (nextRectNow.bottom - rect.top) / s : 0;
+                const catBottom = (catRect && catRect.height > 0) ? (catRect.bottom - rect.top) / s : 0;
+                const maxBottom = Math.max(roadBottom, nextBottom, catBottom, rowTop + 24);
+                const panelTop = maxBottom + 6;
                 TitleLayout.place(this._catalogPanel, { right: 18, top: Math.round(panelTop) });
                 this._catalogPanel.style.setProperty('--title-w', width(s));
                 this._catalogPanel.style.setProperty('--title-maxh',

@@ -37550,6 +37550,80 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     flex: 1 1 auto;
 }
 
+.sm-craft-cover-opt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 10px;
+}
+.sm-craft-cover-swatch {
+    width: 100%;
+    height: 64px;
+    border-radius: 4px;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 8px;
+}
+.sm-craft-author-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 6px;
+    background-image: var(--sm-face, none);
+    background-position: var(--sm-face-x, 0) var(--sm-face-y, 0);
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+.sm-book-preview-card {
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    margin-bottom: 14px;
+}
+.sm-book-preview-cover {
+    padding: 18px 14px;
+    background-size: cover;
+    background-position: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    position: relative;
+}
+.sm-book-preview-cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+}
+.sm-book-preview-title {
+    position: relative;
+    font-size: 1.15em;
+    font-weight: bold;
+    color: #f7d58b;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+}
+.sm-book-preview-author {
+    position: relative;
+    font-size: 0.85em;
+    color: #dedede;
+    margin-top: 4px;
+    font-style: italic;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+.sm-book-preview-body {
+    padding: 12px 14px;
+}
+.sm-write-commit-btn {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    font-size: 1.05em;
+}
+
 
 /* The field a name, a description or a piece of lore is typed into. It is a
    sheet over the whole book rather than part of a page, because every page of

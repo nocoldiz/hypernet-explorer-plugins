@@ -1,5 +1,17 @@
-0.8.12a
+0.9.14a
 
+Changed:
+ - reworked em the witch hexapedia page
+ - regenerated base world
+ - show these buttons same upper row
+ - reworked scribing workbench with step wizard and inspect pills
+ - Removed some battle BG
+
+Fixed:
+ - non-procedural fast travel destinations land in authored map at passable border
+ - fix weapon scaling crash when crafting
+
+0.8.13a
 Maps:
  - Starting skyscraper interior walls
  - Finished many procedural housese
@@ -8,14 +20,20 @@ Added:
  - assign level up points to HP and MP in statuscreen
 
 Changed:
+ - removed all busts
  - ported identity and animation loader to spell fusion
  - removed 3d editor wip button in character creation
  - hide empathize emotion bars and show world sprite when model missing
- - removed all busts
  - teaching and learning skills require knowledge points with new sources
  - reduced css text size of all minigames with this hud
  - reworked skill auto sync selector and renamed best to reactive
  - crafting uses the tag system from itemsysteminventory
+
+
+
+0.8.12a
+
+
 
 Fixed:
  - NPC society registry no longer deletes newly created profiles

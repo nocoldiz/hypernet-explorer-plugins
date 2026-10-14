@@ -11783,11 +11783,52 @@
 
     const tx = (s) => (typeof window.translateText === 'function' ? window.translateText(s) : s);
 
+    function escHtml(s) { return esc(s); }
+
+    const BOOK_TEXTURES = [
+        'golden_brown_leather.jpg', 'brown_leather_stone.jpg', 'dark_brown_marble.jpg',
+        'olive_leather_stone.jpg', 'amber_paper.jpg', 'gold_parchment.jpg',
+        'olive_parchment.jpg', 'dark_gold_foil.jpg', 'emerald_marble.jpg',
+        'red_marble.jpg', 'grey_smoke_marble.jpg', 'charcoal_brown_stone.jpg',
+        'copper_patina.jpg', 'malachite.jpg', 'iridescent_oil.jpg',
+        'crimson_psychedelic.jpg', 'violet_psychedelic.jpg', 'psychedelic_marble.jpg'
+    ]; // i18n-ignore: texture filenames
+
     // How many pages one volume may hold. Five is what the reader draws.
     const WRITE_MAX_ENTRIES = 5;
     SkillMaster.WRITE_MAX_ENTRIES = WRITE_MAX_ENTRIES;
 
+    const WRITE_STEP_AUTHOR = 0;
+    const WRITE_STEP_PAGES = 1;
+    const WRITE_STEP_COVER = 2;
+    const WRITE_STEP_SCRIBE = 3;
+    const WRITE_STEP_ALL = 4;
+    const WRITE_STEPS = ['author', 'pages', 'cover', 'scribe'];
+
     const E = () => SkillMaster.Enchant || {};
+
+    function skillSchoolName(s, kind) {
+        if (!s) return '';
+        const cat = SkillMaster.getSkillCategory(s.id);
+        if (cat) return SkillMaster.getCategoryName ? SkillMaster.getCategoryName(cat) : cat;
+        if (s.damage && s.damage.elementId > 0 && typeof $dataSystem !== 'undefined' && $dataSystem.elements && $dataSystem.elements[s.damage.elementId]) {
+            return $dataSystem.elements[s.damage.elementId];
+        }
+        return kind === 'grimorie' ? (typeof T === 'function' ? T('SkillMaster.magic') : 'Magic') : (typeof T === 'function' ? T('SkillMaster.skill') : 'Skill');
+    }
+
+    function skillPillsHTML(s, kind) {
+        if (!s) return '';
+        const school = skillSchoolName(s, kind);
+        const costStr = s.mpCost > 0 ? `${s.mpCost} MP` : (s.tpCost > 0 ? `${s.tpCost} AP` : '0 MP');
+        const ink = pageCost(s);
+        return `
+            <div class="inspect-quick-pills inspect-pill-block">
+                <span class="inspect-meta-item inspect-pill inspect-pill--school"><span class="inspect-pill-lbl">${esc(tr('school'))}:</span> <span class="inspect-meta-val inspect-pill-val">${esc(school)}</span></span>
+                <span class="inspect-meta-item inspect-pill inspect-pill--cost"><span class="inspect-meta-val inspect-pill-val">${esc(costStr)}</span></span>
+                <span class="inspect-meta-item inspect-pill inspect-pill--kp"><span class="inspect-pill-lbl">${esc(tr('ink'))}:</span> <span class="inspect-meta-val inspect-pill-val">${ink} KP</span></span>
+            </div>`;
+    }
 
     /** Everything anybody in the party knows that this bench will copy out. */
     function writableEntries(kind) {
@@ -11827,16 +11868,19 @@
      * no common event and no row in data/ of its own: <GrimoireEntries:> is
      * the whole of what the reader is told.
      */
-    function forgeVolume(kind, skills) {
+    function forgeVolume(kind, skills, customMeta) {
         const En = E();
-        const ids = skills.map(s => s.id);
+        const ids = (skills || []).map(s => s.id);
+        const cost = volumeCost(skills);
+        const defaultIcon = (skills && skills[0]) ? skills[0].iconIndex : (kind === 'grimorie' ? 183 : 189);
+        const iconIndex = (customMeta && customMeta.iconIndex != null) ? customMeta.iconIndex : defaultIcon;
         const entry = {
             id: $gameSystem.allocEnchantedGearId(kind),
             name: '',
-            iconIndex: skills[0] ? skills[0].iconIndex : 0,
+            iconIndex,
             description: '',
             itypeId: 1,
-            price: 0,
+            price: Math.max(50, Math.round(cost * 1.2)),
             consumable: false,
             scope: 0,
             occasion: 2,
@@ -11849,26 +11893,34 @@
             damage: { type: 0, elementId: 0, formula: '0', variance: 0, critical: false },
             // One effect, and it does nothing: an item with no effect at all is
             // drawn greyed in the item list, and the reader is opened off the
-            // note tag rather than off a common event (id 0 retrieves nothing,
-            // which Game_Interpreter#setupReservedCommonEvent guards for).
+            // note tag rather than off a common event.
             effects: [{ code: 44, dataId: 0, value1: 0, value2: 0 }],
             note: '',
             meta: {}
         };
-        const texture = (En.BOOK_TEXTURES && En.BOOK_TEXTURES.length)
-            ? En.BOOK_TEXTURES[Math.floor(Math.random() * En.BOOK_TEXTURES.length)]
-            : '';
-        entry.name = rollVolumeName(kind, skills, entry.id);
+        const bank = (En.BOOK_TEXTURES && En.BOOK_TEXTURES.length) ? En.BOOK_TEXTURES : BOOK_TEXTURES;
+        const texture = (customMeta && customMeta.texture)
+            ? customMeta.texture
+            : ((bank && bank.length) ? bank[Math.floor(Math.random() * bank.length)] : 'gold_parchment.jpg');
+        const customTitle = (customMeta && customMeta.title) ? String(customMeta.title).trim() : '';
+        entry.name = customTitle || rollVolumeName(kind, skills, entry.id);
+        const authorName = (customMeta && customMeta.author) ? String(customMeta.author).trim() : '';
         entry.description = tr(kind === 'grimorie' ? 'grimorieDesc' : 'skillBookDesc',
             { count: ids.length });
-        entry.note = '<category:Books>\n<GrimoireEntries: ' + ids.join(',') + '>\n<Enchanted: ' + kind + '>' +
-            (texture ? '\n<BookTexture: ' + texture + '>' : ''); // i18n-ignore: note tag
+        let note = '<category:Books>\n<GrimoireEntries: ' + ids.join(',') + '>\n<Enchanted: ' + kind + '>';
+        if (texture) note += '\n<BookTexture: ' + texture + '>';
+        if (authorName) note += '\n<Author: ' + authorName + '>';
+        entry.note = note;
         entry.meta = {
             category: 'Books', // i18n-ignore: note tag value
             GrimoireEntries: ids.join(','),
             Enchanted: kind
         };
         if (texture) entry.meta.BookTexture = texture;
+        if (authorName) {
+            entry.meta.Author = authorName;
+            entry.author = authorName;
+        }
         entry._enchantKind = kind;
         entry._enchantEntries = ids.slice();
         entry._enchanted = true;
@@ -11896,11 +11948,11 @@
     }
 
     /** Writes the volume, spends the knowledge and puts it in the pack. */
-    function writeVolume(kind, skills) {
+    function writeVolume(kind, skills, customMeta) {
         if (!skills || !skills.length) return null;
         const cost = volumeCost(skills);
         if ($gameSystem.getKnowledge() < cost) return null;
-        const entry = forgeVolume(kind, skills);
+        const entry = forgeVolume(kind, skills, customMeta);
         const En = E();
         if (En.restampEntry) En.restampEntry(entry);
         $gameSystem.getEnchantedGear().push(entry);
@@ -11919,7 +11971,15 @@
     Proto.openWriteBench = function (kind) {
         this._viewMode = 'writebook';
         this._writeKind = (kind === 'skillbook') ? 'skillbook' : 'grimorie';
+        this._writeStep = 0;
+        this._writeAuthorId = this._teachActorId || (this.getTeachActor() ? this.getTeachActor().actorId() : 1);
+        this._writePartySource = false;
         this._writeChosen = [];
+        this._writeTitle = '';
+        this._writeCover = '';
+        this._writeIcon = null;
+        this._writeCoverPicking = false;
+        this._writeIconPicking = false;
         this._writeIndex = 0;
         this._writeRow = 0;
         this._writeChip = 0;
@@ -11935,12 +11995,69 @@
         this._lastRightMode = null;
         this._lastRightSkillId = null;
         this._lastRightKnowledge = null;
+        this._writeCoverPicking = false;
+        this._writeIconPicking = false;
         SoundManager.playCancel();
         this.refreshUISkillDOM();
     };
 
+    Proto.writeAuthor = function () {
+        const members = (typeof getSwitchableMembers === 'function') ? getSwitchableMembers() : $gameParty.members();
+        if (this._writeAuthorId) {
+            const found = members.find(m => m && m.actorId() === this._writeAuthorId);
+            if (found) return found;
+        }
+        return this.getTeachActor() || members[0] || null;
+    };
+
+    Proto.writeSelectAuthor = function (actorId) {
+        this._writeAuthorId = actorId;
+        const members = (typeof getSwitchableMembers === 'function') ? getSwitchableMembers() : $gameParty.members();
+        const idx = members.findIndex(m => m && m.actorId() === actorId);
+        if (idx >= 0 && typeof this.switchTeachActor === 'function') {
+            this.switchTeachActor(idx);
+        } else {
+            this._teachActorId = actorId;
+            if (SkillMaster.actorCategoryManager) SkillMaster.actorCategoryManager.setActor(actorId);
+        }
+        SoundManager.playOk();
+        this._writeStep = 1;
+        this.refreshUISkillDOM();
+    };
+
+    Proto.writeTogglePartySource = function () {
+        this._writePartySource = !this._writePartySource;
+        SoundManager.playCursor();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.writeSetStep = function (step) {
+        this._writeStep = Math.max(0, Math.min(WRITE_STEP_ALL, step));
+        this._writeCoverPicking = false;
+        this._writeIconPicking = false;
+        SoundManager.playCursor();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.writeNextStep = function () {
+        if (this._writeStep < WRITE_STEP_SCRIBE) this.writeSetStep(this._writeStep + 1);
+    };
+
+    Proto.writePrevStep = function () {
+        if (this._writeStep > 0) this.writeSetStep(this._writeStep - 1);
+    };
+
     Proto.writeCandidates = function () {
         return writableEntries(this._writeKind || 'grimorie');
+    };
+
+    Proto.writeCandidateSkills = function () {
+        const all = this.writeCandidates();
+        const author = this.writeAuthor();
+        if (!author || this._writePartySource) return all;
+        const authorIds = new Set(author.skills().map(s => s ? s.id : 0));
+        const authorSkills = all.filter(s => authorIds.has(s.id));
+        return authorSkills.length > 0 ? authorSkills : all;
     };
 
     Proto.writeChosenSkills = function () {
@@ -11948,9 +12065,14 @@
         return ids.map(id => $dataSkills[id]).filter(Boolean);
     };
 
-    Proto.writeToggle = function (idx) {
-        const list = this.writeCandidates();
-        const skill = list[idx];
+    Proto.writeToggle = function (target) {
+        let skill = null;
+        if (typeof target === 'number' && target > 100) {
+            skill = $dataSkills[target];
+        } else {
+            const list = this.writeCandidateSkills();
+            skill = list[target] || $dataSkills[target];
+        }
         if (!skill) return;
         if (!this._writeChosen) this._writeChosen = [];
         const at = this._writeChosen.indexOf(skill.id);
@@ -11962,31 +12084,107 @@
             this._writeChosen.push(skill.id);
             SoundManager.playOk();
         }
-        this._writeIndex = idx;
         this.refreshUISkillDOM();
+    };
+
+    Proto.writeDrop = function (skillId) {
+        if (!this._writeChosen) return;
+        const at = this._writeChosen.indexOf(skillId);
+        if (at < 0) return;
+        this._writeChosen.splice(at, 1);
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.writeDefaultCover = function () {
+        const bank = (E().BOOK_TEXTURES && E().BOOK_TEXTURES.length) ? E().BOOK_TEXTURES : BOOK_TEXTURES;
+        return (bank && bank[0]) ? bank[0] : 'gold_parchment.jpg';
+    };
+
+    Proto.writeChooseCover = function (texture) {
+        this._writeCover = texture;
+        this._writeCoverPicking = false;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.writeChooseIcon = function (iconIndex) {
+        this._writeIcon = iconIndex;
+        this._writeIconPicking = false;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.writeToggleCoverPicker = function () {
+        this._writeCoverPicking = !this._writeCoverPicking;
+        this._writeIconPicking = false;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.openWriteIconPicker = function () {
+        this._writeIconPicking = true;
+        this._writeCoverPicking = false;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.closeWriteIconPicker = function () {
+        this._writeIconPicking = false;
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.writeRerollTitle = function () {
+        const skills = this.writeChosenSkills();
+        const salt = Math.floor(Math.random() * 0xFFFFFF);
+        this._writeTitle = rollVolumeName(this._writeKind, skills, salt);
+        SoundManager.playCursor();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.openWriteTextSheet = function (field) {
+        if (typeof this.openCraftTextSheet !== 'function') return;
+        this.openCraftTextSheet(field || 'name', null, (val) => {
+            const trimmed = String(val || '').trim().slice(0, 40);
+            if (trimmed) {
+                this._writeTitle = trimmed;
+                this.refreshUISkillDOM();
+            }
+        });
     };
 
     Proto.writeCommit = function () {
         const skills = this.writeChosenSkills();
         if (!skills.length) { SoundManager.playBuzzer(); return; }
-        if ($gameSystem.getKnowledge() < volumeCost(skills)) { SoundManager.playBuzzer(); return; }
-        const actor = this.getTeachActor();
-        const entry = writeVolume(this._writeKind, skills);
+        const cost = volumeCost(skills);
+        if ($gameSystem.getKnowledge() < cost) { SoundManager.playBuzzer(); return; }
+        const actor = this.writeAuthor();
+        const customMeta = {
+            title: this._writeTitle,
+            texture: this._writeCover || this.writeDefaultCover(),
+            iconIndex: this._writeIcon,
+            author: actor ? actor.name() : ''
+        };
+        const entry = writeVolume(this._writeKind, skills, customMeta);
         if (!entry) { SoundManager.playBuzzer(); return; }
         SoundManager.playSave();
         if (window.ParchmentToast) {
-            const toastMsg = tr('writeDetailed', { actor: actor.name(), book: entry.name }) ||
+            const toastMsg = tr('writeDetailed', { actor: actor ? actor.name() : '', book: entry.name }) ||
                 tr('written', { book: entry.name });
             window.ParchmentToast.show(toastMsg);
         }
         if (window.Diary && typeof window.Diary.record === 'function') {
             window.Diary.record('craft.book', {
-                name: actor.name(),
+                name: actor ? actor.name() : '',
                 item: entry.name
-            }, { who: actor.name() });
+            }, { who: actor ? actor.name() : '' });
         }
         this._writeChosen = [];
-        this._writeIndex = 0;
+        this._writeTitle = '';
+        this._writeCover = '';
+        this._writeIcon = null;
+        this._writeStep = WRITE_STEP_SCRIBE;
         this.refreshUISkillDOM();
     };
 
@@ -11995,21 +12193,20 @@
         const kind = this._writeKind || 'grimorie';
         const made = this.writeMade().find(m => m.id === entryId);
         const bookName = made ? made.name : '';
-        const actor = this.getTeachActor();
+        const actor = this.writeAuthor();
         if (En.unbind && En.unbind(entryId, kind)) {
-            // The next volume slides under the cursor: never onto Unmake.
             this._writeChip = 0;
             SoundManager.playCancel();
             if (window.ParchmentToast && bookName) {
-                const toastMsg = tr('unmadeBookDetailed', { actor: actor.name(), book: bookName }) ||
+                const toastMsg = tr('unmadeBookDetailed', { actor: actor ? actor.name() : '', book: bookName }) ||
                     tr('unmade', { item: bookName });
                 window.ParchmentToast.show(toastMsg);
             }
             if (window.Diary && typeof window.Diary.record === 'function' && bookName) {
                 window.Diary.record('craft.unmade', {
-                    name: actor.name(),
+                    name: actor ? actor.name() : '',
                     item: bookName
-                }, { who: actor.name() });
+                }, { who: actor ? actor.name() : '' });
             }
             this.refreshUISkillDOM();
         }
@@ -12042,8 +12239,7 @@
 
     // The left page of the writing bench, as one list: the pages chosen for
     // this volume, the button that writes it, and then every volume already
-    // written. Walked top to bottom, which is what put the pages and the
-    // finished books back within reach of a cursor.
+    // written.
     Proto.writeMade = function () {
         const kind = this._writeKind || 'grimorie';
         return $gameSystem.getEnchantedGear().filter(e => e && e._enchantKind === kind);
@@ -12072,6 +12268,57 @@
 
     const WRITE_ICONS = { chosen: 189, written: 183 };
 
+    Proto.renderWriteStepperHTML = function () {
+        const cur = (this._writeStep === undefined) ? 0 : this._writeStep;
+        const chosen = this.writeChosenSkills();
+        const cost = volumeCost(chosen);
+        const canScribe = chosen.length > 0 && $gameSystem.getKnowledge() >= cost;
+        const isDone = (s) => {
+            if (s === 0) return !!this.writeAuthor();
+            if (s === 1) return chosen.length > 0;
+            if (s === 2) return true;
+            if (s === 3) return canScribe;
+            return false;
+        };
+        const tabs = WRITE_STEPS.map((key, idx) => {
+            const active = cur === idx;
+            const done = isDone(idx);
+            const num = idx + 1;
+            const label = tr('step.' + key);
+            return `
+                <div class="sm-craft-step-tab focusable ${active ? 'active' : ''} ${done ? 'is-done' : ''}"
+                     onclick="SceneManager._scene.writeSetStep(${idx})" title="${esc(label)}">
+                    <span class="sm-craft-step-num">${num}</span>
+                    <span class="sm-craft-step-label">${esc(label)}</span>
+                </div>`;
+        });
+        tabs.push(`
+            <div class="sm-craft-step-tab sm-craft-step-all focusable ${cur === WRITE_STEP_ALL ? 'active' : ''}"
+                 onclick="SceneManager._scene.writeSetStep(${WRITE_STEP_ALL})" title="${esc(tr('step.all'))}">
+                <span class="sm-craft-step-label">${esc(tr('step.all'))}</span>
+            </div>`);
+        return `<div class="sm-craft-stepper">${tabs.join('')}</div>`;
+    };
+
+    Proto.renderWriteStepNavHTML = function (curStep) {
+        if (curStep === WRITE_STEP_ALL) return '';
+        const prevLabel = tr('step.prev');
+        const nextLabel = tr('step.next');
+        const stepKeys = WRITE_STEPS;
+        const title = tr('step.' + (stepKeys[curStep] || 'author'));
+        const stepOf = tr('step.stepOf', { step: curStep + 1, total: 4, title });
+        const canPrev = curStep > 0;
+        const canNext = curStep < 3;
+        return `
+            <div class="sm-craft-step-nav">
+                <button type="button" class="inspect-btn focusable sm-craft-nav-btn ${canPrev ? '' : 'disabled'}"
+                        onclick="SceneManager._scene.writePrevStep()">&larr; ${esc(prevLabel)}</button>
+                <span class="sm-craft-step-counter">${esc(stepOf)}</span>
+                <button type="button" class="inspect-btn focusable sm-craft-nav-btn ${canNext ? '' : 'disabled'}"
+                        onclick="SceneManager._scene.writeNextStep()">${esc(nextLabel)} &rarr;</button>
+            </div>`;
+    };
+
     Proto.renderWriteBench = function (knowledge) {
         const leftBox = document.getElementById('left-page-content');
         const rightBox = document.getElementById('right-page-content');
@@ -12082,15 +12329,260 @@
         const chosen = this.writeChosenSkills();
         const cost = volumeCost(chosen);
         const afford = knowledge >= cost && chosen.length > 0;
+        const curStep = (this._writeStep === undefined) ? 0 : this._writeStep;
+        const author = this.writeAuthor();
+        const itemPrice = Math.max(50, Math.round(cost * 1.2));
+        const En = E();
 
-        const leftRow = this._writeColumn === 0 ? (this._writeRow || 0) : -1;
+        // Left Page: Step Wizard
+        const stepperHTML = this.renderWriteStepperHTML();
+        const stepNavHTML = this.renderWriteStepNavHTML(curStep);
+
+        // Step 0: Author selection
+        const members = (typeof getSwitchableMembers === 'function') ? getSwitchableMembers() : $gameParty.members();
+        const wantSpell = kind === 'grimorie';
+        let authorCardsHTML = '';
+        members.forEach((m) => {
+            if (!m) return;
+            const isSel = author && m.actorId() === author.actorId();
+            const faceX = (m.faceIndex() % 4) * 144;
+            const faceY = Math.floor(m.faceIndex() / 4) * 144;
+            const faceUrl = window.CCArt ? window.CCArt.url('img/faces/' + m.faceName() + '.png') : '';
+            const knownCount = m.skills().filter(s => s && s.id > 2 && !SkillMaster.isHiddenSkill(s) && (En.isSpell ? En.isSpell(s) === wantSpell : true)).length;
+            authorCardsHTML += `
+                <div class="sm-craft-card-opt focusable ${isSel ? 'selected' : ''}"
+                     onclick="SceneManager._scene.writeSelectAuthor(${m.actorId()})"
+                     style="flex-direction: row; align-items: center; min-height: 84px;">
+                    <div class="sm-craft-author-avatar" style="--sm-face: url('${faceUrl}'); --sm-face-x: -${faceX}px; --sm-face-y: -${faceY}px"></div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="sm-craft-opt-header">
+                            <strong class="sm-craft-opt-name">${esc(m.name())}</strong>
+                            <span class="sm-craft-opt-cost">Lv. ${m.level}</span>
+                        </div>
+                        <div class="sm-craft-opt-desc">${esc(m.currentClass() ? m.currentClass().name : '')}</div>
+                        <div class="inspect-quick-pills inspect-pill-block" style="margin-top: 6px;">
+                            <span class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${knownCount} ${esc(tr('authorKnown', { count: knownCount }))}</span></span>
+                        </div>
+                    </div>
+                </div>`;
+        });
+        if (!authorCardsHTML) {
+            authorCardsHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('noAuthors'))}</div></div>`;
+        }
+
+        // Step 1: Pages (Known spells / abilities to inscribe)
+        const candidateSkills = this.writeCandidateSkills();
+        let pagesGridHTML = '';
+        candidateSkills.forEach(s => {
+            const isChosen = (this._writeChosen || []).includes(s.id);
+            const pills = skillPillsHTML(s, kind);
+            const desc = (s.description || '').replace(/\n/g, ' ');
+            pagesGridHTML += `
+                <div class="sm-craft-card-opt focusable ${isChosen ? 'selected' : ''}"
+                     onclick="SceneManager._scene.writeToggle(${s.id})"
+                     title="${esc(desc)}">
+                    <div class="sm-craft-opt-header">
+                        <strong class="sm-craft-opt-name"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></span> ${esc(tx(s.name))}</strong>
+                        ${isChosen ? `<span class="ui-chip sm-skill-badge" style="background: var(--text-primary-hover, #ffcc00); color: #000; font-weight: bold;">&#10003;</span>` : ''}
+                    </div>
+                    ${pills}
+                    <div class="sm-craft-opt-desc">${esc(desc)}</div>
+                </div>`;
+        });
+        if (!pagesGridHTML) {
+            pagesGridHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('nothingToCopy'))}</div></div>`;
+        }
+
+        // Step 2: Cover Art
+        const defaultTitle = rollVolumeName(kind, chosen, 100);
+        const currentTitle = this._writeTitle || defaultTitle;
+        const currentCover = this._writeCover || this.writeDefaultCover();
+        const cleanCoverName = currentCover.replace(/\.(jpg|png)$/i, '').replace(/_/g, ' ');
+        const defaultIcon = (chosen[0] ? chosen[0].iconIndex : (kind === 'grimorie' ? 183 : 189));
+        const currentIcon = this._writeIcon != null ? this._writeIcon : defaultIcon;
+
+        let coverContentHTML = '';
+        if (this._writeCoverPicking) {
+            let swatchesHTML = '';
+            const bank = (En.BOOK_TEXTURES && En.BOOK_TEXTURES.length) ? En.BOOK_TEXTURES : BOOK_TEXTURES;
+            bank.forEach(tex => {
+                const isSel = currentCover === tex;
+                const label = tex.replace(/\.(jpg|png)$/i, '').replace(/_/g, ' ');
+                swatchesHTML += `
+                    <div class="sm-craft-card-opt sm-craft-cover-opt focusable ${isSel ? 'selected' : ''}"
+                         onclick="SceneManager._scene.writeChooseCover('${tex}')">
+                        <div class="sm-craft-cover-swatch" style="background-image: url('img/textures/${tex}');"></div>
+                        <strong class="sm-craft-opt-name">${esc(label)}</strong>
+                    </div>`;
+            });
+            coverContentHTML = `
+                <div class="ui-detail" style="margin-top: 10px;">
+                    <div class="ui-detail-head">
+                        <div class="ui-detail-titles"><h3 class="sm-detail-name">${esc(tr('chooseCover'))}</h3></div>
+                        <div class="inspect-btn focusable" onclick="SceneManager._scene.writeToggleCoverPicker()">${esc(tr('back'))}</div>
+                    </div>
+                    <div class="sm-craft-opts-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr)); max-height: 380px; overflow-y: auto;">
+                        ${swatchesHTML}
+                    </div>
+                </div>`;
+        } else if (this._writeIconPicking) {
+            const rows = typeof this.craftIconChoices === 'function' ? this.craftIconChoices() : [];
+            let iconGridHTML = '';
+            rows.forEach(row => {
+                const isSel = row.iconIndex === currentIcon;
+                iconGridHTML += `
+                    <div class="sm-kit-icon-cell focusable ${isSel ? 'selected' : ''}" title="#${row.iconIndex}" onclick="SceneManager._scene.writeChooseIcon(${row.iconIndex})">
+                        <span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(row.iconIndex)}"></span>
+                    </div>`;
+            });
+            coverContentHTML = `
+                <div class="ui-detail" style="margin-top: 10px;">
+                    <div class="ui-detail-head">
+                        <div class="ui-detail-titles"><h3 class="sm-detail-name">${esc(tr('bookIcon'))}</h3></div>
+                        <div class="inspect-btn focusable" onclick="SceneManager._scene.closeWriteIconPicker()">${esc(tr('back'))}</div>
+                    </div>
+                    <div class="ui-detail-scroll ui-scroll sm-kit-icon-grid">${iconGridHTML}</div>
+                </div>`;
+        } else {
+            coverContentHTML = `
+                <div class="sm-kit-ident">
+                    ${K.trigger({
+                        label: tr('volumeTitle'), cls: 'sm-kit-span2',
+                        value: currentTitle, muted: !this._writeTitle,
+                        iconIndex: currentIcon,
+                        onclick: "SceneManager._scene.openWriteTextSheet('name')"
+                    })}
+                    ${K.trigger({
+                        label: tr('coverArt'), cls: 'sm-kit-span2',
+                        value: cleanCoverName,
+                        onclick: "SceneManager._scene.writeToggleCoverPicker()"
+                    })}
+                    ${K.trigger({
+                        label: tr('bookIcon'),
+                        value: currentIcon ? '#' + currentIcon : '183',
+                        iconIndex: currentIcon,
+                        onclick: "SceneManager._scene.openWriteIconPicker()"
+                    })}
+                    ${K.trigger({
+                        label: tr('author'),
+                        value: author ? author.name() : tr('allAuthors'),
+                        onclick: "SceneManager._scene.writeSetStep(0)"
+                    })}
+                </div>
+                <div class="inspect-actions ui-panel-actions" style="margin-top: 12px;">
+                    <div class="inspect-btn focusable" onclick="SceneManager._scene.writeRerollTitle()">${esc(tr('rerollTitle'))}</div>
+                </div>`;
+        }
+
+        // Step 3: Scribe review card
+        let pagesSummaryHTML = '';
+        chosen.forEach((s) => {
+            pagesSummaryHTML += `
+                <div class="sm-skill-row" style="margin-bottom: 6px;">
+                    <span class="sm-skill-ident">
+                        <span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></span>
+                        <span class="sm-skill-name">${esc(tx(s.name))}</span>
+                    </span>
+                    ${skillPillsHTML(s, kind)}
+                </div>`;
+        });
+        if (!pagesSummaryHTML) {
+            pagesSummaryHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('nothingChosen'))}</div></div>`;
+        }
+        const reviewCardHTML = `
+            <div class="sm-book-preview-card">
+                <div class="sm-book-preview-cover" style="background-image: url('img/textures/${currentCover}');">
+                    <div class="sm-book-preview-title">${esc(currentTitle)}</div>
+                    <div class="sm-book-preview-author">${esc(tr('byAuthor', { author: author ? author.name() : '' }))}</div>
+                </div>
+                <div class="sm-book-preview-body">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span class="inspect-meta-item inspect-pill inspect-pill--special">
+                            <span class="inspect-pill-lbl">${esc(tr('price'))}:</span> <span class="inspect-meta-val inspect-pill-val">${itemPrice} &euro;</span>
+                        </span>
+                        <span class="inspect-meta-item inspect-pill">
+                            <span class="inspect-pill-lbl">${esc(tr('statPages'))}:</span> <span class="inspect-meta-val inspect-pill-val">${chosen.length}/${WRITE_MAX_ENTRIES}</span>
+                        </span>
+                        <span class="inspect-meta-item inspect-pill inspect-pill--kp">
+                            <span class="inspect-pill-lbl">${esc(tr('statCost'))}:</span> <span class="inspect-meta-val inspect-pill-val">${cost} KP</span>
+                        </span>
+                    </div>
+                    <div class="ui-list ui-scroll sm-forged-list" style="max-height: 180px;">
+                        ${pagesSummaryHTML}
+                    </div>
+                </div>
+            </div>
+            <div class="inspect-actions sm-forge-actions">
+                <div class="inspect-btn focusable sm-write-commit-btn ${afford ? '' : 'unusable'}" onclick="SceneManager._scene.writeCommit()">
+                    ${esc(tr('scribeAction'))} <span class="sm-forge-cost">&middot; ${cost} KP</span>
+                </div>
+            </div>
+            ${chosen.length > 0 && !afford ? `<div class="sm-craft-block">${knowledge} KP ${T('SkillMaster.notEnough')}</div>` : ''}`;
+
+        // Assemble Left Page based on active step
+        let activePaneHTML = '';
+        if (curStep === WRITE_STEP_AUTHOR) {
+            activePaneHTML = `
+                <div class="sm-craft-step-pane">
+                    <div class="sm-craft-step-intro"><strong>${esc(tr('step.author'))}</strong>: ${esc(tr('step.stepHint.author'))}</div>
+                    <div class="sm-craft-opts-grid">${authorCardsHTML}</div>
+                    ${stepNavHTML}
+                </div>`;
+        } else if (curStep === WRITE_STEP_PAGES) {
+            activePaneHTML = `
+                <div class="sm-craft-step-pane">
+                    <div class="sm-craft-step-intro"><strong>${esc(tr('step.pages'))}</strong>: ${esc(tr('step.stepHint.pages', { max: WRITE_MAX_ENTRIES }))}</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin: 8px 0;">
+                        <div class="inspect-quick-pills inspect-pill-block">
+                            <span class="ui-chip sm-skill-badge focusable ${!this._writePartySource ? 'focused' : ''}" onclick="SceneManager._scene.writeTogglePartySource()">${esc(tr('filterAuthor'))}</span>
+                            <span class="ui-chip sm-skill-badge focusable ${this._writePartySource ? 'focused' : ''}" onclick="SceneManager._scene.writeTogglePartySource()">${esc(tr('filterParty'))}</span>
+                        </div>
+                        <span class="ui-chip sm-skill-badge">${chosen.length}/${WRITE_MAX_ENTRIES}</span>
+                    </div>
+                    <div class="sm-craft-opts-grid" style="max-height: 380px; overflow-y: auto;">${pagesGridHTML}</div>
+                    ${stepNavHTML}
+                </div>`;
+        } else if (curStep === WRITE_STEP_COVER) {
+            activePaneHTML = `
+                <div class="sm-craft-step-pane">
+                    <div class="sm-craft-step-intro"><strong>${esc(tr('step.cover'))}</strong>: ${esc(tr('step.stepHint.cover'))}</div>
+                    ${coverContentHTML}
+                    ${stepNavHTML}
+                </div>`;
+        } else if (curStep === WRITE_STEP_SCRIBE) {
+            activePaneHTML = `
+                <div class="sm-craft-step-pane">
+                    <div class="sm-craft-step-intro"><strong>${esc(tr('step.scribe'))}</strong>: ${esc(tr('step.stepHint.scribe'))}</div>
+                    ${reviewCardHTML}
+                    ${stepNavHTML}
+                </div>`;
+        } else {
+            // WRITE_STEP_ALL
+            activePaneHTML = `
+                <div class="sm-craft-step-pane">
+                    <div class="sm-craft-step-intro"><strong>${esc(tr('step.all'))}</strong>: ${esc(tr('blurb' + word))}</div>
+                    <div class="sm-enchant-blurb cc-bio-note" style="margin-bottom: 10px;">${esc(tr('author'))}: <strong>${esc(author ? author.name() : tr('allAuthors'))}</strong></div>
+                    ${reviewCardHTML}
+                </div>`;
+        }
+
+        leftBox.innerHTML = `
+            <div class="page-header-bar sm-bench-header">
+              <div class="back-button focusable" onclick="SceneManager._scene.closeWriteBench()">${esc(tr('back'))}</div>
+              <h2 class="title">${esc(tr('title' + word))}</h2>
+              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+            </div>
+            ${stepperHTML}
+            ${activePaneHTML}`;
+
+        // Right Page: Chosen Pages & Previously Written Volumes
         let chosenHTML = '';
-        chosen.forEach((s, i) => {
-            const on = leftRow === i ? ' focused' : '';
+        chosen.forEach((s) => {
             chosenHTML += `
-                <div class="sm-skill-row focusable${on}" onclick="SceneManager._scene.writeDrop(${s.id})">
+                <div class="sm-skill-row focusable" onclick="SceneManager._scene.writeDrop(${s.id})" style="justify-content: space-between;">
                     <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></span><span class="sm-skill-name">${esc(tx(s.name))}</span></span>
-                    <span class="sm-forge-cost">${pageCost(s)} KP</span>
+                    ${skillPillsHTML(s, kind)}
+                    <span class="ui-chip sm-skill-badge sm-craft-discard" title="${esc(tr('unmake'))}">&times;</span>
                 </div>`;
         });
         if (!chosenHTML) chosenHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('nothingChosen'))}</div></div>`;
@@ -12099,17 +12591,15 @@
         const chips = WRITE_CHIPS;
         this.writeMade().forEach((entry, i) => {
             const pages = (entry._enchantEntries || []).length;
-            const onRow = leftRow === chosen.length + 1 + i;
-            const chipHTML = chips.map((chip, ci) => {
-                const lit = onRow && (this._writeChip || 0) === ci ? ' focused' : '';
+            const chipHTML = chips.map((chip) => {
                 const call = chip === 'rename' ? `enchantRename(${entry.id})`
                     : chip === 'recover' ? `enchantRecover(${entry.id})`
                         : `writeUnmake(${entry.id})`;
-                return `<span class="ui-chip sm-skill-badge focusable${lit}${chip === 'unmake' ? ' sm-craft-discard' : ''}"
+                return `<span class="ui-chip sm-skill-badge focusable${chip === 'unmake' ? ' sm-craft-discard' : ''}"
                         onclick="SceneManager._scene.${call}">${esc(tr(chip))}</span>`;
             }).join('');
             writtenHTML += `
-                <div class="sm-skill-row sm-craft-entry ${onRow ? 'sm-craft-entry--cursor' : ''}">
+                <div class="sm-skill-row sm-craft-entry" style="margin-bottom: 6px;">
                     <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(entry.iconIndex)}"></span><span class="sm-skill-name">${esc(entry.name)}</span></span>
                     <span class="ui-chip sm-skill-badge">${esc(tr('pages', { count: pages }))}</span>
                     ${chipHTML}
@@ -12117,83 +12607,63 @@
         });
         if (!writtenHTML) writtenHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('noneWritten'))}</div></div>`;
 
-        const writeFocused = leftRow === chosen.length;
-        leftBox.innerHTML = `
+        rightBox.innerHTML = `
             <div class="page-header-bar sm-bench-header">
-              <div class="back-button focusable" onclick="SceneManager._scene.closeWriteBench()">${esc(tr('back'))}</div>
-              <h2 class="title">${esc(tr('title' + word))}</h2>
+              <h2 class="title">${esc(tr('source' + word))}</h2>
               <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
             </div>
             <div class="backpack-tabs-row sm-bench-tabs">
               <div class="backpack-tab sm-bench-tab focusable ${kind === 'grimorie' ? 'active' : ''}" onclick="SceneManager._scene.openWriteBench('grimorie')">${esc(tr('titleGrimorie'))}</div>
               <div class="backpack-tab sm-bench-tab focusable ${kind === 'skillbook' ? 'active' : ''}" onclick="SceneManager._scene.openWriteBench('skillbook')">${esc(tr('titleSkillBook'))}</div>
             </div>
-            <div class="sm-enchant-blurb cc-bio-note">${esc(tr('blurb' + word))}</div>
-            ${K.title(WRITE_ICONS.chosen, tr('chosenPages', { count: chosen.length, max: WRITE_MAX_ENTRIES }))}
-            <div id="write-chosen-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list">
-                ${chosenHTML}
-            </div>
-            <div class="inspect-actions sm-forge-actions">
-                <div class="inspect-btn focusable ${writeFocused ? 'selected' : ''} ${afford ? '' : 'unusable'}" onclick="SceneManager._scene.writeCommit()">
-                    ${esc(tr('writeIt'))} <span class="sm-forge-cost">&middot; ${cost} KP</span>
-                </div>
-            </div>
-            ${K.title(WRITE_ICONS.written, tr('writtenSoFar'), this.writeMade().length)}
-            <div id="write-made-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list">
-                ${writtenHTML}
-            </div>`;
-
-        const list = this.writeCandidates();
-        let listHTML = '';
-        list.forEach((s, idx) => {
-            const on = this._writeColumn === 1 && this._writeIndex === idx;
-            const picked = (this._writeChosen || []).indexOf(s.id) >= 0;
-            listHTML += `
-                <div class="sm-skill-row focusable ${on ? 'focused' : ''} ${picked ? 'selected' : ''}" onclick="SceneManager._scene.writeToggle(${idx})">
-                    <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></span><span class="sm-skill-name">${esc(tx(s.name))}</span></span>
-                    <span class="sm-forge-cost">${pageCost(s)} KP</span>
-                </div>`;
-        });
-        if (!listHTML) listHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('nothingToCopy'))}</div></div>`;
-
-        rightBox.innerHTML = `
-            <div class="page-header-bar sm-bench-header">
-              <h2 class="title">${esc(tr('source' + word))}</h2>
-              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
-            </div>
             ${K.stats([
+                { label: tr('author'), value: author ? author.name() : tr('allAuthors') },
                 { label: tr('statPages'), value: `${chosen.length}/${WRITE_MAX_ENTRIES}` },
                 { label: tr('statCost'), value: `${cost} KP`, bad: chosen.length > 0 && knowledge < cost },
-                { label: tr('knowledge'), value: `${knowledge} KP` }
-            ], 3)}
-            <div id="write-source-box" class="ui-list ui-scroll sm-forged-list sm-forged-list--fill">
-                ${listHTML}
+                { label: tr('price'), value: `${itemPrice} €` }
+            ], 4)}
+            ${K.title(WRITE_ICONS.chosen, tr('chosenPages', { count: chosen.length, max: WRITE_MAX_ENTRIES }))}
+            <div id="write-chosen-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list" style="max-height: 160px;">
+                ${chosenHTML}
+            </div>
+            ${K.title(WRITE_ICONS.written, tr('writtenSoFar'), this.writeMade().length)}
+            <div id="write-made-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list" style="max-height: 200px;">
+                ${writtenHTML}
             </div>`;
-    };
-
-    Proto.writeDrop = function (skillId) {
-        if (!this._writeChosen) return;
-        const at = this._writeChosen.indexOf(skillId);
-        if (at < 0) return;
-        this._writeChosen.splice(at, 1);
-        SoundManager.playCancel();
-        this.refreshUISkillDOM();
     };
 
     Proto.updateWriteBenchInput = function () {
+        if (this._craftTyping) return;
         if ((window.CCNav ? window.CCNav.railDir() : 0) !== 0) {
             const nextKind = (this._writeKind === 'skillbook') ? 'grimorie' : 'skillbook';
             this.openWriteBench(nextKind);
             return;
         }
+        if (Input.isTriggered('pageup')) {
+            this.writePrevStep();
+            return;
+        }
+        if (Input.isTriggered('pagedown')) {
+            this.writeNextStep();
+            return;
+        }
         if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
+            if (this._writeCoverPicking) {
+                this._writeCoverPicking = false;
+                SoundManager.playCancel();
+                this.refreshUISkillDOM();
+                return;
+            }
+            if (this._writeIconPicking) {
+                this._writeIconPicking = false;
+                SoundManager.playCancel();
+                this.refreshUISkillDOM();
+                return;
+            }
             this.closeWriteBench();
             return;
         }
         const left = this._writeColumn === 0;
-        // A page dropped or a volume written shortens the list under the
-        // cursor, so where it is standing is answered against the list as it
-        // is now rather than as it was.
         this._writeRow = Math.max(0, Math.min(this._writeRow || 0, this.writeLeftRows() - 1));
         const row = this._writeRow;
         const made = left ? this.writeMadeAt(row) : null;
@@ -12208,8 +12678,6 @@
             }
             return;
         }
-        // On a volume already written, left and right step its own chips;
-        // anywhere else on the page they cross between the two columns.
         const prevChip = this._writeChip || 0;
         if (Input.isTriggered('left') || Input.isRepeated('left')) {
             if (made && prevChip > 0) this._writeChip = prevChip - 1;
@@ -12234,8 +12702,6 @@
         if (Input.isTriggered('down') || Input.isRepeated('down')) this[key] = (prev + 1) % length;
         else if (Input.isTriggered('up') || Input.isRepeated('up')) this[key] = (prev - 1 + length) % length;
         if (this[key] !== prev) {
-            // Coming onto a written volume always offers the harmless chip
-            // first, so a held Down can never land the cursor on Unmake.
             this._writeChip = 0;
             SoundManager.playCursor();
             this.refreshUISkillDOM();

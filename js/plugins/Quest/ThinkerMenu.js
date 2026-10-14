@@ -3342,9 +3342,10 @@
             if (DataManager.isWeapon(item)) {
                 const wt = (sys.weaponTypes || [])[item.wtypeId];
                 if (wt) specs.push([T('Inventory.spec.label.weaponType') || t.weaponType, tr(wt)]);
-                const scales = window.WeaponScaling ? window.WeaponScaling.readScales(item) : null;
-                if (scales && scales.length && window.WeaponScaling.chipsHTML) {
-                    specs.push([T('Inventory.spec.label.scaling'), window.WeaponScaling.chipsHTML(scales)]);
+                const scaler = window.WeaponScaling;
+                const scales = scaler && typeof scaler.statsFor === 'function' ? scaler.statsFor(item) : null;
+                if (scales && scales.length && scaler.chipsHTML) {
+                    specs.push([T('Inventory.spec.label.scaling'), scaler.chipsHTML(scales)]);
                 }
             } else if (DataManager.isArmor(item)) {
                 const at = (sys.armorTypes || [])[item.atypeId];

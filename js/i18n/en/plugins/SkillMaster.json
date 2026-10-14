@@ -1312,7 +1312,41 @@
     "skillBookFallbackName": "Notebook of {first}",
     "grimorieFallbackName": "Grimorie of {first}",
     "statPages": "Pages",
-    "statCost": "Cost"
+    "statCost": "Cost",
+    "step": {
+      "author": "Author",
+      "pages": "Pages",
+      "cover": "Cover",
+      "scribe": "Scribe",
+      "all": "All",
+      "prev": "Prev",
+      "next": "Next",
+      "stepOf": "Step {step} of {total}: {title}",
+      "stepHint": {
+        "author": "Select which companion authors this volume.",
+        "pages": "Choose up to {max} known abilities to inscribe.",
+        "cover": "Set title, cover material and book icon.",
+        "scribe": "Review details and bind into a tradeable item."
+      }
+    },
+    "author": "Author",
+    "school": "School",
+    "ink": "Ink",
+    "price": "Value",
+    "coverArt": "Cover Art",
+    "volumeTitle": "Volume Title",
+    "bookIcon": "Icon",
+    "allAuthors": "Party",
+    "authorKnown": "{count} abilities",
+    "noAuthors": "No party members available.",
+    "selectAuthor": "Select Author",
+    "tradeableItem": "Tradeable Book",
+    "scribeAction": "Scribe Volume",
+    "rerollTitle": "Reroll Title",
+    "byAuthor": "Penned by {author}",
+    "filterAuthor": "Author Only",
+    "filterParty": "Entire Party",
+    "chooseCover": "Choose Cover Art"
   },
   "expression": {
     "button": "Expressions",

@@ -7118,6 +7118,16 @@
             if (!destination && coords) {
                 destination = coords.find(c => c && c.id);
             }
+            if (!destination && location.procedural === false) {
+                const FT = window.FastTravelSystem;
+                if (FT && typeof FT.entranceFor === 'function') {
+                    destination = FT.entranceFor(location);
+                }
+            }
+            if (!destination && location.procedural === false) {
+                console.warn('[WMR] Non-procedural location missing entrance, not generating procedural map:', key);
+                return;
+            }
             if (!destination) break;  // hand-made map has no way in: generate one
 
             console.log('[WMR] Transferring to map', destination.id, 'at', destination.x, destination.y);

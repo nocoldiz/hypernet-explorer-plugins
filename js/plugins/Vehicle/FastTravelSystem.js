@@ -1228,6 +1228,185 @@
         return transportType === 'bus' && isProceduralTown(dest);
     }
 
+    function findNonProceduralMapId(destination) {
+        if (!destination) return null;
+        const o = destination.transportOverrides || destination;
+        if (o.entrance && o.entrance.id && typeof $dataMapInfos !== 'undefined' && $dataMapInfos && $dataMapInfos[o.entrance.id]) {
+            return o.entrance.id;
+        }
+        if (destination.mapId && destination.mapId !== 315 && typeof $dataMapInfos !== 'undefined' && $dataMapInfos && $dataMapInfos[destination.mapId]) {
+            return destination.mapId;
+        }
+        const name = (o.name || destination.name || '').trim();
+        if (!name || typeof $dataMapInfos === 'undefined' || !$dataMapInfos) return null;
+
+        const cleanName = name.toLowerCase();
+        for (let i = 1; i < $dataMapInfos.length; i++) {
+            const info = $dataMapInfos[i];
+            if (!info || !info.name) continue;
+            const stripped = info.name.replace(/^\d+\s*-\s*/, '').trim().toLowerCase();
+            if (stripped === cleanName) return info.id;
+        }
+        for (let i = 1; i < $dataMapInfos.length; i++) {
+            const info = $dataMapInfos[i];
+            if (!info || !info.name) continue;
+            if (info.name.toLowerCase().includes(cleanName)) return info.id;
+        }
+        return null;
+    }
+
+    function getMapDataSync(mapId) {
+        const id = Number(mapId) || 0;
+        if (typeof $dataMap !== 'undefined' && $dataMap &&
+            ((typeof $gameMap !== 'undefined' && $gameMap && typeof $gameMap.mapId === 'function' && $gameMap.mapId() === id) || $dataMap.id === id)) {
+            return $dataMap;
+        }
+        if (typeof require === 'function') {
+            try {
+                const fs = require('fs');
+                const path = require('path');
+                const p = path.join(process.cwd(), 'data', 'Map' + String(id).padStart(3, '0') + '.json');
+                if (fs.existsSync(p)) {
+                    return JSON.parse(fs.readFileSync(p, 'utf8'));
+                }
+            } catch (e) {}
+        }
+        if (typeof XMLHttpRequest !== 'undefined') {
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', 'data/Map%1.json'.format(String(id).padStart(3, '0')), false);
+                xhr.overrideMimeType('application/json');
+                xhr.send();
+                if (xhr.status < 400) {
+                    return JSON.parse(xhr.responseText);
+                }
+            } catch (e) {}
+        }
+        return null;
+    }
+
+    function getMapBorderCoords(mapId) {
+        const data = getMapDataSync(mapId);
+        const w = (data && data.width) || 20;
+        const h = (data && data.height) || 20;
+        return {
+            x: Math.floor(w / 2),
+            y: h > 2 ? h - 2 : 0,
+            dir: 8
+        };
+    }
+
+    function findPassableBorderTile() {
+        if (typeof $gameMap === 'undefined' || !$gameMap) return null;
+        const w = $gameMap.width();
+        const h = $gameMap.height();
+        if (!w || !h || w <= 0 || h <= 0) return null;
+
+        const isTilePassable = (x, y) => {
+            if (x < 0 || y < 0 || x >= w || y >= h) return false;
+            if ($gameMap.terrainTag && $gameMap.terrainTag(x, y) === 4) return false;
+            if ($gameMap.isDamageFloor && $gameMap.isDamageFloor(x, y)) return false;
+            if ($gameMap.eventsXy && $gameMap.eventsXy(x, y).some(e => e.isNormalPriority && e.isNormalPriority() && !e.isThrough())) {
+                return false;
+            }
+            if ($gameMap.isPassable) {
+                return $gameMap.isPassable(x, y, 2) || $gameMap.isPassable(x, y, 4) ||
+                       $gameMap.isPassable(x, y, 6) || $gameMap.isPassable(x, y, 8);
+            }
+            if ($gameMap.checkPassage) {
+                return $gameMap.checkPassage(x, y, 0x0f);
+            }
+            return true;
+        };
+
+        const borders = [
+            {
+                name: 'south', dir: 8, getCandidates: () => {
+                    const list = [];
+                    const yCandidates = [h - 2, h - 1, h - 3].filter(y => y >= 0 && y < h);
+                    const midX = Math.floor(w / 2);
+                    for (const y of yCandidates) {
+                        for (let offset = 0; offset < w; offset++) {
+                            const x1 = midX + offset;
+                            const x2 = midX - offset;
+                            if (x1 >= 0 && x1 < w) list.push({ x: x1, y, dir: 8 });
+                            if (offset > 0 && x2 >= 0 && x2 < w) list.push({ x: x2, y, dir: 8 });
+                        }
+                    }
+                    return list;
+                }
+            },
+            {
+                name: 'north', dir: 2, getCandidates: () => {
+                    const list = [];
+                    const yCandidates = [1, 0, 2].filter(y => y >= 0 && y < h);
+                    const midX = Math.floor(w / 2);
+                    for (const y of yCandidates) {
+                        for (let offset = 0; offset < w; offset++) {
+                            const x1 = midX + offset;
+                            const x2 = midX - offset;
+                            if (x1 >= 0 && x1 < w) list.push({ x: x1, y, dir: 2 });
+                            if (offset > 0 && x2 >= 0 && x2 < w) list.push({ x: x2, y, dir: 2 });
+                        }
+                    }
+                    return list;
+                }
+            },
+            {
+                name: 'west', dir: 6, getCandidates: () => {
+                    const list = [];
+                    const xCandidates = [1, 0, 2].filter(x => x >= 0 && x < w);
+                    const midY = Math.floor(h / 2);
+                    for (const x of xCandidates) {
+                        for (let offset = 0; offset < h; offset++) {
+                            const y1 = midY + offset;
+                            const y2 = midY - offset;
+                            if (y1 >= 0 && y1 < h) list.push({ x, y: y1, dir: 6 });
+                            if (offset > 0 && y2 >= 0 && y2 < h) list.push({ x, y: y2, dir: 6 });
+                        }
+                    }
+                    return list;
+                }
+            },
+            {
+                name: 'east', dir: 4, getCandidates: () => {
+                    const list = [];
+                    const xCandidates = [w - 2, w - 1, w - 3].filter(x => x >= 0 && x < w);
+                    const midY = Math.floor(h / 2);
+                    for (const x of xCandidates) {
+                        for (let offset = 0; offset < h; offset++) {
+                            const y1 = midY + offset;
+                            const y2 = midY - offset;
+                            if (y1 >= 0 && y1 < h) list.push({ x, y: y1, dir: 4 });
+                            if (offset > 0 && y2 >= 0 && y2 < h) list.push({ x, y: y2, dir: 4 });
+                        }
+                    }
+                    return list;
+                }
+            }
+        ];
+
+        for (const border of borders) {
+            const candidates = border.getCandidates();
+            for (const cand of candidates) {
+                if (isTilePassable(cand.x, cand.y)) {
+                    return cand;
+                }
+            }
+        }
+        return null;
+    }
+
+    function placePlayerNearFreeBorder() {
+        const spot = findPassableBorderTile();
+        if (spot && typeof $gamePlayer !== 'undefined' && $gamePlayer) {
+            $gamePlayer.locate(spot.x, spot.y);
+            if (spot.dir) $gamePlayer.setDirection(spot.dir);
+        } else if (typeof placeOnStandableTile === 'function') {
+            placeOnStandableTile();
+        }
+    }
+
     // The door of a hardcoded, named place: a Destinations.json entry that
     // carries `reservedTiles` (its old js/db/WorldGen/HardcodedBiomeNames.json
     // world-map footprint, now folded straight into the entry) AND its own
@@ -1236,13 +1415,42 @@
     // the open world tile the town's `base` pin only approximates; stepping
     // through the door it actually names reads far better, so this is checked
     // ahead of that fallback in getActualDestination.
+    // If the destination has `procedural: false`, a procedural map must never
+    // be generated: it resolves its authored map and, if entry coordinates are
+    // missing, places the player near a free border of the map on a passable tile.
     function entranceFor(destination) {
-        const o = destination && destination.transportOverrides;
-        const tiles = o && o.reservedTiles;
+        const o = destination && (destination.transportOverrides || destination);
         const entrance = o && o.entrance;
-        if (!entrance || !Array.isArray(tiles) || !tiles.length) return null;
-        if (!entrance.id || !$dataMapInfos[entrance.id]) return null;
-        return entrance;
+
+        // If explicit entrance with valid coordinates exists:
+        if (entrance && entrance.id && typeof $dataMapInfos !== 'undefined' && $dataMapInfos && $dataMapInfos[entrance.id]) {
+            if (typeof entrance.x === 'number' && typeof entrance.y === 'number' &&
+                !isNaN(entrance.x) && !isNaN(entrance.y)) {
+                return { id: entrance.id, x: entrance.x, y: entrance.y, direction: Number(entrance.direction) || 2 };
+            }
+            // Missing entry coordinates: place player near free border of the map
+            const borderSpot = getMapBorderCoords(entrance.id);
+            if (typeof $gameTemp !== 'undefined' && $gameTemp) $gameTemp._ftBorderLanding = true;
+            return { id: entrance.id, x: borderSpot.x, y: borderSpot.y, direction: borderSpot.dir, missingCoords: true };
+        }
+
+        // Non-procedural destination ("procedural": false)
+        if (o && o.procedural === false) {
+            const mapId = findNonProceduralMapId(destination);
+            if (mapId && typeof $dataMapInfos !== 'undefined' && $dataMapInfos && $dataMapInfos[mapId]) {
+                const borderSpot = getMapBorderCoords(mapId);
+                if (typeof $gameTemp !== 'undefined' && $gameTemp) $gameTemp._ftBorderLanding = true;
+                return { id: mapId, x: borderSpot.x, y: borderSpot.y, direction: borderSpot.dir, missingCoords: true };
+            }
+        }
+
+        // Destinations with reservedTiles footprint
+        const tiles = o && o.reservedTiles;
+        if (entrance && Array.isArray(tiles) && tiles.length && entrance.id &&
+            typeof $dataMapInfos !== 'undefined' && $dataMapInfos && $dataMapInfos[entrance.id]) {
+            return entrance;
+        }
+        return null;
     }
 
     // Where a character being CREATED actually lands, given the arrival the
@@ -1259,6 +1467,12 @@
         const entrance = entranceFor(destination);
         if (entrance) {
             return { mapId: entrance.id, x: entrance.x, y: entrance.y, direction: entrance.direction };
+        }
+
+        const o = destination && (destination.transportOverrides || destination);
+        // Procedural map should not exist for "procedural": false
+        if (o && o.procedural === false) {
+            return null;
         }
 
         const built = $gameSystem && $gameSystem.generateOriginBiomeMap
@@ -2180,6 +2394,10 @@
                 $gameTemp._ftVehicleDrop = null;
                 dropVehicleBeside(key);
             }
+        }
+        if ($gameTemp && $gameTemp._ftBorderLanding) {
+            $gameTemp._ftBorderLanding = false;
+            placePlayerNearFreeBorder();
         }
         const booking = $gameSystem && $gameSystem._busTownArrival;
         if (!booking) return;
@@ -4412,6 +4630,10 @@ Scene_Map.prototype.printTravelCoordinates = function () {
     window.FastTravelSystem = window.FastTravelSystem || {};
     window.FastTravelSystem.refreshDestinations = refreshDestinationCache;
     window.FastTravelSystem.destinationKind = destinationKind;
+    window.FastTravelSystem.entranceFor = entranceFor;
+    window.FastTravelSystem.findNonProceduralMapId = findNonProceduralMapId;
+    window.FastTravelSystem.findPassableBorderTile = findPassableBorderTile;
+    window.FastTravelSystem.placePlayerNearFreeBorder = placePlayerNearFreeBorder;
 
     /**
      * Every place on the network, as the overlay itself lists them. Published

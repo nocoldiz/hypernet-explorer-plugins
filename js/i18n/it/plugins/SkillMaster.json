@@ -1312,7 +1312,41 @@
     "skillBookFallbackName": "Quaderno di {first}",
     "grimorieFallbackName": "Grimorie di {first}",
     "statPages": "Pagine",
-    "statCost": "Costo"
+    "statCost": "Costo",
+    "step": {
+      "author": "Autore",
+      "pages": "Pagine",
+      "cover": "Copertina",
+      "scribe": "Scrivi",
+      "all": "Tutto",
+      "prev": "Prec",
+      "next": "Succ",
+      "stepOf": "Fase {step} di {total}: {title}",
+      "stepHint": {
+        "author": "Scegli quale compagno scrive questo volume.",
+        "pages": "Scegli fino a {max} abilità note da trascrivere.",
+        "cover": "Imposta titolo, copertina e icona del libro.",
+        "scribe": "Rivedi i dettagli e rilega in un oggetto scambiabile."
+      }
+    },
+    "author": "Autore",
+    "school": "Scuola",
+    "ink": "Inchiostro",
+    "price": "Valore",
+    "coverArt": "Copertina",
+    "volumeTitle": "Titolo del volume",
+    "bookIcon": "Icona",
+    "allAuthors": "Party",
+    "authorKnown": "{count} abilità",
+    "noAuthors": "Nessun membro del party disponibile.",
+    "selectAuthor": "Seleziona autore",
+    "tradeableItem": "Libro scambiabile",
+    "scribeAction": "Scrivi volume",
+    "rerollTitle": "Rilancia titolo",
+    "byAuthor": "Scritto da {author}",
+    "filterAuthor": "Solo autore",
+    "filterParty": "Tutto il party",
+    "chooseCover": "Scegli copertina"
   },
   "expression": {
     "button": "Espressioni",

@@ -96,6 +96,29 @@
     }
 
     function gameNow() {
+        if (typeof $gameVariables !== "undefined" && $gameVariables) {
+            const v = $gameVariables.value(113);
+            if (v && typeof v === "string") {
+                const parts = v.trim().split(/\s+/);
+                if (parts.length >= 3) {
+                    const day = parseInt(parts[0], 10) || 1;
+                    const mStr = (parts[1] || "").toUpperCase();
+                    const year = parseInt(parts[2], 10) || 2001;
+                    const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                    let month = months.indexOf(mStr);
+                    if (month === -1) {
+                        const itMonths = ["GEN", "FEB", "MAR", "APR", "MAG", "GIU", "LUG", "AGO", "SET", "OTT", "NOV", "DIC"];
+                        month = itMonths.indexOf(mStr);
+                    }
+                    if (month !== -1) {
+                        const timeStr = (parts[3] || "08:00").split(":");
+                        const h = parseInt(timeStr[0], 10) || 8;
+                        const m = parseInt(timeStr[1], 10) || 0;
+                        return new Date(year, month, day, h, m);
+                    }
+                }
+            }
+        }
         const TDS = window.TimeDateSystem;
         try {
             if (TDS && typeof TDS.getCurrentDateObj === "function") {
