@@ -972,6 +972,8 @@ Imported.DialogueSystem = true;
             if (!slot) return false;
             if (slot.storyKey === key) return true;
             slot.storyKey           = key;
+            slot.imageName          = imageName;
+            slot._modelSpec         = modelSpec;
             slot._bustFallbackTried = false;
             // Somebody stepping onto a slot mid-scene shows their painted bust
             // while their model is still loading, and the model takes over
@@ -986,6 +988,7 @@ Imported.DialogueSystem = true;
         // be built, or the painted bust alone. `modelSpec` undefined means
         // "work it out from the portrait's name".
         _dressStorySlot(sprite, imageName, modelSpec, paintedWhileLoading) {
+            sprite.imageName = imageName;
             const path = this.resolveBustPath(imageName);
             let painted = null;
             try {
@@ -995,6 +998,7 @@ Imported.DialogueSystem = true;
                 console.warn('Failed to load story bust:', path, err);
             }
             const spec  = modelSpec === undefined ? this._modelSpecForImage(imageName) : modelSpec;
+            sprite._modelSpec = spec;
             const layout = this.storyLayout();
             const model = spec ? SpeakerModels.bitmapFor(spec, layout.width, layout.height,
                 (bitmap) => this._bitmapOnStage(bitmap)) : null;
@@ -1028,6 +1032,9 @@ Imported.DialogueSystem = true;
                 sprite.bitmap       = model;
                 sprite._modelBust   = null;
                 this.layoutStoryCast();
+                if (this._isEmModelSlot(sprite) && sprite.setColorTone) {
+                    sprite.setColorTone(storyLitTone);
+                }
             }
         }
 
@@ -1072,8 +1079,29 @@ Imported.DialogueSystem = true;
             });
         }
 
+        // Em's 3D model in conversation is always lighted up and never darkened.
+        _isEmModelSlot(sprite) {
+            if (!sprite) return false;
+            const spec = sprite._modelSpec;
+            const isEmSpec = spec && (
+                String(spec.id || '').toLowerCase().includes('em') ||
+                String(spec.info?.path || '').toLowerCase().includes('em')
+            );
+            const key = String(sprite.storyKey || '').toLowerCase();
+            const name = String(sprite.imageName || '').toLowerCase();
+            const isEmName = key === 'custom_em' || key.includes('/em') || key.endsWith('_em') ||
+                             name === 'em' || name.endsWith('/em') || name.includes('em');
+            if (!isEmSpec && !isEmName) return false;
+            return !!(
+                (sprite._modelBust && sprite._modelBust._speakerModel) ||
+                (sprite.bitmap && sprite.bitmap._speakerModel) ||
+                (spec && (spec.info?.kind === 'glb' || spec.frame === 'bust'))
+            );
+        }
+
         // Who is talking is the one in the light; everybody else on stage is
-        // darkened, at full opacity, and drawn behind them.
+        // darkened, at full opacity, and drawn behind them. Em's model is always
+        // lighted up and will not be darkened.
         setStoryActive(key) {
             const slots = this.storySlots || [];
             this._storyActiveKey = key || null;
@@ -1088,13 +1116,15 @@ Imported.DialogueSystem = true;
                 }
             }
             slots.forEach(sprite => {
-                const lit = !!key && sprite.storyKey === key;
+                const active = !!key && sprite.storyKey === key;
+                const isEm = this._isEmModelSlot(sprite);
+                const lit = active || isEm;
                 if (sprite.setColorTone) sprite.setColorTone(lit ? storyLitTone : storyDimTone);
                 // A portrait still walking in keeps its fade, and one still
                 // waiting on its pixels keeps its edge; only one already
                 // standing there is held at full opacity.
                 if (!(sprite._slideDuration > 0) && !this._castPending) sprite.opacity = bustOpacity;
-                if (lit && sprite.parent && sprite.parent.addChild) sprite.parent.addChild(sprite);
+                if (active && sprite.parent && sprite.parent.addChild) sprite.parent.addChild(sprite);
             });
         }
 
@@ -3006,10 +3036,9 @@ Imported.DialogueSystem = true;
                 // instead, and never asked to hold more entries than they fit.
                 const cols = group.side ? 1
                     : Math.max(1, Math.min(group.count || 1, grid.cols || 2));
-                // minmax(0, max-content): a track is as wide as what is written
-                // in it and no wider, but it may still be squeezed rather than
-                // spilling out of its column over the one beside it.
-                cell.style.gridTemplateColumns = `repeat(${cols}, minmax(0, max-content))`;
+                cell.style.gridTemplateColumns = group.side
+                    ? '1fr'
+                    : `repeat(${cols}, minmax(170px, 1fr))`;
                 column.appendChild(cell);
                 left = group.count;
             }
@@ -3027,6 +3056,7 @@ Imported.DialogueSystem = true;
             if (grid && cell === root) item.classList.add('html-choice-tail');
             item.style.cursor = enabled ? 'pointer' : 'default';
             item.textContent  = cmd.name;
+            item.title        = cmd.name;
             if (enabled) {
                 item.addEventListener('mouseover', () => { if (self.active && typeof self.select === 'function') self.select(i); });
                 item.addEventListener('click',     () => {
@@ -3119,7 +3149,7 @@ Imported.DialogueSystem = true;
             s.left      = '50%';
             s.top       = '50%';
             s.transform = 'translate(-50%, -50%)';
-            s.width     = 'auto';
+            s.width     = 'max-content';
         } else {
             s.transform = '';
             s.left  = (sc.ox + this.x * sc.sx) + 'px';

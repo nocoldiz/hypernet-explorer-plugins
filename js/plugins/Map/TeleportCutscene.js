@@ -131,15 +131,16 @@
     // menu the snapshot the menu was opened over is reused.
     function play(options) {
         const opts = Object.assign({ variant: currentVariant() }, options || {});
+        SceneManager.goto(Scene_TeleportCutscene);
         if (SceneManager._scene instanceof Scene_Map && typeof SceneManager.snapForBackground === 'function') {
             snapWithoutParty(SceneManager._scene);
-        } else if (partylessSnap) {
+        }
+        if (partylessSnap) {
             // From a menu: the menu's own backdrop still shows the party on
             // their tiles, so the copy taken without them when the map was
             // left is used instead.
             opts.background = partylessSnap;
         }
-        SceneManager.goto(Scene_TeleportCutscene);
         SceneManager.prepareNextScene(opts);
     }
 
@@ -182,11 +183,41 @@
     // is kept for the cutscene. The menu keeps its own backdrop untouched.
     let partylessSnap = null;
     let snapping = false;
+
+    function isNextSceneTeleport() {
+        if (typeof SceneManager === 'undefined') return false;
+        if (SceneManager._nextScene && typeof Scene_TeleportCutscene !== 'undefined' &&
+            SceneManager._nextScene instanceof Scene_TeleportCutscene) {
+            return true;
+        }
+        if (typeof Scene_TeleportCutscene !== 'undefined' &&
+            typeof SceneManager.isNextScene === 'function' &&
+            SceneManager.isNextScene(Scene_TeleportCutscene)) {
+            return true;
+        }
+        return false;
+    }
+
     const _snapForBackground = SceneManager.snapForBackground;
     SceneManager.snapForBackground = function () {
         const scene = this._scene;
         if (snapping || !(typeof Scene_Map !== 'undefined' && scene instanceof Scene_Map)) {
             return _snapForBackground.apply(this, arguments);
+        }
+        if (isNextSceneTeleport()) {
+            snapping = true;
+            const hidden = hidePartySprites(scene);
+            try {
+                _snapForBackground.apply(this, arguments);
+                if (partylessSnap && partylessSnap !== this._backgroundBitmap && partylessSnap.destroy) {
+                    partylessSnap.destroy();
+                }
+                partylessSnap = this._backgroundBitmap;
+            } finally {
+                for (const sprite of hidden) sprite.visible = true;
+                snapping = false;
+            }
+            return;
         }
         snapping = true;
         const hidden = hidePartySprites(scene);
@@ -711,12 +742,29 @@
         return typeof window.translateText === 'function' ? window.translateText(name) : name;
     }
 
+    function activeEventId(eventId) {
+        if (eventId != null && eventId > 0) return eventId;
+        if (typeof $gameMap !== 'undefined' && $gameMap && $gameMap._interpreter) {
+            let it = $gameMap._interpreter;
+            let lastEventId = 0;
+            while (it) {
+                if (typeof it.eventId === 'function' && it.eventId()) {
+                    lastEventId = it.eventId();
+                }
+                it = it._childInterpreter;
+            }
+            if (lastEventId) return lastEventId;
+        }
+        return 0;
+    }
+
     // Every filed crystal but the one being touched, two on one map told
     // apart by number.
     function crystalDestinations(eventId) {
         const here = $gameMap.mapId();
+        const id = activeEventId(eventId);
         const dests = crystalNetwork().filter(c =>
-            !(c.mapId === here && c.eventId === eventId) && !crystalSealedMap(c.mapId));
+            !(c.mapId === here && (id ? c.eventId === id : true)) && !crystalSealedMap(c.mapId));
         const seen = {};
         return dests.map(c => {
             const label = crystalLabel(c.name);
@@ -730,21 +778,24 @@
 
     function openCrystalNetwork(interpreter) {
         if (crystalSealedHere()) return;
-        const eventId = interpreter && interpreter.eventId ? interpreter.eventId() : 0;
+        const eventId = interpreter && interpreter.eventId ? interpreter.eventId() : activeEventId();
         const dests = crystalDestinations(eventId);
-        if (!dests.length) {
-            $gameMessage.add(T('TeleportCutscene.crystalNoneKnown'));
-        } else {
-            const choices = dests.map(d => d.label).concat([T('TeleportCutscene.crystalCancel')]);
-            $gameMessage.add(T('TeleportCutscene.crystalPrompt'));
-            $gameMessage.setChoices(choices, 0, choices.length - 1);
-            $gameMessage.setChoiceBackground(0);
-            $gameMessage.setChoicePositionType(2);
-            $gameMessage.setChoiceCallback(n => {
-                if (n >= 0 && n < dests.length) pendingCrystal = dests[n].crystal;
-            });
-        }
+        if (!dests.length) return;
+        const choices = dests.map(d => d.label).concat([T('TeleportCutscene.crystalCancel')]);
+        $gameMessage.setChoices(choices, 0, choices.length - 1);
+        $gameMessage.setChoiceBackground(0);
+        $gameMessage.setChoicePositionType(2);
+        $gameMessage.setChoiceCallback(n => {
+            if (n >= 0 && n < dests.length) pendingCrystal = dests[n].crystal;
+        });
         if (interpreter && interpreter.setWaitMode) interpreter.setWaitMode('message');
+    }
+
+    function crystalTeleportAvailable(eventId) {
+        if (crystalSealedHere()) return false;
+        if (crystalNetwork().length <= 1) return false;
+        const id = activeEventId(eventId);
+        return crystalDestinations(id).length > 0;
     }
 
     // The cutscene waits for the choice window to close, so the snapshot it
@@ -773,7 +824,7 @@
         play, isExteriorHere, currentVariant, partyScreenSpots,
         partylessSnap: () => partylessSnap,
         // Restore Crystals: used by the CureParty common event.
-        crystalTeleportAvailable: () => !crystalSealedHere(),
+        crystalTeleportAvailable,
         registerCrystal, crystalDestinations, openCrystalNetwork,
         crystalNetwork: () => crystalNetwork().slice(),
     };

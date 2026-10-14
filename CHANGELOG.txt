@@ -1,4 +1,15 @@
 
+0.8.11a
+
+Changed:
+ - em model in conversation always lighted up and not darkened
+ - reworked ask bubba menu layout and styling
+
+Fixed:
+ - party sprites no longer remain on map during teleport scenes
+ - disabled remote talk while holding action button for the moment
+
+
 0.8.10a
 Maps:
  . Fixed and expanded maps in omega tower
@@ -8,12 +19,12 @@ Added:
 
 Changed:
  - translate askbubba to italian from start since changed
- - renamed mages guild to wizard guild and shoko asahara to father
+ - renamed mages guild to wizard guild
  - bubba talk command uses random topic from askbubba file
  - reworked ask bubba modal in alphabetical order
  - rewritten by hand ask Bubba text 
  - reworked news with sidebar, bigger text and inventory system style
- - start in dungeon second suggested scenario below train, train hides bologna
+ - start in dungeon second suggested scenario below train
  - playtest, Crowley and grimorie starts begin with 9999 KP
  - plants initialized as sunflower get random seeded from map and world seed
  - reselected Ghent and low-level maps encounters to level 1 to 5

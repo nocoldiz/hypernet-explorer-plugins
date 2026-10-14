@@ -10152,50 +10152,38 @@
             }
 
             if (!this._active) {
-                if (Input.isPressed('ok')) {
-                    this._holdFrames = (this._holdFrames || 0) + 1;
-                    if (this._holdFrames >= this._HOLD_THRESHOLD) {
-                        this._pendingOkTap = false;
-                        this.activate();
-                    }
-                } else {
-                    if (this._pendingOkTap) {
-                        this._pendingOkTap = false;
-                        this._holdFrames = 0;
-                        this.executeNormalButtonAction();
-                    }
-                    this._holdFrames = 0;
-                }
-            } else {
-                this.updatePan();
+                // Holding action button to remotely talk is disabled for now.
+                return;
+            }
 
-                if (this._justActivated) {
-                    if (!Input.isPressed('ok')) {
-                        this._justActivated = false;
-                    }
-                }
+            this.updatePan();
 
-                if (Input.isTriggered('cancel') || (typeof TouchInput !== "undefined" && TouchInput.isCancelled && TouchInput.isCancelled())) {
-                    SoundManager.playCancel();
-                    this.cancel();
-                    return;
-                }
-
-                if (Input.isRepeated('right') || Input.isTriggered('right')) {
-                    this.selectNext();
-                } else if (Input.isRepeated('left') || Input.isTriggered('left')) {
-                    this.selectPrev();
-                }
-
-                if (Input.isTriggered('ok') && !this._justActivated) {
-                    this.confirm();
-                    return;
-                }
-
+            if (this._justActivated) {
                 if (!Input.isPressed('ok')) {
-                    this.confirm();
-                    return;
+                    this._justActivated = false;
                 }
+            }
+
+            if (Input.isTriggered('cancel') || (typeof TouchInput !== "undefined" && TouchInput.isCancelled && TouchInput.isCancelled())) {
+                SoundManager.playCancel();
+                this.cancel();
+                return;
+            }
+
+            if (Input.isRepeated('right') || Input.isTriggered('right')) {
+                this.selectNext();
+            } else if (Input.isRepeated('left') || Input.isTriggered('left')) {
+                this.selectPrev();
+            }
+
+            if (Input.isTriggered('ok') && !this._justActivated) {
+                this.confirm();
+                return;
+            }
+
+            if (!Input.isPressed('ok') && !this._justActivated) {
+                this.confirm();
+                return;
             }
         },
 
@@ -10236,15 +10224,15 @@
 
     const _Game_Player_triggerButtonAction_loose = Game_Player.prototype.triggerButtonAction;
     Game_Player.prototype.triggerButtonAction = function () {
-        if (RemoteTalk.onWorldMap() || this.isInVehicle() || !RemoteTalk.canActivate()) {
-            return executeNormalPlayerButtonAction(this);
-        }
         if (RemoteTalk.isActive()) return true;
-
-        if (Input.isTriggered("ok")) {
-            RemoteTalk._pendingOkTap = true;
-            RemoteTalk._holdFrames = 1;
-            return true;
+        if (Input.isTriggered("ok") && !this.isInVehicle()) {
+            const f = Loose.facedFollower() || Loose.facedPet();
+            if (f && Loose.talkTo(f)) return true;
+        }
+        if (_Game_Player_triggerButtonAction_loose &&
+            _Game_Player_triggerButtonAction_loose.call(this)) return true;
+        if (Input.isTriggered("ok") && !this.isInVehicle()) {
+            if (Loose.interactAt(this.x, this.y)) return true;
         }
         return false;
     };
