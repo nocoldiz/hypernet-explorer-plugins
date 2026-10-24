@@ -14,6 +14,8 @@
   "freeDrive": "Guida libera",
   "freeWalk": "Passeggiata liminale (WIP)",
   "worldUnavailable": "Impossibile caricare il mondo liminale.",
+  "disclaimer": "RPG Maker non è stato fatto per questo, JavaScript non è stato fatto per questo!!! Per favore aspetta che il codice venga riscritto in un linguaggio più sano, torna alla modalità 2D ok? Chi ha bisogno della profondità? Chi ha chiesto la profondità?",
+  "disclaimerClose": "Premi un tasto, fai clic o premi un pulsante per continuare",
   "prompt": {
     "key": "E",
     "talk": "{key}  Parla con {name}",

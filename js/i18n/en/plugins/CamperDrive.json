@@ -14,6 +14,8 @@
   "freeDrive": "Free Drive",
   "freeWalk": "Liminal Walk (WIP)",
   "worldUnavailable": "Liminal world failed to load.",
+  "disclaimer": "RPG maker was not made for this, JavaScript was not made for this!!! Please wait until the codebase is rewritten to a more sane language just go back to 2d mode ok? Who even need depth? Who asked for depth?",
+  "disclaimerClose": "Press any key, click or press a button to continue",
   "prompt": {
     "key": "E",
     "talk": "{key}  Talk to {name}",

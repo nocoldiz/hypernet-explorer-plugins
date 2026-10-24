@@ -102,7 +102,9 @@
     // return it.
     function build(...args) {
         try {
-            return new VoxelWorldScene(...args);
+            const scene = new VoxelWorldScene(...args);
+            try { showLiminalDisclaimer(scene); } catch (e) { console.error('[VoxelWorld] disclaimer', e); }
+            return scene;
         } catch (e) {
             console.error('[VoxelWorld] could not raise the world', e);
             const half = buildingScene ? buildingScene() : null;
@@ -132,6 +134,104 @@
                     { severity: 'warning', key: 'voxel-world-unavailable' });
             } catch (e) { console.error('[VoxelWorld] unavailable toast', e); }
         }
+    }
+
+    // =========================================================================
+    // The disclaimer, once per save
+    // =========================================================================
+    // The first time a save game goes 3D it is told, honestly, what it is
+    // walking into. The flag lives on $gameSystem so it is written into the
+    // save with everything else. The title's background drive and the title
+    // minigames are not a save game, and are never told.
+    //
+    // The panel is put straight on the page, which is enough to hold the
+    // world still behind it: DomMenuGuard takes anything that turns up over
+    // the world for a menu, pauses the walk and hands the mouse back. Any key,
+    // a click or a pad button (A, B or Start) puts it away. The key is eaten
+    // before the world or the engine sees it, and the pad button is only
+    // honoured on its release, so neither carries on into the world as a
+    // press of its own.
+    function showLiminalDisclaimer(scene) {
+        if (!scene || scene._titleMode || scene._standalone) return;
+        if (typeof $gameSystem === 'undefined' || !$gameSystem) return;
+        if ($gameSystem._liminalDisclaimerSeen) return;
+        $gameSystem._liminalDisclaimerSeen = true;
+
+        const el = document.createElement('div');
+        el.id = 'voxel-liminal-disclaimer';
+        el.style.cssText = `
+            position:fixed; top:0; left:0; width:100%; height:100%;
+            display:flex; align-items:center; justify-content:center;
+            background:rgba(0,0,0,0.75); cursor:pointer;
+        `;
+        const panel = document.createElement('div');
+        panel.style.cssText = `
+            max-width:560px; margin:16px; padding:24px 28px;
+            background:#1a1a22; border:2px solid #c9a227; border-radius:6px;
+            color:#f2e6c4; font-family:inherit; font-size:20px; line-height:1.45;
+            text-align:center; box-shadow:0 0 24px rgba(0,0,0,0.8);
+        `;
+        const text = document.createElement('div');
+        text.textContent = T('CamperDrive.disclaimer');
+        const hint = document.createElement('div');
+        hint.style.cssText = 'margin-top:18px; font-size:15px; opacity:0.7;';
+        hint.textContent = T('CamperDrive.disclaimerClose');
+        panel.appendChild(text);
+        panel.appendChild(hint);
+        el.appendChild(panel);
+
+        let closed = false;
+        const close = () => {
+            if (closed) return;
+            closed = true;
+            window.removeEventListener('keydown', onKey, true);
+            if (el.parentNode) el.parentNode.removeChild(el);
+            try {
+                if (typeof Input !== 'undefined' && Input.clear) Input.clear();
+                if (typeof TouchInput !== 'undefined' && TouchInput.clear) TouchInput.clear();
+            } catch (e) { /* nothing was held */ }
+        };
+        const onKey = (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if (!e.repeat) close();
+        };
+        const swallow = (e) => { e.preventDefault(); e.stopPropagation(); };
+        ['mousedown', 'mouseup', 'pointerdown', 'pointerup', 'touchstart', 'touchend', 'wheel', 'contextmenu']
+            .forEach(type => el.addEventListener(type, swallow));
+        el.addEventListener('click', (e) => { swallow(e); close(); });
+        window.addEventListener('keydown', onKey, true);
+
+        // Whatever was held to get here (the A that chose the drive) has to be
+        // let go first, or it would close the panel the frame it opened.
+        let armed = false, pressed = false;
+        const CLOSE_BUTTONS = [0, 1, 9];
+        const poll = () => {
+            if (closed) return;
+            if (VoxelWorldSystem._scene !== scene) { close(); return; }
+            const pads = (navigator.getGamepads && navigator.getGamepads()) || [];
+            let anyDown = false, closeDown = false;
+            for (const pad of pads) {
+                if (!pad || !pad.buttons) continue;
+                pad.buttons.forEach((b, i) => {
+                    if (!b || !b.pressed) return;
+                    anyDown = true;
+                    if (CLOSE_BUTTONS.indexOf(i) >= 0) closeDown = true;
+                });
+            }
+            if (!armed) {
+                if (!anyDown) armed = true;
+            } else if (closeDown) {
+                pressed = true;
+            } else if (pressed) {
+                close();
+                return;
+            }
+            requestAnimationFrame(poll);
+        };
+
+        document.body.appendChild(el);
+        requestAnimationFrame(poll);
     }
 
     // =========================================================================
